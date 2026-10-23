@@ -33,6 +33,14 @@ export const auth = betterAuth({
     enabled: true,
   },
 
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
+
+
   // This is the stuff that only dlsu emails are allowed
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
@@ -75,4 +83,5 @@ export const auth = betterAuth({
       generateId: "uuid",
     },
   },
+
 });

@@ -1,7 +1,15 @@
 import Image from "next/image";
-
+import { authClient } from "./lib/auth-client"
 
 export function GoogleButton() {
+
+  const googleHandler = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/main"
+    });
+  };
+
   return (
     <button
       type="button"
