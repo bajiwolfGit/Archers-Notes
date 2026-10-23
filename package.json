@@ -1,6 +1,7 @@
 {
   "name": "Archers-Notes",
   "private": true,
+  "packageManager": "npm@11.19.1",
   "scripts": {
     "build": "npx turbo run build",
     "dev": "npx turbo run dev",
