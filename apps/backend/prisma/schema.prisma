@@ -1,6 +1,6 @@
 generator client {
-  provider     = "prisma-client"
-  output       = "../src/generated/prisma"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -16,7 +16,7 @@ model audit_logs {
   entity_type String   @db.VarChar(30)
   entity_id   String
   created_at  DateTime @default(now()) @db.Timestamptz(6)
-  users       users    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -28,17 +28,17 @@ model colleges {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model comments {
-  comment_id     String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  post_id        String     @db.Uuid
-  user_id        String     @db.Uuid
-  parent_id      String?    @db.Uuid
+  comment_id     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id        String       @db.Uuid
+  user_id        String       @db.Uuid
+  parent_id      String?      @db.Uuid
   body           String
-  is_anonymous   Boolean    @default(false)
-  created_at     DateTime   @default(now()) @db.Timestamptz(6)
-  comments       comments?  @relation("commentsTocomments", fields: [parent_id], references: [comment_id], onDelete: Cascade, onUpdate: NoAction)
-  other_comments comments[] @relation("commentsTocomments")
-  posts          posts      @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
-  users          users      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  is_anonymous   Boolean      @default(false)
+  created_at     DateTime     @default(now()) @db.Timestamptz(6)
+  comments       comments?    @relation("commentsTocomments", fields: [parent_id], references: [comment_id], onDelete: Cascade, onUpdate: NoAction)
+  other_comments comments[]   @relation("commentsTocomments")
+  posts          posts        @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
+  users          users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reports        reports[]
 }
 
@@ -51,18 +51,18 @@ model courses {
   is_verified Boolean  @default(false)
   created_by  String?  @db.Uuid
   colleges    colleges @relation(fields: [college_id], references: [college_id], onDelete: NoAction, onUpdate: NoAction)
-  users       users?   @relation(fields: [created_by], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  users       users?   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   posts       posts[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model follows {
-  follower_id                       String   @db.Uuid
-  following_id                      String   @db.Uuid
-  created_at                        DateTime @default(now()) @db.Timestamptz(6)
-  users_follows_follower_idTousers  users    @relation("follows_follower_idTousers", fields: [follower_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-  users_follows_following_idTousers users    @relation("follows_following_idTousers", fields: [following_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  follower_id                     String   @db.Uuid
+  following_id                    String   @db.Uuid
+  created_at                      DateTime @default(now()) @db.Timestamptz(6)
+  users_follows_follower_idTousers  users    @relation("follows_follower_idTousers", fields: [follower_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_follows_following_idTousers users    @relation("follows_following_idTousers", fields: [following_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([follower_id, following_id])
 }
@@ -83,7 +83,7 @@ model post_votes {
   post_id String @db.Uuid
   value   Int    @db.SmallInt
   posts   posts  @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
-  users   users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  users   users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([user_id, post_id])
 }
@@ -102,7 +102,7 @@ model posts {
   post_files post_files[]
   post_votes post_votes[]
   courses    courses      @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction)
-  users      users        @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  users      users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reports    reports[]
 }
 
@@ -118,7 +118,7 @@ model reports {
   created_at  DateTime  @default(now()) @db.Timestamptz(6)
   comments    comments? @relation(fields: [comment_id], references: [comment_id], onDelete: NoAction, onUpdate: NoAction)
   posts       posts?    @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction)
-  users       users     @relation(fields: [reporter_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  users       users     @relation(fields: [reporter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum post_status {
@@ -137,7 +137,7 @@ enum user_role {
 // Modified user table
 model users {
   // Shared identity
-  user_id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("user_id")
   name          String
   gmail         String   @unique @db.VarChar(255)
   emailVerified Boolean  @default(false)
@@ -169,19 +169,19 @@ model users {
   @@map("users")
 }
 
+// Better-auth tables
 
-//Better-auth tables
 
 model Session {
-  id        String   @id
+  id        String   @id @default(uuid())
   expiresAt DateTime
-  token     String   
+  token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
   userId    String   @db.Uuid
-  user      users    @relation(  fields: [userId],  references: [user_id],  onDelete: Cascade)
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
@@ -189,11 +189,11 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String   @id @default(uuid())
   accountId             String
   providerId            String
-  userId                String    @db.Uuid
-  user                  users      @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  userId                String   @db.Uuid
+  user                  users    @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -201,15 +201,15 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   @@index([userId])
   @@map("account")
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(uuid())
   identifier String
   value      String
   expiresAt  DateTime
