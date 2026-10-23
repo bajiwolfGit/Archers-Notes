@@ -1,0 +1,221 @@
+generator client {
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model audit_logs {
+  log_id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.Uuid
+  action      String   @db.VarChar(30)
+  entity_type String   @db.VarChar(30)
+  entity_id   String
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model colleges {
+  college_id Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(100)
+  courses    courses[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model comments {
+  comment_id     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id        String       @db.Uuid
+  user_id        String       @db.Uuid
+  parent_id      String?      @db.Uuid
+  body           String
+  is_anonymous   Boolean      @default(false)
+  created_at     DateTime     @default(now()) @db.Timestamptz(6)
+  comments       comments?    @relation("commentsTocomments", fields: [parent_id], references: [comment_id], onDelete: Cascade, onUpdate: NoAction)
+  other_comments comments[]   @relation("commentsTocomments")
+  posts          posts        @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
+  users          users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reports        reports[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model courses {
+  course_id   Int      @id @default(autoincrement())
+  college_id  Int
+  code        String   @unique @db.VarChar(20)
+  name        String   @db.VarChar(150)
+  is_verified Boolean  @default(false)
+  created_by  String?  @db.Uuid
+  colleges    colleges @relation(fields: [college_id], references: [college_id], onDelete: NoAction, onUpdate: NoAction)
+  users       users?   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  posts       posts[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model follows {
+  follower_id                     String   @db.Uuid
+  following_id                    String   @db.Uuid
+  created_at                      DateTime @default(now()) @db.Timestamptz(6)
+  users_follows_follower_idTousers  users    @relation("follows_follower_idTousers", fields: [follower_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_follows_following_idTousers users    @relation("follows_following_idTousers", fields: [following_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([follower_id, following_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model post_files {
+  file_id   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id   String  @db.Uuid
+  file_url  String
+  file_type String? @db.VarChar(50)
+  posts     posts   @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model post_votes {
+  user_id String @db.Uuid
+  post_id String @db.Uuid
+  value   Int    @db.SmallInt
+  posts   posts  @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
+  users   users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, post_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model posts {
+  post_id    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String       @db.Uuid
+  course_id  Int
+  header     String       @db.VarChar(200)
+  body       String?
+  status     post_status  @default(draft)
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at DateTime     @default(now()) @db.Timestamptz(6)
+  comments   comments[]
+  post_files post_files[]
+  post_votes post_votes[]
+  courses    courses      @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction)
+  users      users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reports    reports[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model reports {
+  report_id   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reporter_id String    @db.Uuid
+  post_id     String?   @db.Uuid
+  comment_id  String?   @db.Uuid
+  reason      String
+  status      String    @default("open") @db.VarChar(20)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  comments    comments? @relation(fields: [comment_id], references: [comment_id], onDelete: NoAction, onUpdate: NoAction)
+  posts       posts?    @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction)
+  users       users     @relation(fields: [reporter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum post_status {
+  draft
+  pending_review
+  published
+  archived
+  deleted
+}
+
+enum user_role {
+  student
+  admin
+}
+
+// Modified user table
+model users {
+  // Shared identity
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("user_id")
+  name          String
+  gmail         String   @unique @db.VarChar(255)
+  emailVerified Boolean  @default(false)
+  image         String?
+
+  // Application profile
+  username      String   @unique @db.VarChar(50)
+  bio           String?
+  avatar_url    String?
+  role          user_role @default(student)
+
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt
+
+  // Better Auth relations
+  sessions      Session[]
+  accounts      Account[]
+
+  // Existing application relations
+  audit_logs                          audit_logs[]
+  comments                            comments[]
+  courses                             courses[]
+  follows_follows_follower_idTousers  follows[] @relation("follows_follower_idTousers")
+  follows_follows_following_idTousers follows[] @relation("follows_following_idTousers")
+  post_votes                          post_votes[]
+  posts                               posts[]
+  reports                             reports[]
+
+  @@map("users")
+}
+
+// Better-auth tables
+
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String   @db.Uuid
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String   @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String   @db.Uuid
+  user                  users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
