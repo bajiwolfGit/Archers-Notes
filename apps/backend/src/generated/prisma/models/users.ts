@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model users
- * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+ * 
  */
 export type usersModel = runtime.Types.Result.DefaultSelection<Prisma.$usersPayload>
 
@@ -26,64 +26,88 @@ export type AggregateUsers = {
 
 export type UsersMinAggregateOutputType = {
   user_id: string | null
-  username: string | null
+  name: string | null
   gmail: string | null
+  emailVerified: boolean | null
+  image: string | null
+  username: string | null
   bio: string | null
   avatar_url: string | null
   role: $Enums.user_role | null
   created_at: Date | null
+  updatedAt: Date | null
 }
 
 export type UsersMaxAggregateOutputType = {
   user_id: string | null
-  username: string | null
+  name: string | null
   gmail: string | null
+  emailVerified: boolean | null
+  image: string | null
+  username: string | null
   bio: string | null
   avatar_url: string | null
   role: $Enums.user_role | null
   created_at: Date | null
+  updatedAt: Date | null
 }
 
 export type UsersCountAggregateOutputType = {
   user_id: number
-  username: number
+  name: number
   gmail: number
+  emailVerified: number
+  image: number
+  username: number
   bio: number
   avatar_url: number
   role: number
   created_at: number
+  updatedAt: number
   _all: number
 }
 
 
 export type UsersMinAggregateInputType = {
   user_id?: true
-  username?: true
+  name?: true
   gmail?: true
+  emailVerified?: true
+  image?: true
+  username?: true
   bio?: true
   avatar_url?: true
   role?: true
   created_at?: true
+  updatedAt?: true
 }
 
 export type UsersMaxAggregateInputType = {
   user_id?: true
-  username?: true
+  name?: true
   gmail?: true
+  emailVerified?: true
+  image?: true
+  username?: true
   bio?: true
   avatar_url?: true
   role?: true
   created_at?: true
+  updatedAt?: true
 }
 
 export type UsersCountAggregateInputType = {
   user_id?: true
-  username?: true
+  name?: true
   gmail?: true
+  emailVerified?: true
+  image?: true
+  username?: true
   bio?: true
   avatar_url?: true
   role?: true
   created_at?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -161,12 +185,16 @@ export type usersGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type UsersGroupByOutputType = {
   user_id: string
-  username: string
+  name: string
   gmail: string
+  emailVerified: boolean
+  image: string | null
+  username: string
   bio: string | null
   avatar_url: string | null
   role: $Enums.user_role
   created_at: Date
+  updatedAt: Date
   _count: UsersCountAggregateOutputType | null
   _min: UsersMinAggregateOutputType | null
   _max: UsersMaxAggregateOutputType | null
@@ -192,12 +220,18 @@ export type usersWhereInput = {
   OR?: Prisma.usersWhereInput[]
   NOT?: Prisma.usersWhereInput | Prisma.usersWhereInput[]
   user_id?: Prisma.UuidFilter<"users"> | string
-  username?: Prisma.StringFilter<"users"> | string
+  name?: Prisma.StringFilter<"users"> | string
   gmail?: Prisma.StringFilter<"users"> | string
+  emailVerified?: Prisma.BoolFilter<"users"> | boolean
+  image?: Prisma.StringNullableFilter<"users"> | string | null
+  username?: Prisma.StringFilter<"users"> | string
   bio?: Prisma.StringNullableFilter<"users"> | string | null
   avatar_url?: Prisma.StringNullableFilter<"users"> | string | null
   role?: Prisma.Enumuser_roleFilter<"users"> | $Enums.user_role
   created_at?: Prisma.DateTimeFilter<"users"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"users"> | Date | string
+  sessions?: Prisma.SessionListRelationFilter
+  accounts?: Prisma.AccountListRelationFilter
   audit_logs?: Prisma.Audit_logsListRelationFilter
   comments?: Prisma.CommentsListRelationFilter
   courses?: Prisma.CoursesListRelationFilter
@@ -210,12 +244,18 @@ export type usersWhereInput = {
 
 export type usersOrderByWithRelationInput = {
   user_id?: Prisma.SortOrder
-  username?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   gmail?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
+  username?: Prisma.SortOrder
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
   avatar_url?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  sessions?: Prisma.SessionOrderByRelationAggregateInput
+  accounts?: Prisma.AccountOrderByRelationAggregateInput
   audit_logs?: Prisma.audit_logsOrderByRelationAggregateInput
   comments?: Prisma.commentsOrderByRelationAggregateInput
   courses?: Prisma.coursesOrderByRelationAggregateInput
@@ -228,15 +268,21 @@ export type usersOrderByWithRelationInput = {
 
 export type usersWhereUniqueInput = Prisma.AtLeast<{
   user_id?: string
-  username?: string
   gmail?: string
+  username?: string
   AND?: Prisma.usersWhereInput | Prisma.usersWhereInput[]
   OR?: Prisma.usersWhereInput[]
   NOT?: Prisma.usersWhereInput | Prisma.usersWhereInput[]
+  name?: Prisma.StringFilter<"users"> | string
+  emailVerified?: Prisma.BoolFilter<"users"> | boolean
+  image?: Prisma.StringNullableFilter<"users"> | string | null
   bio?: Prisma.StringNullableFilter<"users"> | string | null
   avatar_url?: Prisma.StringNullableFilter<"users"> | string | null
   role?: Prisma.Enumuser_roleFilter<"users"> | $Enums.user_role
   created_at?: Prisma.DateTimeFilter<"users"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"users"> | Date | string
+  sessions?: Prisma.SessionListRelationFilter
+  accounts?: Prisma.AccountListRelationFilter
   audit_logs?: Prisma.Audit_logsListRelationFilter
   comments?: Prisma.CommentsListRelationFilter
   courses?: Prisma.CoursesListRelationFilter
@@ -245,16 +291,20 @@ export type usersWhereUniqueInput = Prisma.AtLeast<{
   post_votes?: Prisma.Post_votesListRelationFilter
   posts?: Prisma.PostsListRelationFilter
   reports?: Prisma.ReportsListRelationFilter
-}, "user_id" | "username" | "gmail">
+}, "user_id" | "gmail" | "username">
 
 export type usersOrderByWithAggregationInput = {
   user_id?: Prisma.SortOrder
-  username?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   gmail?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
+  username?: Prisma.SortOrder
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
   avatar_url?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.usersCountOrderByAggregateInput
   _max?: Prisma.usersMaxOrderByAggregateInput
   _min?: Prisma.usersMinOrderByAggregateInput
@@ -265,22 +315,32 @@ export type usersScalarWhereWithAggregatesInput = {
   OR?: Prisma.usersScalarWhereWithAggregatesInput[]
   NOT?: Prisma.usersScalarWhereWithAggregatesInput | Prisma.usersScalarWhereWithAggregatesInput[]
   user_id?: Prisma.UuidWithAggregatesFilter<"users"> | string
-  username?: Prisma.StringWithAggregatesFilter<"users"> | string
+  name?: Prisma.StringWithAggregatesFilter<"users"> | string
   gmail?: Prisma.StringWithAggregatesFilter<"users"> | string
+  emailVerified?: Prisma.BoolWithAggregatesFilter<"users"> | boolean
+  image?: Prisma.StringNullableWithAggregatesFilter<"users"> | string | null
+  username?: Prisma.StringWithAggregatesFilter<"users"> | string
   bio?: Prisma.StringNullableWithAggregatesFilter<"users"> | string | null
   avatar_url?: Prisma.StringNullableWithAggregatesFilter<"users"> | string | null
   role?: Prisma.Enumuser_roleWithAggregatesFilter<"users"> | $Enums.user_role
   created_at?: Prisma.DateTimeWithAggregatesFilter<"users"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"users"> | Date | string
 }
 
 export type usersCreateInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
@@ -293,12 +353,18 @@ export type usersCreateInput = {
 
 export type usersUncheckedCreateInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
@@ -311,12 +377,18 @@ export type usersUncheckedCreateInput = {
 
 export type usersUpdateInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
@@ -329,12 +401,18 @@ export type usersUpdateInput = {
 
 export type usersUncheckedUpdateInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
@@ -347,32 +425,44 @@ export type usersUncheckedUpdateInput = {
 
 export type usersCreateManyInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
 }
 
 export type usersUpdateManyMutationInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type usersUncheckedUpdateManyInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UsersScalarRelationFilter = {
@@ -387,32 +477,44 @@ export type UsersNullableScalarRelationFilter = {
 
 export type usersCountOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
-  username?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   gmail?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
+  image?: Prisma.SortOrder
+  username?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   avatar_url?: Prisma.SortOrder
   role?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type usersMaxOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
-  username?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   gmail?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
+  image?: Prisma.SortOrder
+  username?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   avatar_url?: Prisma.SortOrder
   role?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type usersMinOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
-  username?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   gmail?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
+  image?: Prisma.SortOrder
+  username?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   avatar_url?: Prisma.SortOrder
   role?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type usersCreateNestedOneWithoutAudit_logsInput = {
@@ -533,14 +635,48 @@ export type Enumuser_roleFieldUpdateOperationsInput = {
   set?: $Enums.user_role
 }
 
+export type usersCreateNestedOneWithoutSessionsInput = {
+  create?: Prisma.XOR<Prisma.usersCreateWithoutSessionsInput, Prisma.usersUncheckedCreateWithoutSessionsInput>
+  connectOrCreate?: Prisma.usersCreateOrConnectWithoutSessionsInput
+  connect?: Prisma.usersWhereUniqueInput
+}
+
+export type usersUpdateOneRequiredWithoutSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.usersCreateWithoutSessionsInput, Prisma.usersUncheckedCreateWithoutSessionsInput>
+  connectOrCreate?: Prisma.usersCreateOrConnectWithoutSessionsInput
+  upsert?: Prisma.usersUpsertWithoutSessionsInput
+  connect?: Prisma.usersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.usersUpdateToOneWithWhereWithoutSessionsInput, Prisma.usersUpdateWithoutSessionsInput>, Prisma.usersUncheckedUpdateWithoutSessionsInput>
+}
+
+export type usersCreateNestedOneWithoutAccountsInput = {
+  create?: Prisma.XOR<Prisma.usersCreateWithoutAccountsInput, Prisma.usersUncheckedCreateWithoutAccountsInput>
+  connectOrCreate?: Prisma.usersCreateOrConnectWithoutAccountsInput
+  connect?: Prisma.usersWhereUniqueInput
+}
+
+export type usersUpdateOneRequiredWithoutAccountsNestedInput = {
+  create?: Prisma.XOR<Prisma.usersCreateWithoutAccountsInput, Prisma.usersUncheckedCreateWithoutAccountsInput>
+  connectOrCreate?: Prisma.usersCreateOrConnectWithoutAccountsInput
+  upsert?: Prisma.usersUpsertWithoutAccountsInput
+  connect?: Prisma.usersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.usersUpdateToOneWithWhereWithoutAccountsInput, Prisma.usersUpdateWithoutAccountsInput>, Prisma.usersUncheckedUpdateWithoutAccountsInput>
+}
+
 export type usersCreateWithoutAudit_logsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
   follows_follows_follower_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_follower_idTousersInput
@@ -552,12 +688,18 @@ export type usersCreateWithoutAudit_logsInput = {
 
 export type usersUncheckedCreateWithoutAudit_logsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
   follows_follows_follower_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_follower_idTousersInput
@@ -585,12 +727,18 @@ export type usersUpdateToOneWithWhereWithoutAudit_logsInput = {
 
 export type usersUpdateWithoutAudit_logsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
   follows_follows_follower_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
@@ -602,12 +750,18 @@ export type usersUpdateWithoutAudit_logsInput = {
 
 export type usersUncheckedUpdateWithoutAudit_logsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
   follows_follows_follower_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
@@ -619,12 +773,18 @@ export type usersUncheckedUpdateWithoutAudit_logsInput = {
 
 export type usersCreateWithoutCommentsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
   follows_follows_follower_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_follower_idTousersInput
@@ -636,12 +796,18 @@ export type usersCreateWithoutCommentsInput = {
 
 export type usersUncheckedCreateWithoutCommentsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
   follows_follows_follower_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_follower_idTousersInput
@@ -669,12 +835,18 @@ export type usersUpdateToOneWithWhereWithoutCommentsInput = {
 
 export type usersUpdateWithoutCommentsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
   follows_follows_follower_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
@@ -686,12 +858,18 @@ export type usersUpdateWithoutCommentsInput = {
 
 export type usersUncheckedUpdateWithoutCommentsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
   follows_follows_follower_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
@@ -703,12 +881,18 @@ export type usersUncheckedUpdateWithoutCommentsInput = {
 
 export type usersCreateWithoutCoursesInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   follows_follows_follower_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_follower_idTousersInput
@@ -720,12 +904,18 @@ export type usersCreateWithoutCoursesInput = {
 
 export type usersUncheckedCreateWithoutCoursesInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   follows_follows_follower_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_follower_idTousersInput
@@ -753,12 +943,18 @@ export type usersUpdateToOneWithWhereWithoutCoursesInput = {
 
 export type usersUpdateWithoutCoursesInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   follows_follows_follower_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
@@ -770,12 +966,18 @@ export type usersUpdateWithoutCoursesInput = {
 
 export type usersUncheckedUpdateWithoutCoursesInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   follows_follows_follower_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
@@ -787,12 +989,18 @@ export type usersUncheckedUpdateWithoutCoursesInput = {
 
 export type usersCreateWithoutFollows_follows_follower_idTousersInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
@@ -804,12 +1012,18 @@ export type usersCreateWithoutFollows_follows_follower_idTousersInput = {
 
 export type usersUncheckedCreateWithoutFollows_follows_follower_idTousersInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
@@ -826,12 +1040,18 @@ export type usersCreateOrConnectWithoutFollows_follows_follower_idTousersInput =
 
 export type usersCreateWithoutFollows_follows_following_idTousersInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
@@ -843,12 +1063,18 @@ export type usersCreateWithoutFollows_follows_following_idTousersInput = {
 
 export type usersUncheckedCreateWithoutFollows_follows_following_idTousersInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
@@ -876,12 +1102,18 @@ export type usersUpdateToOneWithWhereWithoutFollows_follows_follower_idTousersIn
 
 export type usersUpdateWithoutFollows_follows_follower_idTousersInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
@@ -893,12 +1125,18 @@ export type usersUpdateWithoutFollows_follows_follower_idTousersInput = {
 
 export type usersUncheckedUpdateWithoutFollows_follows_follower_idTousersInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
@@ -921,12 +1159,18 @@ export type usersUpdateToOneWithWhereWithoutFollows_follows_following_idTousersI
 
 export type usersUpdateWithoutFollows_follows_following_idTousersInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
@@ -938,12 +1182,18 @@ export type usersUpdateWithoutFollows_follows_following_idTousersInput = {
 
 export type usersUncheckedUpdateWithoutFollows_follows_following_idTousersInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
@@ -955,12 +1205,18 @@ export type usersUncheckedUpdateWithoutFollows_follows_following_idTousersInput 
 
 export type usersCreateWithoutPost_votesInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
@@ -972,12 +1228,18 @@ export type usersCreateWithoutPost_votesInput = {
 
 export type usersUncheckedCreateWithoutPost_votesInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
@@ -1005,12 +1267,18 @@ export type usersUpdateToOneWithWhereWithoutPost_votesInput = {
 
 export type usersUpdateWithoutPost_votesInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
@@ -1022,12 +1290,18 @@ export type usersUpdateWithoutPost_votesInput = {
 
 export type usersUncheckedUpdateWithoutPost_votesInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
@@ -1039,12 +1313,18 @@ export type usersUncheckedUpdateWithoutPost_votesInput = {
 
 export type usersCreateWithoutPostsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
@@ -1056,12 +1336,18 @@ export type usersCreateWithoutPostsInput = {
 
 export type usersUncheckedCreateWithoutPostsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
@@ -1089,12 +1375,18 @@ export type usersUpdateToOneWithWhereWithoutPostsInput = {
 
 export type usersUpdateWithoutPostsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
@@ -1106,12 +1398,18 @@ export type usersUpdateWithoutPostsInput = {
 
 export type usersUncheckedUpdateWithoutPostsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
@@ -1123,12 +1421,18 @@ export type usersUncheckedUpdateWithoutPostsInput = {
 
 export type usersCreateWithoutReportsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
@@ -1140,12 +1444,18 @@ export type usersCreateWithoutReportsInput = {
 
 export type usersUncheckedCreateWithoutReportsInput = {
   user_id?: string
-  username: string
+  name: string
   gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
   bio?: string | null
   avatar_url?: string | null
   role?: $Enums.user_role
   created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
   comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
   courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
@@ -1173,12 +1483,18 @@ export type usersUpdateToOneWithWhereWithoutReportsInput = {
 
 export type usersUpdateWithoutReportsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
@@ -1190,12 +1506,18 @@ export type usersUpdateWithoutReportsInput = {
 
 export type usersUncheckedUpdateWithoutReportsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
   comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
   courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
@@ -1205,12 +1527,230 @@ export type usersUncheckedUpdateWithoutReportsInput = {
   posts?: Prisma.postsUncheckedUpdateManyWithoutUsersNestedInput
 }
 
+export type usersCreateWithoutSessionsInput = {
+  user_id?: string
+  name: string
+  gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
+  bio?: string | null
+  avatar_url?: string | null
+  role?: $Enums.user_role
+  created_at?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
+  comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
+  courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
+  follows_follows_follower_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_follower_idTousersInput
+  follows_follows_following_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_following_idTousersInput
+  post_votes?: Prisma.post_votesCreateNestedManyWithoutUsersInput
+  posts?: Prisma.postsCreateNestedManyWithoutUsersInput
+  reports?: Prisma.reportsCreateNestedManyWithoutUsersInput
+}
+
+export type usersUncheckedCreateWithoutSessionsInput = {
+  user_id?: string
+  name: string
+  gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
+  bio?: string | null
+  avatar_url?: string | null
+  role?: $Enums.user_role
+  created_at?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
+  comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
+  courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
+  follows_follows_follower_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_follower_idTousersInput
+  follows_follows_following_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_following_idTousersInput
+  post_votes?: Prisma.post_votesUncheckedCreateNestedManyWithoutUsersInput
+  posts?: Prisma.postsUncheckedCreateNestedManyWithoutUsersInput
+  reports?: Prisma.reportsUncheckedCreateNestedManyWithoutUsersInput
+}
+
+export type usersCreateOrConnectWithoutSessionsInput = {
+  where: Prisma.usersWhereUniqueInput
+  create: Prisma.XOR<Prisma.usersCreateWithoutSessionsInput, Prisma.usersUncheckedCreateWithoutSessionsInput>
+}
+
+export type usersUpsertWithoutSessionsInput = {
+  update: Prisma.XOR<Prisma.usersUpdateWithoutSessionsInput, Prisma.usersUncheckedUpdateWithoutSessionsInput>
+  create: Prisma.XOR<Prisma.usersCreateWithoutSessionsInput, Prisma.usersUncheckedCreateWithoutSessionsInput>
+  where?: Prisma.usersWhereInput
+}
+
+export type usersUpdateToOneWithWhereWithoutSessionsInput = {
+  where?: Prisma.usersWhereInput
+  data: Prisma.XOR<Prisma.usersUpdateWithoutSessionsInput, Prisma.usersUncheckedUpdateWithoutSessionsInput>
+}
+
+export type usersUpdateWithoutSessionsInput = {
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
+  comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
+  courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
+  follows_follows_follower_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
+  follows_follows_following_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_following_idTousersNestedInput
+  post_votes?: Prisma.post_votesUpdateManyWithoutUsersNestedInput
+  posts?: Prisma.postsUpdateManyWithoutUsersNestedInput
+  reports?: Prisma.reportsUpdateManyWithoutUsersNestedInput
+}
+
+export type usersUncheckedUpdateWithoutSessionsInput = {
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
+  comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
+  courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
+  follows_follows_follower_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
+  follows_follows_following_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_following_idTousersNestedInput
+  post_votes?: Prisma.post_votesUncheckedUpdateManyWithoutUsersNestedInput
+  posts?: Prisma.postsUncheckedUpdateManyWithoutUsersNestedInput
+  reports?: Prisma.reportsUncheckedUpdateManyWithoutUsersNestedInput
+}
+
+export type usersCreateWithoutAccountsInput = {
+  user_id?: string
+  name: string
+  gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
+  bio?: string | null
+  avatar_url?: string | null
+  role?: $Enums.user_role
+  created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  audit_logs?: Prisma.audit_logsCreateNestedManyWithoutUsersInput
+  comments?: Prisma.commentsCreateNestedManyWithoutUsersInput
+  courses?: Prisma.coursesCreateNestedManyWithoutUsersInput
+  follows_follows_follower_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_follower_idTousersInput
+  follows_follows_following_idTousers?: Prisma.followsCreateNestedManyWithoutUsers_follows_following_idTousersInput
+  post_votes?: Prisma.post_votesCreateNestedManyWithoutUsersInput
+  posts?: Prisma.postsCreateNestedManyWithoutUsersInput
+  reports?: Prisma.reportsCreateNestedManyWithoutUsersInput
+}
+
+export type usersUncheckedCreateWithoutAccountsInput = {
+  user_id?: string
+  name: string
+  gmail: string
+  emailVerified?: boolean
+  image?: string | null
+  username: string
+  bio?: string | null
+  avatar_url?: string | null
+  role?: $Enums.user_role
+  created_at?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  audit_logs?: Prisma.audit_logsUncheckedCreateNestedManyWithoutUsersInput
+  comments?: Prisma.commentsUncheckedCreateNestedManyWithoutUsersInput
+  courses?: Prisma.coursesUncheckedCreateNestedManyWithoutUsersInput
+  follows_follows_follower_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_follower_idTousersInput
+  follows_follows_following_idTousers?: Prisma.followsUncheckedCreateNestedManyWithoutUsers_follows_following_idTousersInput
+  post_votes?: Prisma.post_votesUncheckedCreateNestedManyWithoutUsersInput
+  posts?: Prisma.postsUncheckedCreateNestedManyWithoutUsersInput
+  reports?: Prisma.reportsUncheckedCreateNestedManyWithoutUsersInput
+}
+
+export type usersCreateOrConnectWithoutAccountsInput = {
+  where: Prisma.usersWhereUniqueInput
+  create: Prisma.XOR<Prisma.usersCreateWithoutAccountsInput, Prisma.usersUncheckedCreateWithoutAccountsInput>
+}
+
+export type usersUpsertWithoutAccountsInput = {
+  update: Prisma.XOR<Prisma.usersUpdateWithoutAccountsInput, Prisma.usersUncheckedUpdateWithoutAccountsInput>
+  create: Prisma.XOR<Prisma.usersCreateWithoutAccountsInput, Prisma.usersUncheckedCreateWithoutAccountsInput>
+  where?: Prisma.usersWhereInput
+}
+
+export type usersUpdateToOneWithWhereWithoutAccountsInput = {
+  where?: Prisma.usersWhereInput
+  data: Prisma.XOR<Prisma.usersUpdateWithoutAccountsInput, Prisma.usersUncheckedUpdateWithoutAccountsInput>
+}
+
+export type usersUpdateWithoutAccountsInput = {
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  audit_logs?: Prisma.audit_logsUpdateManyWithoutUsersNestedInput
+  comments?: Prisma.commentsUpdateManyWithoutUsersNestedInput
+  courses?: Prisma.coursesUpdateManyWithoutUsersNestedInput
+  follows_follows_follower_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
+  follows_follows_following_idTousers?: Prisma.followsUpdateManyWithoutUsers_follows_following_idTousersNestedInput
+  post_votes?: Prisma.post_votesUpdateManyWithoutUsersNestedInput
+  posts?: Prisma.postsUpdateManyWithoutUsersNestedInput
+  reports?: Prisma.reportsUpdateManyWithoutUsersNestedInput
+}
+
+export type usersUncheckedUpdateWithoutAccountsInput = {
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  gmail?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.Enumuser_roleFieldUpdateOperationsInput | $Enums.user_role
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  audit_logs?: Prisma.audit_logsUncheckedUpdateManyWithoutUsersNestedInput
+  comments?: Prisma.commentsUncheckedUpdateManyWithoutUsersNestedInput
+  courses?: Prisma.coursesUncheckedUpdateManyWithoutUsersNestedInput
+  follows_follows_follower_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_follower_idTousersNestedInput
+  follows_follows_following_idTousers?: Prisma.followsUncheckedUpdateManyWithoutUsers_follows_following_idTousersNestedInput
+  post_votes?: Prisma.post_votesUncheckedUpdateManyWithoutUsersNestedInput
+  posts?: Prisma.postsUncheckedUpdateManyWithoutUsersNestedInput
+  reports?: Prisma.reportsUncheckedUpdateManyWithoutUsersNestedInput
+}
+
 
 /**
  * Count Type UsersCountOutputType
  */
 
 export type UsersCountOutputType = {
+  sessions: number
+  accounts: number
   audit_logs: number
   comments: number
   courses: number
@@ -1222,6 +1762,8 @@ export type UsersCountOutputType = {
 }
 
 export type UsersCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  sessions?: boolean | UsersCountOutputTypeCountSessionsArgs
+  accounts?: boolean | UsersCountOutputTypeCountAccountsArgs
   audit_logs?: boolean | UsersCountOutputTypeCountAudit_logsArgs
   comments?: boolean | UsersCountOutputTypeCountCommentsArgs
   courses?: boolean | UsersCountOutputTypeCountCoursesArgs
@@ -1240,6 +1782,20 @@ export type UsersCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
    * Select specific fields to fetch from the UsersCountOutputType
    */
   select?: Prisma.UsersCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UsersCountOutputType without action
+ */
+export type UsersCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SessionWhereInput
+}
+
+/**
+ * UsersCountOutputType without action
+ */
+export type UsersCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccountWhereInput
 }
 
 /**
@@ -1301,12 +1857,18 @@ export type UsersCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.E
 
 export type usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   user_id?: boolean
-  username?: boolean
+  name?: boolean
   gmail?: boolean
+  emailVerified?: boolean
+  image?: boolean
+  username?: boolean
   bio?: boolean
   avatar_url?: boolean
   role?: boolean
   created_at?: boolean
+  updatedAt?: boolean
+  sessions?: boolean | Prisma.users$sessionsArgs<ExtArgs>
+  accounts?: boolean | Prisma.users$accountsArgs<ExtArgs>
   audit_logs?: boolean | Prisma.users$audit_logsArgs<ExtArgs>
   comments?: boolean | Prisma.users$commentsArgs<ExtArgs>
   courses?: boolean | Prisma.users$coursesArgs<ExtArgs>
@@ -1320,36 +1882,50 @@ export type usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type usersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   user_id?: boolean
-  username?: boolean
+  name?: boolean
   gmail?: boolean
+  emailVerified?: boolean
+  image?: boolean
+  username?: boolean
   bio?: boolean
   avatar_url?: boolean
   role?: boolean
   created_at?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type usersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   user_id?: boolean
-  username?: boolean
+  name?: boolean
   gmail?: boolean
+  emailVerified?: boolean
+  image?: boolean
+  username?: boolean
   bio?: boolean
   avatar_url?: boolean
   role?: boolean
   created_at?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type usersSelectScalar = {
   user_id?: boolean
-  username?: boolean
+  name?: boolean
   gmail?: boolean
+  emailVerified?: boolean
+  image?: boolean
+  username?: boolean
   bio?: boolean
   avatar_url?: boolean
   role?: boolean
   created_at?: boolean
+  updatedAt?: boolean
 }
 
-export type usersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "username" | "gmail" | "bio" | "avatar_url" | "role" | "created_at", ExtArgs["result"]["users"]>
+export type usersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "name" | "gmail" | "emailVerified" | "image" | "username" | "bio" | "avatar_url" | "role" | "created_at" | "updatedAt", ExtArgs["result"]["users"]>
 export type usersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  sessions?: boolean | Prisma.users$sessionsArgs<ExtArgs>
+  accounts?: boolean | Prisma.users$accountsArgs<ExtArgs>
   audit_logs?: boolean | Prisma.users$audit_logsArgs<ExtArgs>
   comments?: boolean | Prisma.users$commentsArgs<ExtArgs>
   courses?: boolean | Prisma.users$coursesArgs<ExtArgs>
@@ -1366,6 +1942,8 @@ export type usersIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type $usersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "users"
   objects: {
+    sessions: Prisma.$SessionPayload<ExtArgs>[]
+    accounts: Prisma.$AccountPayload<ExtArgs>[]
     audit_logs: Prisma.$audit_logsPayload<ExtArgs>[]
     comments: Prisma.$commentsPayload<ExtArgs>[]
     courses: Prisma.$coursesPayload<ExtArgs>[]
@@ -1377,12 +1955,16 @@ export type $usersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     user_id: string
-    username: string
+    name: string
     gmail: string
+    emailVerified: boolean
+    image: string | null
+    username: string
     bio: string | null
     avatar_url: string | null
     role: $Enums.user_role
     created_at: Date
+    updatedAt: Date
   }, ExtArgs["result"]["users"]>
   composites: {}
 }
@@ -1777,6 +2359,8 @@ readonly fields: usersFieldRefs;
  */
 export interface Prisma__usersClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  sessions<T extends Prisma.users$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.users$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accounts<T extends Prisma.users$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.users$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   audit_logs<T extends Prisma.users$audit_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.users$audit_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$audit_logsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.users$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.users$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$commentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   courses<T extends Prisma.users$coursesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.users$coursesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$coursesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1815,12 +2399,16 @@ export interface Prisma__usersClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface usersFieldRefs {
   readonly user_id: Prisma.FieldRef<"users", 'String'>
-  readonly username: Prisma.FieldRef<"users", 'String'>
+  readonly name: Prisma.FieldRef<"users", 'String'>
   readonly gmail: Prisma.FieldRef<"users", 'String'>
+  readonly emailVerified: Prisma.FieldRef<"users", 'Boolean'>
+  readonly image: Prisma.FieldRef<"users", 'String'>
+  readonly username: Prisma.FieldRef<"users", 'String'>
   readonly bio: Prisma.FieldRef<"users", 'String'>
   readonly avatar_url: Prisma.FieldRef<"users", 'String'>
   readonly role: Prisma.FieldRef<"users", 'user_role'>
   readonly created_at: Prisma.FieldRef<"users", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"users", 'DateTime'>
 }
     
 
@@ -2211,6 +2799,54 @@ export type usersDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many users to delete.
    */
   limit?: number
+}
+
+/**
+ * users.sessions
+ */
+export type users$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Session
+   */
+  select?: Prisma.SessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Session
+   */
+  omit?: Prisma.SessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SessionInclude<ExtArgs> | null
+  where?: Prisma.SessionWhereInput
+  orderBy?: Prisma.SessionOrderByWithRelationInput | Prisma.SessionOrderByWithRelationInput[]
+  cursor?: Prisma.SessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SessionScalarFieldEnum | Prisma.SessionScalarFieldEnum[]
+}
+
+/**
+ * users.accounts
+ */
+export type users$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Account
+   */
+  select?: Prisma.AccountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Account
+   */
+  omit?: Prisma.AccountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountInclude<ExtArgs> | null
+  where?: Prisma.AccountWhereInput
+  orderBy?: Prisma.AccountOrderByWithRelationInput | Prisma.AccountOrderByWithRelationInput[]
+  cursor?: Prisma.AccountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccountScalarFieldEnum | Prisma.AccountScalarFieldEnum[]
 }
 
 /**
