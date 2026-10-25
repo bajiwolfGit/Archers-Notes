@@ -7,7 +7,8 @@
     "dev": "npx turbo run dev",
     "lint": "npx turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "npx turbo run check-types"
+    "check-types": "npx turbo run check-types",
+    "test": "npx turbo run check-types"
   },
   "devDependencies": {
     "prettier": "^3.9.6",
@@ -26,5 +27,13 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "allowScripts": {
+    "@prisma/engines@7.10.1": true,
+    "prisma@7.10.1": true,
+    "unrs-resolver@1.12.2": true
+  },
+  "dependencies": {
+    "npm": "^11.19.0"
+  }
 }
