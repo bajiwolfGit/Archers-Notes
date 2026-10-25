@@ -35,6 +35,36 @@ export default function PostCard({ post }: PostCardProps) {
     router.push(`/posts/${post.id}`);
   };
 
+  async function handleShare(event: React.MouseEvent<HTMLButtonElement>) {
+    // Prevent clicking Share from opening the Post Details page
+    event.preventDefault();
+    event.stopPropagation();
+
+    const postUrl = `${window.location.origin}/posts/${post.id}`;
+
+    const shareData = {
+      title: post.title,
+      text: `Check out "${post.title}" on Archers Notes!`,
+      url: postUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(postUrl);
+        alert("Post link copied to clipboard!");
+      }
+    } catch (error) {
+      // User cancelled the share dialog
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      console.error("Failed to share post:", error);
+    }
+  }
+
   return (
     <>
       <article
@@ -219,9 +249,10 @@ export default function PostCard({ post }: PostCardProps) {
           {/* Share */}
           <button
             type="button"
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleShare}
             aria-label="Share post"
-            className="flex h-8 w-8 shrink-0 items-center justify-center"
+            title="Share post"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center"
           >
             <Image
               src="/assets/icons/share.svg"
