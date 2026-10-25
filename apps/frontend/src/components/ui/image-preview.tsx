@@ -114,14 +114,29 @@ export default function ImagePreview({
             previousImage();
           }}
           aria-label="Previous image"
-          className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-md transition hover:scale-110"
+          className="
+            absolute left-4 top-1/2 z-20
+            flex h-10 w-10 -translate-y-1/2
+            items-center justify-center
+            rounded-full bg-black/20 text-white
+            opacity-60 backdrop-blur-sm
+            transition-all duration-200
+            hover:bg-black/50 hover:opacity-100
+            md:left-[calc(50%-340px)]
+          "
         >
-          <Image
-            src="/assets/icons/next-left.svg"
-            alt=""
-            width={24}
-            height={24}
-          />
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m15 18-6-6 6-6" />
+          </svg>
         </button>
       )}
 
@@ -159,14 +174,29 @@ export default function ImagePreview({
             nextImage();
           }}
           aria-label="Next image"
-          className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white p-3 shadow-md transition hover:scale-110"
+          className="
+            absolute right-4 top-1/2 z-20
+            flex h-10 w-10 -translate-y-1/2
+            items-center justify-center
+            rounded-full bg-black/20 text-white
+            opacity-60 backdrop-blur-sm
+            transition-all duration-200
+            hover:bg-black/50 hover:opacity-100
+            md:right-[calc(50%-340px)]
+          "
         >
-          <Image
-            src="/assets/icons/next-right.svg"
-            alt=""
-            width={24}
-            height={24}
-          />
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m9 18 6-6-6-6" />
+          </svg>
         </button>
       )}
 
