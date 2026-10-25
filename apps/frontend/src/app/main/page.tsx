@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -15,8 +14,7 @@ export default function MainPage() {
       <div className="relative w-full px-6 py-6">
 
         {/* Center feed aligned with Navbar Search Bar */}
-        <div className="mx-auto w-full max-w-[480px] -translate-x-[97.5px]">
-          <FeedTabs
+          <div className="relative left-1/2 w-full max-w-[480px] -translate-x-[calc(50%+111px)]">          <FeedTabs
             activeTab={sortBy}
             onTabChange={setSortBy}
           />
