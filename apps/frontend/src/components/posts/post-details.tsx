@@ -12,18 +12,18 @@ import CommentEditor, {
 } from "@/components/ui/comment-editor";
 
 interface Comment {
-  id: number;
-  name: string;
-  course: string;
-  text: string;
-  time: string;
-  likes: number;
-  replies: Comment[];
-  attachments?: CommentAttachment[];
+    id: number;
+    name: string;
+    course: string;
+    text: string;
+    time: string;
+    likes: number;
+    replies: Comment[];
+    attachments?: CommentAttachment[];
 }
 
 interface PostDetailsProps {
-  post: Post;
+    post: Post;
 }
 
 export default function PostDetails({ post }: PostDetailsProps) {
@@ -57,15 +57,15 @@ export default function PostDetails({ post }: PostDetailsProps) {
             time: "15 mins ago",
             likes: 2,
             replies: [
-            {
-                id: 2,
-                name: "Alan Smith",
-                course: "CCS Student",
-                text: "<p>You're welcome!</p>",
-                time: "2 mins ago",
-                likes: 0,
-                replies: [],
-            },
+                {
+                    id: 2,
+                    name: "Alan Smith",
+                    course: "CCS Student",
+                    text: "<p>You're welcome!</p>",
+                    time: "2 mins ago",
+                    likes: 0,
+                    replies: [],
+                },
             ],
         },
     ]);
@@ -77,14 +77,14 @@ export default function PostDetails({ post }: PostDetailsProps) {
         setComments((previous) => [
             ...previous,
             {
-            id: Date.now(),
-            name: "You",
-            course: "CCS Student",
-            text: html,
-            time: "Just now",
-            likes: 0,
-            replies: [],
-            attachments,
+                id: Date.now(),
+                name: "You",
+                course: "CCS Student",
+                text: html,
+                time: "Just now",
+                likes: 0,
+                replies: [],
+                attachments,
             },
         ]);
     }
@@ -95,9 +95,9 @@ export default function PostDetails({ post }: PostDetailsProps) {
             const updated = new Set(previous);
 
             if (updated.has(commentId)) {
-            updated.delete(commentId);
+                updated.delete(commentId);
             } else {
-            updated.add(commentId);
+                updated.add(commentId);
             }
 
             return updated;
@@ -110,30 +110,30 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
         setComments((previous) =>
             previous.map((comment) => {
-            if (comment.id !== commentId) return comment;
+                if (comment.id !== commentId) return comment;
 
-            return {
-                ...comment,
-                replies: [
-                ...comment.replies,
-                {
-                    id: Date.now(),
-                    name: "You",
-                    course: "CCS Student",
-                    text: `<p>${text.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</p>`,
-                    time: "Just now",
-                    likes: 0,
-                    replies: [],
-                },
-                ],
-            };
+                return {
+                    ...comment,
+                    replies: [
+                        ...comment.replies,
+                        {
+                            id: Date.now(),
+                            name: "You",
+                            course: "CCS Student",
+                            text: `<p>${text.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</p>`,
+                            time: "Just now",
+                            likes: 0,
+                            replies: [],
+                        },
+                    ],
+                };
             })
         );
     }
 
     function handleCommentImageClick(
         event: React.MouseEvent<HTMLDivElement>
-        ) {
+    ) {
         const target = event.target;
 
         if (!(target instanceof HTMLImageElement)) return;
@@ -167,9 +167,9 @@ export default function PostDetails({ post }: PostDetailsProps) {
             const updated = new Set(previous);
 
             if (updated.has(commentId)) {
-            updated.delete(commentId);
+                updated.delete(commentId);
             } else {
-            updated.add(commentId);
+                updated.add(commentId);
             }
 
             return updated;
@@ -194,522 +194,517 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
         try {
             if (navigator.share) {
-            await navigator.share(shareData);
+                await navigator.share(shareData);
             } else {
-            await navigator.clipboard.writeText(shareData.url);
-            alert("Link copied to clipboard!");
+                await navigator.clipboard.writeText(shareData.url);
+                alert("Link copied to clipboard!");
             }
         } catch (error) {
             // Ignore when the user cancels the share dialog
             if (error instanceof DOMException && error.name === "AbortError") {
-            return;
+                return;
             }
 
             console.error("Sharing failed:", error);
         }
     }
 
-  return (
-    <>
-      {/* Main Post Details Container */}
-      <div className="mx-auto w-full max-w-[540px] py-2">
+    return (
+        <>
+            {/* Main Post Details Container */}
+            <div className="mx-auto w-full max-w-[540px] py-2">
 
-        {/* Back Button + Post Content */}
-        <div className="relative">
+                {/* Back Button + Post Content */}
+                <div className="relative">
 
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={() => router.back()}
-            aria-label="Go back"
-            className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center"
-          >
-            <Image
-              src="/assets/icons/back.svg"
-              alt=""
-              width={16}
-              height={16}
-            />
-          </button>
-
-          {/* Post Column */}
-          <div className="ml-12 min-w-0">
-
-            {/* Post Header */}
-            <div className="flex items-center gap-3">
-
-              {/* Profile Picture */}
-              <Image
-                src="/assets/icons/profile.svg"
-                alt=""
-                width={36}
-                height={36}
-                className="h-9 w-9 shrink-0"
-              />
-
-              {/* Author */}
-              <div>
-                <h3 className="text-sm font-semibold">
-                  {post.name}
-                </h3>
-
-                <p className="text-xs">
-                  {post.course}
-                </p>
-              </div>
-
-              {/* Post Time */}
-              <span className="ml-2 whitespace-nowrap text-xs text-gray-500">
-                {post.time}
-              </span>
-
-              {/* More Options */}
-              <button
-                type="button"
-                aria-label="More options"
-                className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
-              >
-                <Image
-                  src="/assets/icons/more.svg"
-                  alt=""
-                  width={23}
-                  height={6}
-                />
-              </button>
-
-            </div>
-
-            {/* Post Content */}
-            <div className="ml-9 mt-3">
-
-              {/* Post Title */}
-              <h2 className="text-sm font-semibold">
-                {post.title}
-              </h2>
-
-              {/* Post Description */}
-              <p className="mt-4 whitespace-pre-line text-xs leading-relaxed">
-                {post.content}
-              </p>
-
-              {/* Post Images */}
-              {images.length > 0 && (
-                <div
-                  className={`mt-5 grid w-full gap-2 overflow-hidden rounded-sm ${
-                    images.length === 1
-                      ? "h-[250px] grid-cols-1"
-                      : images.length === 2
-                      ? "h-[220px] grid-cols-2"
-                      : "h-[190px] grid-cols-2 grid-rows-2"
-                  }`}
-                >
-                  {images.slice(0, 3).map((image, index) => (
+                    {/* Back Button */}
                     <button
-                      key={index}
-                      type="button"
-                      onClick={() => setSelectedImageIndex(index)}
-                      className={`relative min-h-0 min-w-0 cursor-zoom-in overflow-hidden bg-gray-50 ${
-                        images.length >= 3 && index === 0
-                          ? "row-span-2"
-                          : ""
-                      }`}
-                      aria-label={`View image ${index + 1} of ${images.length}`}
+                        type="button"
+                        onClick={() => router.back()}
+                        aria-label="Go back"
+                        className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center"
                     >
-                      <Image
-                        src={image}
-                        alt={`Attachment ${index + 1} for ${post.title}`}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 300px"
-                        className="object-cover"
-                      />
-
-                      {/* Overlay for Additional Images */}
-                      {images.length > 3 && index === 2 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                          <span className="text-3xl font-semibold text-white">
-                            +{images.length - 3}
-                          </span>
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Post Actions */}
-              <div className="mt-5 flex items-center gap-6">
-
-                {/* Like */}
-                <button
-                  type="button"
-                  onClick={() => setLiked(!liked)}
-                  aria-pressed={liked}
-                  className="flex shrink-0 items-center gap-2"
-                >
-                  <Image
-                    src={
-                      liked
-                        ? "/assets/icons/like-active.svg"
-                        : "/assets/icons/like.svg"
-                    }
-                    alt=""
-                    width={30}
-                    height={27}
-                  />
-
-                  <span className="text-sm">
-                    {post.likes + (liked ? 1 : 0)}
-                  </span>
-                </button>
-
-                {/* Comments Count */}
-                <div className="flex shrink-0 items-center gap-2">
-                  <Image
-                    src="/assets/icons/comment.svg"
-                    alt=""
-                    width={25}
-                    height={24}
-                  />
-
-                  <span className="text-sm">
-                    {post.comments + comments.length - 1}
-                  </span>
-                </div>
-
-                {/* Bookmark */}
-                <button
-                  type="button"
-                  onClick={() => setSaved(!saved)}
-                  aria-pressed={saved}
-                  aria-label={saved ? "Unsave post" : "Save post"}
-                  className="ml-auto"
-                >
-                  <Image
-                    src={
-                      saved
-                        ? "/assets/icons/bookmark-active.svg"
-                        : "/assets/icons/bookmark.svg"
-                    }
-                    alt=""
-                    width={23}
-                    height={29}
-                  />
-                </button>
-
-                {/* Share */}
-                <button
-                    type="button"
-                    onClick={() => handleShare()}
-                    aria-label="Share post"
-                    title="Share post"
-                    className="cursor-pointer"
-                >
-                    <Image
-                        src="/assets/icons/share.svg"
-                        alt=""
-                        width={24}
-                        height={24}
-                    />
-                </button>
-
-              </div>
-
-              {/* Comment Input - Tiptap Editor */}
-              <CommentEditor onSubmit={handleComment} />
-
-            {/* Comments Section */}
-            <div className="mt-7 space-y-7">
-                {comments.map((item) => {
-                    const isLiked = likedComments.has(item.id);
-
-                    return (
-                        <div
-                            key={item.id}
-                            id={`comment-${item.id}`}
-                            className="scroll-mt-24"
-                        >
-
-                        {/* Comment Header */}
-                        <div className="flex items-start gap-3">
                         <Image
-                            src="/assets/icons/profile.svg"
+                            src="/assets/icons/back.svg"
                             alt=""
-                            width={32}
-                            height={32}
-                            className="h-8 w-8 shrink-0"
+                            width={16}
+                            height={16}
                         />
+                    </button>
 
-                        <div className="min-w-0 flex-1">
+                    {/* Post Column */}
+                    <div className="ml-12 min-w-0">
 
-                            <div className="flex items-center gap-4">
-                            <div>
-                                <h4 className="text-xs font-semibold">
-                                {item.name}
-                                </h4>
+                        {/* Post Header */}
+                        <div className="flex items-center gap-3">
 
-                                <p className="text-[10px] text-gray-600">
-                                {item.course}
-                                </p>
-                            </div>
-
-                            <span className="text-[10px] text-gray-500">
-                                {item.time}
-                            </span>
-                            </div>
-
-                            {/* Comment Text */}
-                            <div
-                            onClick={handleCommentImageClick}
-                            className="comment-content mt-3 break-words text-[11px] leading-relaxed [&_p]:whitespace-pre-wrap [&_strong]:font-bold [&_em]:italic [&_img]:cursor-zoom-in"
-                            dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(item.text),
-                            }}
+                            {/* Profile Picture */}
+                            <Image
+                                src="/assets/icons/profile.svg"
+                                alt=""
+                                width={36}
+                                height={36}
+                                className="h-9 w-9 shrink-0"
                             />
 
-                            {/* File Attachments */}
-                            {item.attachments?.map((attachment) => (
-                            <div
-                                key={attachment.id}
-                                className="mt-2 rounded border border-gray-200 bg-gray-50 px-3 py-2"
-                            >
+                            {/* Author */}
+                            <div>
+                                <h3 className="text-sm font-semibold">
+                                    {post.name}
+                                </h3>
+
                                 <p className="text-xs">
-                                {attachment.file.name}
+                                    {post.course}
                                 </p>
                             </div>
-                            ))}
 
-                            {/* Comment Actions */}
-                            <div className="mt-4 flex items-center gap-7">
-
-                            {/* Like */}
-                            <button
-                                type="button"
-                                onClick={() => handleLikeComment(item.id)}
-                                className="flex items-center gap-2"
-                            >
-                                <Image
-                                src={
-                                    isLiked
-                                    ? "/assets/icons/like-active.svg"
-                                    : "/assets/icons/like.svg"
-                                }
-                                alt=""
-                                width={25}
-                                height={23}
-                                />
-
-                                <span className="text-xs">
-                                {item.likes + (isLiked ? 1 : 0)}
-                                </span>
-                            </button>
-
-                            {/* Comment Count */}
-                            <button
-                                type="button"
-                                onClick={() =>
-                                setReplyingTo(
-                                    replyingTo === item.id ? null : item.id
-                                )
-                                }
-                                className="flex items-center gap-2"
-                            >
-                                <Image
-                                src="/assets/icons/comment.svg"
-                                alt=""
-                                width={23}
-                                height={23}
-                                />
-
-                                <span className="text-xs">
-                                {item.replies.length}
-                                </span>
-                            </button>
-
-                            {/* Share Comment */}
-                            <button
-                                type="button"
-                                onClick={() => handleShare(item.id)}
-                                aria-label="Share comment"
-                                title="Share comment"
-                                className="cursor-pointer"
-                            >
-                                <Image
-                                    src="/assets/icons/share.svg"
-                                    alt=""
-                                    width={23}
-                                    height={23}
-                                />
-                            </button>
+                            {/* Post Time */}
+                            <span className="ml-2 whitespace-nowrap text-xs text-gray-500">
+                                {post.time}
+                            </span>
 
                             {/* More Options */}
                             <button
                                 type="button"
                                 aria-label="More options"
+                                className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
                             >
                                 <Image
-                                src="/assets/icons/more.svg"
-                                alt=""
-                                width={23}
-                                height={6}
+                                    src="/assets/icons/more.svg"
+                                    alt=""
+                                    width={23}
+                                    height={6}
                                 />
                             </button>
+                        </div>
 
-                            </div>
+                        {/* Post Content */}
+                        <div className="ml-9 mt-3">
 
-                            {/* Shared positioning for the collapse button and thread line */}
-                            <div className="relative mt-3">
-                            {/* Thread line: centered at 10px, the center of the 20px button */}
-                            {item.replies.length > 0 && !collapsedReplies.has(item.id) && (
-                                <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-[9px] top-8 w-[2px] bg-gray-200" />
-                            )}
-                            {/* Reply controls */}
-                            <div className="flex items-center gap-3">
-                                
-                                {/* Collapse and Expand Button*/}
-                                {item.replies.length > 0 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleReplies(item.id)}
-                                        aria-expanded={!collapsedReplies.has(item.id)}
-                                        aria-label={
-                                            collapsedReplies.has(item.id)
-                                                ? "Expand replies"
-                                                : "Collapse replies"
-                                        }
-                                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-400"
-                                    >
-                                        <span className="text-sm leading-none">
-                                            {collapsedReplies.has(item.id) ? "+" : "−"}
-                                        </span>
-                                    </button>
-                                )}
+                            {/* Post Title */}
+                            <h2 className="text-sm font-semibold">
+                                {post.title}
+                            </h2>
 
-                                {/* Reply Button */}
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setReplyingTo(replyingTo === item.id ? null : item.id)
-                                    }
-                                    className="inline-flex items-center gap-2 text-[11px] text-gray-400 hover:text-[#00A651]"
+                            {/* Post Description */}
+                            <p className="mt-4 whitespace-pre-line text-xs leading-relaxed">
+                                {post.content}
+                            </p>
+
+                            {/* Post Images */}
+                            {images.length > 0 && (
+                                <div
+                                    className={`mt-5 grid w-full gap-2 overflow-hidden rounded-sm ${
+                                        images.length === 1
+                                        ? "h-[250px] grid-cols-1"
+                                        : images.length === 2
+                                        ? "h-[220px] grid-cols-2"
+                                        : "h-[190px] grid-cols-2 grid-rows-2"
+                                    }`}
                                 >
-                                    <Image
-                                        src="/assets/icons/reply.svg"
-                                        alt=""
-                                        width={16}
-                                        height={14}
-                                        className="shrink-0"
-                                    />
-                                    <span>Reply</span>
+                                    {images.slice(0, 3).map((image, index) => (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            onClick={() => setSelectedImageIndex(index)}
+                                            className={`relative min-h-0 min-w-0 cursor-zoom-in overflow-hidden bg-gray-50 ${
+                                                images.length >= 3 && index === 0
+                                                ? "row-span-2"
+                                                : ""
+                                            }`}
+                                            aria-label={`View image ${index + 1} of ${images.length}`}
+                                        >
+                                            <Image
+                                                src={image}
+                                                alt={`Attachment ${index + 1} for ${post.title}`}
+                                                fill
+                                                sizes="(max-width: 768px) 50vw, 300px"
+                                                className="object-cover"
+                                            />
+
+                                            {/* Overlay for Additional Images */}
+                                            {images.length > 3 && index === 2 && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                                                    <span className="text-3xl font-semibold text-white">
+                                                        +{images.length - 3}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </button>
-                                        
-                            </div>
-
-                            {/* Reply Input */}
-                            {replyingTo === item.id && (
-                                <div className="relative z-10 mt-3 ml-9 flex gap-2">
-                                    <input
-                                    type="text"
-                                    value={replyText}
-                                    onChange={(event) =>
-                                        setReplyText(event.target.value)
-                                    }
-                                    placeholder="Write a reply..."
-                                    className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#00A651]"
-                                    />
-
-                                    <button
-                                    type="button"
-                                    onClick={() => {
-                                        handleReply(item.id, replyText);
-                                        setReplyText("");
-                                        setReplyingTo(null);
-                                    }}
-                                    className="rounded bg-[#00A651] px-3 py-2 text-xs text-white"
-                                    >
-                                    Reply
-                                    </button>
+                                    ))}
                                 </div>
                             )}
 
-                            {/* Nested Replies */}
-                            {item.replies.length > 0 && !collapsedReplies.has(item.id) && (
-                                <div className="relative mt-3 pl-9">
-                                    
-                                    {item.replies.map((reply) => (
-                                    <div
-                                        key={reply.id}
-                                        className="mb-5 flex gap-2 last:mb-0"
-                                    >
-                                        <Image
-                                            src="/assets/icons/profile.svg"
-                                            alt=""
-                                            width={32}
-                                            height={32}
-                                            className="h-8 w-8 shrink-0"
-                                        />
+                            {/* Post Actions */}
+                            <div className="mt-5 flex items-center gap-6">
 
-                                        <div>
-                                        <div className="flex items-center gap-4">
-                                            <div>
-                                            <h5 className="text-xs font-semibold">
-                                                {reply.name}
-                                            </h5>
+                                {/* Like */}
+                                <button
+                                    type="button"
+                                    onClick={() => setLiked(!liked)}
+                                    aria-pressed={liked}
+                                    className="flex shrink-0 items-center gap-2"
+                                >
+                                    <Image
+                                        src={
+                                        liked
+                                            ? "/assets/icons/like-active.svg"
+                                            : "/assets/icons/like.svg"
+                                        }
+                                        alt=""
+                                        width={30}
+                                        height={27}
+                                    />
 
-                                            <p className="text-[10px] text-gray-600">
-                                                {reply.course}
-                                            </p>
-                                            </div>
+                                    <span className="text-sm">
+                                        {post.likes + (liked ? 1 : 0)}
+                                    </span>
+                                </button>
 
-                                            <span className="text-[10px] text-gray-500">
-                                            {reply.time}
-                                            </span>
-                                        </div>
+                                {/* Comments Count */}
+                                <div className="flex shrink-0 items-center gap-2">
+                                    <Image
+                                        src="/assets/icons/comment.svg"
+                                        alt=""
+                                        width={25}
+                                        height={24}
+                                    />
 
-                                        <div
-                                            className="comment-content mt-3 break-words text-[11px] leading-relaxed [&_strong]:font-bold [&_em]:italic"
-                                            dangerouslySetInnerHTML={{
-                                            __html: DOMPurify.sanitize(reply.text),
-                                            }}
-                                        />
-                                        </div>
-                                    </div>
-                                ))}
+                                    <span className="text-sm">
+                                        {post.comments + comments.length - 1}
+                                    </span>
+                                </div>
 
+                                {/* Bookmark */}
+                                <button
+                                    type="button"
+                                    onClick={() => setSaved(!saved)}
+                                    aria-pressed={saved}
+                                    aria-label={saved ? "Unsave post" : "Save post"}
+                                    className="ml-auto"
+                                >
+                                    <Image
+                                        src={
+                                        saved
+                                            ? "/assets/icons/bookmark-active.svg"
+                                            : "/assets/icons/bookmark.svg"
+                                        }
+                                        alt=""
+                                        width={23}
+                                        height={29}
+                                    />
+                                </button>
+
+                                {/* Share */}
+                                <button
+                                    type="button"
+                                    onClick={() => handleShare()}
+                                    aria-label="Share post"
+                                    title="Share post"
+                                    className="cursor-pointer"
+                                >
+                                    <Image
+                                        src="/assets/icons/share.svg"
+                                        alt=""
+                                        width={24}
+                                        height={24}
+                                    />
+                                </button>
                             </div>
-                            )}
-                            </div>{/* End shared thread wrapper */}
 
-                        </div>
+                            {/* Comment Input - Tiptap Editor */}
+                            <CommentEditor onSubmit={handleComment} />
+
+                            {/* Comments Section */}
+                            <div className="mt-7 space-y-7">
+                                {comments.map((item) => {
+                                    const isLiked = likedComments.has(item.id);
+
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            id={`comment-${item.id}`}
+                                            className="scroll-mt-24"
+                                        >
+
+                                            {/* Comment Header */}
+                                            <div className="flex items-start gap-3">
+                                                <Image
+                                                    src="/assets/icons/profile.svg"
+                                                    alt=""
+                                                    width={32}
+                                                    height={32}
+                                                    className="h-8 w-8 shrink-0"
+                                                />
+
+                                                <div className="min-w-0 flex-1">
+
+                                                    <div className="flex items-center gap-4">
+                                                        <div>
+                                                            <h4 className="text-xs font-semibold">
+                                                                {item.name}
+                                                            </h4>
+
+                                                            <p className="text-[10px] text-gray-600">
+                                                                {item.course}
+                                                            </p>
+                                                        </div>
+
+                                                        <span className="text-[10px] text-gray-500">
+                                                            {item.time}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Comment Text */}
+                                                    <div
+                                                        onClick={handleCommentImageClick}
+                                                        className="comment-content mt-3 break-words text-[11px] leading-relaxed [&_p]:whitespace-pre-wrap [&_strong]:font-bold [&_em]:italic [&_img]:cursor-zoom-in"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: DOMPurify.sanitize(item.text),
+                                                        }}
+                                                    />
+
+                                                        {/* File Attachments */}
+                                                        {item.attachments?.map((attachment) => (
+                                                            <div
+                                                                key={attachment.id}
+                                                                className="mt-2 rounded border border-gray-200 bg-gray-50 px-3 py-2"
+                                                            >
+                                                                <p className="text-xs">
+                                                                    {attachment.file.name}
+                                                                </p>
+                                                            </div>
+                                                        ))}
+
+                                                        {/* Comment Actions */}
+                                                        <div className="mt-4 flex items-center gap-7">
+
+                                                        {/* Like */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleLikeComment(item.id)}
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <Image
+                                                                src={
+                                                                    isLiked
+                                                                    ? "/assets/icons/like-active.svg"
+                                                                    : "/assets/icons/like.svg"
+                                                                }
+                                                                alt=""
+                                                                width={25}
+                                                                height={23}
+                                                            />
+
+                                                            <span className="text-xs">
+                                                                {item.likes + (isLiked ? 1 : 0)}
+                                                            </span>
+                                                        </button>
+
+                                                        {/* Comment Count */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                            setReplyingTo(
+                                                                replyingTo === item.id ? null : item.id
+                                                            )
+                                                            }
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <Image
+                                                                src="/assets/icons/comment.svg"
+                                                                alt=""
+                                                                width={23}
+                                                                height={23}
+                                                            />
+
+                                                            <span className="text-xs">
+                                                                {item.replies.length}
+                                                            </span>
+                                                        </button>
+
+                                                        {/* Share Comment */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleShare(item.id)}
+                                                            aria-label="Share comment"
+                                                            title="Share comment"
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <Image
+                                                                src="/assets/icons/share.svg"
+                                                                alt=""
+                                                                width={23}
+                                                                height={23}
+                                                            />
+                                                        </button>
+
+                                                        {/* More Options */}
+                                                        <button
+                                                            type="button"
+                                                            aria-label="More options"
+                                                        >
+                                                            <Image
+                                                                src="/assets/icons/more.svg"
+                                                                alt=""
+                                                                width={23}
+                                                                height={6}
+                                                            />
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Shared positioning for the collapse button and thread line */}
+                                                    <div className="relative mt-3">
+
+                                                        {/* Thread line: centered at 10px, the center of the 20px button */}
+                                                        {item.replies.length > 0 && !collapsedReplies.has(item.id) && (
+                                                            <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-[9px] top-8 w-[2px] bg-gray-200" />
+                                                        )}
+
+                                                        {/* Reply controls */}
+                                                        <div className="flex items-center gap-3">
+                                        
+                                                            {/* Collapse and Expand Button*/}
+                                                            {item.replies.length > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => toggleReplies(item.id)}
+                                                                    aria-expanded={!collapsedReplies.has(item.id)}
+                                                                    aria-label={
+                                                                        collapsedReplies.has(item.id)
+                                                                            ? "Expand replies"
+                                                                            : "Collapse replies"
+                                                                    }
+                                                                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-400"
+                                                                >
+                                                                    <span className="text-sm leading-none">
+                                                                        {collapsedReplies.has(item.id) ? "+" : "−"}
+                                                                    </span>
+                                                                </button>
+                                                            )}
+
+                                                            {/* Reply Button */}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    setReplyingTo(replyingTo === item.id ? null : item.id)
+                                                                }
+                                                                className="inline-flex items-center gap-2 text-[11px] text-gray-400 hover:text-[#00A651]"
+                                                            >
+                                                                <Image
+                                                                    src="/assets/icons/reply.svg"
+                                                                    alt=""
+                                                                    width={16}
+                                                                    height={14}
+                                                                    className="shrink-0"
+                                                                />
+                                                                <span>Reply</span>
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Reply Input */}
+                                                        {replyingTo === item.id && (
+                                                            <div className="relative z-10 mt-3 ml-9 flex gap-2">
+                                                                <input
+                                                                    type="text"
+                                                                    value={replyText}
+                                                                    onChange={(event) =>
+                                                                        setReplyText(event.target.value)
+                                                                    }
+                                                                    placeholder="Write a reply..."
+                                                                    className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#00A651]"
+                                                                />
+
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        handleReply(item.id, replyText);
+                                                                        setReplyText("");
+                                                                        setReplyingTo(null);
+                                                                    }}
+                                                                    className="rounded bg-[#00A651] px-3 py-2 text-xs text-white"
+                                                                >
+                                                                        Reply
+                                                                </button>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Nested Replies */}
+                                                        {item.replies.length > 0 && !collapsedReplies.has(item.id) && (
+                                                            <div className="relative mt-3 pl-9">
+                                                                
+                                                                {item.replies.map((reply) => (
+                                                                    <div
+                                                                        key={reply.id}
+                                                                        className="mb-5 flex gap-2 last:mb-0"
+                                                                    >
+                                                                        <Image
+                                                                            src="/assets/icons/profile.svg"
+                                                                            alt=""
+                                                                            width={32}
+                                                                            height={32}
+                                                                            className="h-8 w-8 shrink-0"
+                                                                        />
+
+                                                                        <div>
+                                                                            <div className="flex items-center gap-4">
+                                                                                <div>
+                                                                                    <h5 className="text-xs font-semibold">
+                                                                                        {reply.name}
+                                                                                    </h5>
+
+                                                                                    <p className="text-[10px] text-gray-600">
+                                                                                        {reply.course}
+                                                                                    </p>
+                                                                                </div>
+
+                                                                                <span className="text-[10px] text-gray-500">
+                                                                                    {reply.time}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div
+                                                                                className="comment-content mt-3 break-words text-[11px] leading-relaxed [&_strong]:font-bold [&_em]:italic"
+                                                                                dangerouslySetInnerHTML={{
+                                                                                    __html: DOMPurify.sanitize(reply.text),
+                                                                                }}
+                                                                            />
+                                                                        </div>
+                                                                    </div>     
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
-                    );
-                })}
                 </div>
-
             </div>
-          </div>
-        </div>
-      </div>
 
-        {/* Image Preview Modal */}
-        {selectedImageIndex !== null && images.length > 0 && (
-            <ImagePreview
-                images={images}
-                initialIndex={selectedImageIndex}
-                alt={`Attachment for ${post.title}`}
-                onClose={() => setSelectedImageIndex(null)}
-            />
-        )}
-      
-        {/* Comment Image Preview */}
-        {commentImagePreview !== null && (
-            <ImagePreview
-                images={commentImagePreview.images}
-                initialIndex={commentImagePreview.initialIndex}
-                alt="Comment attachment"
-                onClose={() => setCommentImagePreview(null)}
-            />
-        )}
-    </>
-  );
+            {/* Image Preview Modal */}
+            {selectedImageIndex !== null && images.length > 0 && (
+                <ImagePreview
+                    images={images}
+                    initialIndex={selectedImageIndex}
+                    alt={`Attachment for ${post.title}`}
+                    onClose={() => setSelectedImageIndex(null)}
+                />
+            )}
+
+            {/* Comment Image Preview */}
+            {commentImagePreview !== null && (
+                <ImagePreview
+                    images={commentImagePreview.images}
+                    initialIndex={commentImagePreview.initialIndex}
+                    alt="Comment attachment"
+                    onClose={() => setCommentImagePreview(null)}
+                />
+            )}
+        </>
+    );
 }
