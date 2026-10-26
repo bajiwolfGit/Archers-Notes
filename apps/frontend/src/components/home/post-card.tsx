@@ -2,13 +2,15 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
 import ImagePreview from "@/components/ui/image-preview";
 
 export interface Post {
   id: number;
+  authorId: number;
   name: string;
   course: string;
   time: string;
@@ -22,14 +24,20 @@ export interface Post {
 
 interface PostCardProps {
   post: Post;
+  isOwnPost?: boolean;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({
+  post,
+  isOwnPost,
+}: PostCardProps) {
   const router = useRouter();
+  const isOwner = isOwnPost ?? post.authorId === 1;
   
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);  
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [isPinned, setIsPinned] = useState(false);
   
   const openPost = () => {
     router.push(`/posts/${post.id}`);
@@ -74,16 +82,33 @@ export default function PostCard({ post }: PostCardProps) {
 
         {/* Post Header */}
         <div className="flex items-center gap-3">
-          <Image
-            src="/assets/icons/profile.svg"
-            alt=""
-            width={36}
-            height={36}
-            className="h-9 w-9 shrink-0 object-contain"
-          />
 
+          {/* Clickable Profile Picture */}
+          <Link
+            href={post.authorId === 1 ? "/profile" : `/profile/${post.authorId}`}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`View ${post.name}'s profile`}
+            className="shrink-0"
+          >
+            <Image
+              src="/assets/icons/profile.svg"
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 object-contain"
+            />
+          </Link>
+
+          {/* Clickable Username */}
           <div>
-            <h3 className="text-sm font-semibold">{post.name}</h3>
+            <Link
+              href={`/profile/${post.authorId}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-sm font-semibold hover:underline"
+            >
+              {post.name}
+            </Link>
+
             <p className="text-xs">{post.course}</p>
           </div>
 
@@ -91,21 +116,90 @@ export default function PostCard({ post }: PostCardProps) {
             {post.time}
           </span>
 
-          <button
-            type="button"
-            onClick={(e) => e.stopPropagation()}
-            aria-label="More options"
-            className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
-          >
-            <Image
-              src="/assets/icons/more.svg"
-              alt=""
-              width={23}
-              height={6}
-              className="h-6 w-6 object-contain"
-            />
-          </button>
-        </div>
+          {/* Post Options */}
+          {isOwner ? (
+            <div className="ml-auto flex items-center gap-3">
+
+              {/* Pin Post */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsPinned(!isPinned);
+                }}
+                aria-label={isPinned ? "Unpin post" : "Pin post"}
+                title={isPinned ? "Unpin post" : "Pin post"}
+                className={`flex h-7 w-7 items-center justify-center transition-opacity hover:opacity-60 ${
+                  isPinned ? "opacity-100" : "opacity-70"
+                }`}
+              >
+                <Image
+                  src="/assets/icons/pin.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 object-contain"
+                />
+              </button>
+
+              {/* Edit Post */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // TODO: Open Edit Post modal
+                }}
+                aria-label="Edit post"
+                title="Edit post"
+                className="flex h-7 w-7 items-center justify-center hover:opacity-60"
+              >
+                <Image
+                  src="/assets/icons/edit.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 object-contain"
+                />
+              </button>
+
+              {/* Delete Post */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // TODO: Open Delete Post confirmation modal
+                }}
+                aria-label="Delete post"
+                title="Delete post"
+                className="flex h-7 w-7 items-center justify-center hover:opacity-60"
+              >
+                <Image
+                  src="/assets/icons/delete.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 object-contain"
+                />
+              </button>
+
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={(e) => e.stopPropagation()}
+                aria-label="More options"
+                className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
+              >
+                <Image
+                  src="/assets/icons/more.svg"
+                  alt=""
+                  width={23}
+                  height={6}
+                  className="h-6 w-6 object-contain"
+                />
+              </button>
+            )}
+          </div>
 
         {/* Post Content */}
         <div className="ml-9 mt-3">
