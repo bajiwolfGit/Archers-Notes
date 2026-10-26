@@ -3,21 +3,31 @@ import Navbar from "./navbar";
 import Sidebar from "./sidebar";
 
 interface MainLayoutProps {
-  children: ReactNode;
+  	children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
+	return (
+		<div className="min-h-screen bg-white">
 
-      <div className="flex">
-        <Sidebar />
+			{/* Sticky Navbar */}
+			<div className="sticky top-0 z-50 bg-white">
+				<Navbar />
+			</div>
 
-        <main className="flex-1 min-w-0">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+			<div className="flex">
+
+				{/* Independently Scrollable Sidebar */}
+				<div className="sidebar-scroll sticky top-[66px] h-[calc(100vh-66px)] shrink-0 overflow-y-auto">
+					<Sidebar />
+				</div>
+
+				{/* Main Content */}
+				<main className="min-w-0 flex-1">
+					{children}
+				</main>
+
+			</div>
+		</div>
+	);
 }
