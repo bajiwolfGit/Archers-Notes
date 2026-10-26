@@ -1,12 +1,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
 import ImagePreview from "@/components/ui/image-preview";
+import ReportModal from "@/components/posts/report-modal";
 
 export interface Post {
 	id: number;
@@ -38,6 +39,28 @@ export default function PostCard({
 	const [saved, setSaved] = useState(false);
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 	const [isPinned, setIsPinned] = useState(false);
+
+	const [showMoreMenu, setShowMoreMenu] = useState(false);
+	const [showReportModal, setShowReportModal] = useState(false);
+
+	const moreMenuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				moreMenuRef.current &&
+				!moreMenuRef.current.contains(event.target as Node)
+			) {
+				setShowMoreMenu(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
 	
 	const openPost = () => {
 		router.push(`/posts/${post.id}`);
@@ -182,20 +205,46 @@ export default function PostCard({
 							</button>
 						</div>
 					) : (
-						<button
-							type="button"
-							onClick={(e) => e.stopPropagation()}
-							aria-label="More options"
-							className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
-						>
-							<Image
-								src="/assets/icons/more.svg"
-								alt=""
-								width={23}
-								height={6}
-								className="h-6 w-6 object-contain"
-							/>
-						</button>
+						<div ref={moreMenuRef} className="relative ml-auto">
+							
+							{/* More Options */}
+							<button
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation();
+									setShowMoreMenu((prev) => !prev);
+								}}
+								aria-label="More options"
+								aria-expanded={showMoreMenu}
+								className="flex h-8 w-8 items-center justify-center"
+							>
+								<Image
+									src="/assets/icons/more.svg"
+									alt=""
+									width={23}
+									height={6}
+								/>
+							</button>
+							
+							{showMoreMenu && (
+								<div
+									className="absolute right-0 top-full z-30 mt-1 w-[120px] rounded-md border border-gray-200 bg-white py-1 shadow-md"
+									onClick={(e) => e.stopPropagation()}
+								>
+									<button
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
+											setShowMoreMenu(false);
+											setShowReportModal(true);
+										}}
+										className="w-full px-4 py-2 text-center text-xs text-gray-700 hover:bg-gray-50"
+									>
+										Report
+									</button>
+								</div>
+							)}
+						</div>
 					)}
 				</div>
 
@@ -212,7 +261,6 @@ export default function PostCard({
 					<p className="whitespace-pre-line text-xs leading-relaxed">
 						{post.content}
 					</p>
-
 
 					{/* Post Images */}
 					{post.images && post.images.length > 0 && (
@@ -260,102 +308,107 @@ export default function PostCard({
 							))}
 						</div>
 					)}
-			</div>
+				</div>
 
-			{/* Post Actions */}
-			<div className="mt-5 flex items-center gap-6 pl-9">
+				{/* Post Actions */}
+				<div className="mt-5 flex items-center gap-6 pl-9">
 
-				{/* Like */}
-				<button
-					type="button"
-					onClick={(e) => {
-						e.stopPropagation();
-						setLiked(!liked);
-					}}
-					aria-pressed={liked}
-					className="flex shrink-0 items-center gap-2"
-				>
-					<Image
-						src={
-							liked
-							? "/assets/icons/like-active.svg"
-							: "/assets/icons/like.svg"
-						}
-						alt=""
-						width={30}
-						height={27}
-						className="h-[27px] w-[30px] shrink-0 object-contain"
-					/>
+					{/* Like */}
+					<button
+						type="button"
+						onClick={(e) => {
+							e.stopPropagation();
+							setLiked(!liked);
+						}}
+						aria-pressed={liked}
+						className="flex shrink-0 items-center gap-2"
+					>
+						<Image
+							src={
+								liked
+								? "/assets/icons/like-active.svg"
+								: "/assets/icons/like.svg"
+							}
+							alt=""
+							width={30}
+							height={27}
+							className="h-[27px] w-[30px] shrink-0 object-contain"
+						/>
 
-					<span className="text-sm">
-						{post.likes + (liked ? 1 : 0)}
-					</span>
-				</button>
+						<span className="text-sm">
+							{post.likes + (liked ? 1 : 0)}
+						</span>
+					</button>
 
-				{/* Comments */}
-				<button
-					type="button"
-					onClick={(e) => {
-						e.stopPropagation();
-						openPost();
-					}}
-					className="flex shrink-0 items-center gap-2"
-					aria-label={`${post.comments} comments`}
-				>
-					<Image
-						src="/assets/icons/comment.svg"
+					{/* Comments */}
+					<button
+						type="button"
+						onClick={(e) => {
+							e.stopPropagation();
+							openPost();
+						}}
+						className="flex shrink-0 items-center gap-2"
+						aria-label={`${post.comments} comments`}
+					>
+						<Image
+							src="/assets/icons/comment.svg"
+							alt=""
+							width={24}
+							height={24}
+							className="h-6 w-[25px] shrink-0 object-contain"
+						/>
+
+						<span className="text-sm">{post.comments}</span>
+					</button>
+
+					{/* Bookmark */}
+					<button
+						type="button"
+						onClick={(e) => {
+							e.stopPropagation();
+							setSaved(!saved);
+						}}
+						aria-pressed={saved}
+						className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
+						aria-label={saved ? "Unsave post" : "Save post"}
+					>
+						<Image
+							src={
+								saved
+								? "/assets/icons/bookmark-active.svg"
+								: "/assets/icons/bookmark.svg"
+							}
+							alt=""
+							width={29}
+							height={29}
+							className="h-[23px] w-[19px] shrink-0 object-contain"
+						/>
+					</button>
+
+					{/* Share */}
+					<button
+						type="button"
+						onClick={handleShare}
+						aria-label="Share post"
+						title="Share post"
+						className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center"
+					>
+						<Image
+						src="/assets/icons/share.svg"
 						alt=""
 						width={24}
-						height={24}
-						className="h-6 w-[25px] shrink-0 object-contain"
-					/>
-
-					<span className="text-sm">{post.comments}</span>
-				</button>
-
-				{/* Bookmark */}
-				<button
-					type="button"
-					onClick={(e) => {
-						e.stopPropagation();
-						setSaved(!saved);
-					}}
-					aria-pressed={saved}
-					className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
-					aria-label={saved ? "Unsave post" : "Save post"}
-				>
-					<Image
-						src={
-							saved
-							? "/assets/icons/bookmark-active.svg"
-							: "/assets/icons/bookmark.svg"
-						}
-						alt=""
-						width={29}
-						height={29}
-						className="h-[23px] w-[19px] shrink-0 object-contain"
-					/>
-				</button>
-
-				{/* Share */}
-				<button
-					type="button"
-					onClick={handleShare}
-					aria-label="Share post"
-					title="Share post"
-					className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center"
-				>
-					<Image
-					src="/assets/icons/share.svg"
-					alt=""
-					width={24}
-					height={20}
-					className="h-6 w-6 object-contain"
-					/>
-				</button>
-			</div>
-			
-		</article>
+						height={20}
+						className="h-6 w-6 object-contain"
+						/>
+					</button>
+				</div>
+			</article>
+		
+			<ReportModal
+				isOpen={showReportModal}
+				onClose={() => setShowReportModal(false)}
+			/>
+		
 			{/* Image Preview Modal */}
 			{selectedImageIndex !== null && post.images && (
 				<ImagePreview

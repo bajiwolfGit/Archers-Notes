@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+
+import Image from "next/image";
+import Link from "next/link";
 import DOMPurify from "isomorphic-dompurify";
 
+import ReportModal from "@/components/posts/report-modal";
 import type { Post } from "@/components/home/post-card";
 import ImagePreview from "@/components/ui/image-preview";
 import CommentEditor, {
@@ -13,6 +16,7 @@ import CommentEditor, {
 
 interface Comment {
     id: number;
+    authorId: number;
     name: string;
     course: string;
     text: string;
@@ -27,6 +31,9 @@ interface PostDetailsProps {
 }
 
 export default function PostDetails({ post }: PostDetailsProps) {
+    const isOwner = post.authorId === 1;
+    const [isPinned, setIsPinned] = useState(false);
+    
     const [replyingTo, setReplyingTo] = useState<number | null>(null);
     const [replyText, setReplyText] = useState("");
     
@@ -39,6 +46,10 @@ export default function PostDetails({ post }: PostDetailsProps) {
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
 
+    const [showMoreMenu, setShowMoreMenu] = useState(false);
+    const [showReportModal, setShowReportModal] = useState(false);
+    const [openCommentMenu, setOpenCommentMenu] = useState<number | null>(null);
+
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
         null
     );
@@ -48,10 +59,36 @@ export default function PostDetails({ post }: PostDetailsProps) {
         initialIndex: number;
     } | null>(null);
 
+    const moreMenuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+
+            if (
+                moreMenuRef.current &&
+                !moreMenuRef.current.contains(target)
+            ) {
+                setShowMoreMenu(false);
+            }
+
+            if (!target.closest("[data-comment-menu]")) {
+                setOpenCommentMenu(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+    
     const [comments, setComments] = useState<Comment[]>([
         {
             id: 1,
             name: "Carmy Berzatto",
+            authorId: 3,
             course: "CCS Student",
             text: "<p>Wow! Thank for this :)</p>",
             time: "15 mins ago",
@@ -59,6 +96,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
             replies: [
                 {
                     id: 2,
+                    authorId: 4,
                     name: "Alan Smith",
                     course: "CCS Student",
                     text: "<p>You're welcome!</p>",
@@ -78,6 +116,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
             ...previous,
             {
                 id: Date.now(),
+                authorId: 1,
                 name: "You",
                 course: "CCS Student",
                 text: html,
@@ -118,6 +157,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
                         ...comment.replies,
                         {
                             id: Date.now(),
+                            authorId: 1,
                             name: "You",
                             course: "CCS Student",
                             text: `<p>${text.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</p>`,
@@ -209,6 +249,8 @@ export default function PostDetails({ post }: PostDetailsProps) {
         }
     }
 
+    const isOwnPost = post.authorId === 1;
+
     return (
         <>
             {/* Main Post Details Container */}
@@ -239,19 +281,29 @@ export default function PostDetails({ post }: PostDetailsProps) {
                         <div className="flex items-center gap-3">
 
                             {/* Profile Picture */}
-                            <Image
-                                src="/assets/icons/profile.svg"
-                                alt=""
-                                width={36}
-                                height={36}
-                                className="h-9 w-9 shrink-0"
-                            />
+                            <Link
+                                href={post.authorId === 1 ? "/profile" : `/profile/${post.authorId}`}
+                                aria-label={`View ${post.name}'s profile`}
+                                className="shrink-0"
+                            >
+                                <Image
+                                    src="/assets/icons/profile.svg"
+                                    alt=""
+                                    width={36}
+                                    height={36}
+                                    className="h-9 w-9 shrink-0"
+                                />
+                            </Link>
+                            
 
                             {/* Author */}
                             <div>
-                                <h3 className="text-sm font-semibold">
+                                <Link
+                                    href={post.authorId === 1 ? "/profile" : `/profile/${post.authorId}`}
+                                    className="text-sm font-semibold hover:underline"
+                                >
                                     {post.name}
-                                </h3>
+                                </Link>
 
                                 <p className="text-xs">
                                     {post.course}
@@ -263,19 +315,104 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                 {post.time}
                             </span>
 
-                            {/* More Options */}
-                            <button
-                                type="button"
-                                aria-label="More options"
-                                className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center"
-                            >
-                                <Image
-                                    src="/assets/icons/more.svg"
-                                    alt=""
-                                    width={23}
-                                    height={6}
-                                />
-                            </button>
+                            {/* Post Options */}
+                            {isOwner ? (
+                                <div className="ml-auto flex items-center gap-3">
+
+                                    {/* Pin Post */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPinned(!isPinned)}
+                                        aria-label={isPinned ? "Unpin post" : "Pin post"}
+                                        title={isPinned ? "Unpin post" : "Pin post"}
+                                        className={`flex h-7 w-7 items-center justify-center transition-opacity hover:opacity-60 ${
+                                            isPinned ? "opacity-100" : "opacity-70"
+                                        }`}
+                                    >
+                                        <Image
+                                            src="/assets/icons/pin.svg"
+                                            alt=""
+                                            width={20}
+                                            height={20}
+                                            className="h-5 w-5 object-contain"
+                                        />
+                                    </button>
+
+                                    {/* Edit Post */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            // TODO: Open Edit Post modal
+                                        }}
+                                        aria-label="Edit post"
+                                        title="Edit post"
+                                        className="flex h-7 w-7 items-center justify-center hover:opacity-60"
+                                    >
+                                        <Image
+                                            src="/assets/icons/edit.svg"
+                                            alt=""
+                                            width={20}
+                                            height={20}
+                                            className="h-5 w-5 object-contain"
+                                        />
+                                    </button>
+
+                                    {/* Delete Post */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            // TODO: Open Delete Post confirmation modal
+                                        }}
+                                        aria-label="Delete post"
+                                        title="Delete post"
+                                        className="flex h-7 w-7 items-center justify-center hover:opacity-60"
+                                    >
+                                        <Image
+                                            src="/assets/icons/delete.svg"
+                                            alt=""
+                                            width={20}
+                                            height={20}
+                                            className="h-5 w-5 object-contain"
+                                        />
+                                    </button>
+
+                                </div>
+                            ) : (
+                                <div ref={moreMenuRef} className="relative ml-auto">
+
+                                    {/* More Options */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowMoreMenu(!showMoreMenu)}
+                                        aria-label="More options"
+                                        aria-expanded={showMoreMenu}
+                                        className="flex h-8 w-8 items-center justify-center"
+                                    >
+                                        <Image
+                                            src="/assets/icons/more.svg"
+                                            alt=""
+                                            width={23}
+                                            height={6}
+                                        />
+                                    </button>
+
+                                    {/* Report Popup */}
+                                    {showMoreMenu && (
+                                    <div className="absolute right-0 top-full z-50 mt-1 w-[120px] rounded-md border border-gray-200 bg-white py-1 shadow-md">
+                                        <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowMoreMenu(false);
+                                            setShowReportModal(true);
+                                        }}
+                                        className="w-full px-4 py-2 text-center text-xs text-gray-700 hover:bg-gray-50"
+                                        >
+                                            Report
+                                        </button>
+                                    </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Post Content */}
@@ -429,21 +566,30 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
                                             {/* Comment Header */}
                                             <div className="flex items-start gap-3">
-                                                <Image
-                                                    src="/assets/icons/profile.svg"
-                                                    alt=""
-                                                    width={32}
-                                                    height={32}
-                                                    className="h-8 w-8 shrink-0"
-                                                />
+                                                <Link
+                                                    href={item.authorId === 1 ? "/profile" : `/profile/${item.authorId}`}
+                                                    aria-label={`View ${item.name}'s profile`}
+                                                    className="shrink-0"
+                                                >
+                                                    <Image
+                                                        src="/assets/icons/profile.svg"
+                                                        alt=""
+                                                        width={32}
+                                                        height={32}
+                                                        className="h-8 w-8"
+                                                    />
+                                                </Link>
 
                                                 <div className="min-w-0 flex-1">
 
                                                     <div className="flex items-center gap-4">
                                                         <div>
-                                                            <h4 className="text-xs font-semibold">
+                                                            <Link
+                                                                href={item.authorId === 1 ? "/profile" : `/profile/${item.authorId}`}
+                                                                className="text-xs font-semibold hover:underline"
+                                                            >
                                                                 {item.name}
-                                                            </h4>
+                                                            </Link>
 
                                                             <p className="text-[10px] text-gray-600">
                                                                 {item.course}
@@ -539,18 +685,43 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                                             />
                                                         </button>
 
-                                                        {/* More Options */}
-                                                        <button
-                                                            type="button"
-                                                            aria-label="More options"
-                                                        >
-                                                            <Image
-                                                                src="/assets/icons/more.svg"
-                                                                alt=""
-                                                                width={23}
-                                                                height={6}
-                                                            />
-                                                        </button>
+                                                        {/* More Options for Comment */}
+                                                        <div className="relative" data-comment-menu>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setShowMoreMenu(false);
+                                                                    setOpenCommentMenu(
+                                                                        openCommentMenu === item.id ? null : item.id
+                                                                    );
+                                                                }}
+                                                                aria-label="More comment options"
+                                                                aria-expanded={openCommentMenu === item.id}
+                                                            >
+                                                                <Image
+                                                                    src="/assets/icons/more.svg"
+                                                                    alt=""
+                                                                    width={23}
+                                                                    height={6}
+                                                                />
+                                                            </button>
+
+                                                            {/* Popup */}
+                                                            {openCommentMenu === item.id && (
+                                                                <div className="absolute right-0 top-full z-30 mt-2 w-[120px] rounded-md border border-gray-200 bg-white py-1 shadow-md">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setOpenCommentMenu(null);
+                                                                            setShowReportModal(true);
+                                                                        }}
+                                                                        className="w-full px-4 py-2 text-left text-xs text-gray-700 hover:bg-gray-50"
+                                                                    >
+                                                                        Report
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                     {/* Shared positioning for the collapse button and thread line */}
@@ -638,20 +809,29 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                                                         key={reply.id}
                                                                         className="mb-5 flex gap-2 last:mb-0"
                                                                     >
-                                                                        <Image
-                                                                            src="/assets/icons/profile.svg"
-                                                                            alt=""
-                                                                            width={32}
-                                                                            height={32}
-                                                                            className="h-8 w-8 shrink-0"
-                                                                        />
+                                                                        <Link
+                                                                            href={reply.authorId === 1 ? "/profile" : `/profile/${reply.authorId}`}
+                                                                            aria-label={`View ${reply.name}'s profile`}
+                                                                            className="shrink-0"
+                                                                        >
+                                                                            <Image
+                                                                                src="/assets/icons/profile.svg"
+                                                                                alt=""
+                                                                                width={32}
+                                                                                height={32}
+                                                                                className="h-8 w-8"
+                                                                            />
+                                                                        </Link>
 
                                                                         <div>
                                                                             <div className="flex items-center gap-4">
                                                                                 <div>
-                                                                                    <h5 className="text-xs font-semibold">
+                                                                                    <Link
+                                                                                        href={reply.authorId === 1 ? "/profile" : `/profile/${reply.authorId}`}
+                                                                                        className="text-xs font-semibold hover:underline"
+                                                                                    >
                                                                                         {reply.name}
-                                                                                    </h5>
+                                                                                    </Link>
 
                                                                                     <p className="text-[10px] text-gray-600">
                                                                                         {reply.course}
@@ -705,6 +885,12 @@ export default function PostDetails({ post }: PostDetailsProps) {
                     onClose={() => setCommentImagePreview(null)}
                 />
             )}
+
+            {/* Report Modal */}
+            <ReportModal
+                isOpen={showReportModal}
+                onClose={() => setShowReportModal(false)}
+            />
         </>
     );
 }

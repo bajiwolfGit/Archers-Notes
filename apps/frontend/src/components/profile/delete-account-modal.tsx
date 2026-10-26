@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 interface DeleteAccountModalProps {
   onClose: () => void;
@@ -36,7 +37,13 @@ export default function DeleteAccountModal({
 					aria-label="Close"
 					className="absolute left-5 top-5 flex h-8 w-8 items-center justify-center text-2xl text-[#343B36] hover:text-black"
 				>
-				x
+				<Image
+					src="/assets/icons/exit.svg"
+					alt=""
+					width={16}
+					height={16}
+					className="object-contain"
+				/>
 				</button>
 
 				{step === "confirm" ? (
@@ -64,7 +71,18 @@ export default function DeleteAccountModal({
 				) : (
 					<>
 						{/* Password Confirmation */}
-						<div className="mx-auto mt-9 w-full max-w-[380px]">
+						<form
+							id="delete-account-form"
+							autoComplete="off"
+							onSubmit={(e) => {
+								e.preventDefault();
+
+								if (password.trim()) {
+								onConfirm(password);
+								}
+							}}
+							className="mx-auto mt-9 w-full max-w-[380px]"
+						>
 							<label
 								htmlFor="delete-password"
 								className="mb-1 block text-[10px] text-gray-400"
@@ -74,13 +92,15 @@ export default function DeleteAccountModal({
 
 							<input
 								id="delete-password"
+								name="account-deletion-password"
 								type="password"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								autoComplete="current-password"
+								autoFocus
 								className="h-[45px] w-full rounded-md border border-gray-200 px-3 text-sm outline-none focus:border-[#00A651]"
 							/>
-						</div>
+						</form>
 
 						<div className="mt-4 flex justify-end">
 							<button

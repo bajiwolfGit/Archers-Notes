@@ -19,7 +19,7 @@ export default function Navbar() {
                 />
             </Link>
 
-            {/* Search Bar - Centered on the page */}
+            {/* Search Bar */}
             <div className="absolute left-1/2 flex w-[480px] max-w-[calc(100%-320px)] -translate-x-1/2 items-center gap-3 rounded-[10px] border border-[#E5E7EB] bg-white px-6 py-2">
                 <Image
                     src="/assets/icons/search.svg"
@@ -30,7 +30,10 @@ export default function Navbar() {
                 />
 
                 <input
-                    type="text"
+                    id="site-search"
+                    name="site-search"
+                    type="search"
+                    autoComplete="off"
                     placeholder="Search"
                     aria-label="Search"
                     className="w-full bg-transparent text-sm font-semibold text-[#00A651] placeholder:text-[#00A651] outline-none"
