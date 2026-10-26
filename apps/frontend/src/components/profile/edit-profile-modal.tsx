@@ -126,7 +126,13 @@ export default function EditProfileModal({
 							aria-label="Close edit profile"
 							className="flex h-8 w-8 items-center justify-center text-2xl text-[#343B36] hover:text-black"
 						>
-						x
+							<Image
+								src="/assets/icons/exit.svg"
+								alt=""
+								width={16}
+								height={16}
+								className="object-contain"
+							/>
 						</button>
 
 						<h2
