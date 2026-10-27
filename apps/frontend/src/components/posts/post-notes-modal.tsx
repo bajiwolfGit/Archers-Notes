@@ -6,24 +6,44 @@ import Image from "next/image";
 import CourseSelector from "./course-selector";
 import NotesEditor from "./notes-editor";
 
-import { usePosts } from "@/context/posts-context";
+import { usePosts, type Draft } from "@/context/posts-context";
 import type { Post } from "@/components/home/post-card";
 
 interface PostNotesModalProps {
     onClose: () => void;
+    editingPost?: Post | null;
+    editingDraft?: Draft | null;
 }
 
 export default function PostNotesModal({
     onClose,
+    editingPost = null,
+    editingDraft = null,
 }: PostNotesModalProps) {
-    const { addPost, addDraft } = usePosts();
+    const { addPost, addDraft, updatePost } = usePosts();
+    const isEditing = editingPost !== null;
 
-    const [title, setTitle] = useState("");
-    const [course, setCourse] = useState("");
-    const [content, setContent] = useState("");
+    const [title, setTitle] = useState(
+        editingPost?.title ?? editingDraft?.title ?? ""
+    );
+
+    const [course, setCourse] = useState(
+        editingPost?.course ?? editingDraft?.course ?? ""
+    );
+
+    const [content, setContent] = useState(
+        editingPost?.content ?? editingDraft?.content ?? ""
+    );
+
     const [attachments, setAttachments] = useState<File[]>([]);
+
+    const [existingImages, setExistingImages] = useState<string[]>(
+        editingPost?.images ?? []
+    );
+    
     const [resetKey, setResetKey] = useState(0);
     const [error, setError] = useState("");
+
     const [showCloseConfirm, setShowCloseConfirm] = useState(false);
     const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -58,8 +78,8 @@ export default function PostNotesModal({
     });
 
     function handleSaveDraft() {
-        const draft = {
-            id: Date.now(),
+        const draft: Draft = {
+            id: editingDraft?.id ?? Date.now(),
             title: title.trim(),
             course,
             content,
@@ -70,6 +90,42 @@ export default function PostNotesModal({
         onClose();
     }
     
+    // Update an existing post
+    function handleUpdatePost() {
+        if (!editingPost) return;
+
+        if (!title.trim()) {
+            setError("Please enter a title.");
+            return;
+        }
+
+        if (!course) {
+            setError("Please select a course.");
+            return;
+        }
+
+        const plainText = content
+            .replace(/<[^>]*>/g, "")
+            .replace(/&nbsp;/g, " ")
+            .trim();
+
+        if (!plainText && !content.includes("<img")) {
+            setError("Please write something in your notes.");
+            return;
+        }
+
+        const updatedPost: Post = {
+            ...editingPost,
+            title: title.trim(),
+            course,
+            content,
+            images: existingImages,
+        };
+
+        updatePost(updatedPost);
+        onClose();
+    }
+
     // Publish Note
     function handlePost() {
         if (!title.trim()) {
@@ -127,6 +183,7 @@ export default function PostNotesModal({
         setCourse("");
         setContent("");
         setAttachments([]);
+        setExistingImages([]);
         setError("");
         setResetKey((previous) => previous + 1);
 
@@ -144,12 +201,20 @@ export default function PostNotesModal({
             return;
         }
 
-        const hasChanges =
-            title.trim() !== "" ||
-            course !== "" ||
-            content.replace(/<[^>]*>/g, "").trim() !== "" ||
-            content.includes("<img") ||
-            attachments.length > 0;
+        const hasChanges = isEditing && editingPost
+            ? title !== editingPost.title ||
+                course !== editingPost.course ||
+                content !== editingPost.content ||
+                attachments.length > 0 ||
+                existingImages.length !== (editingPost.images?.length ?? 0) ||
+                existingImages.some(
+                (image, index) => image !== editingPost.images?.[index]
+            )
+            : title.trim() !== "" ||
+                course !== "" ||
+                content.replace(/<[^>]*>/g, "").trim() !== "" ||
+                content.includes("<img") ||
+                attachments.length > 0;
 
         if (hasChanges) {
             setShowCloseConfirm(true);
@@ -201,26 +266,28 @@ export default function PostNotesModal({
                         id="post-notes-title"
                         className="text-xs font-semibold text-gray-900"
                     >
-                        Post Notes
+                        {isEditing ? "Edit Post" : "Post Notes"}
                     </h2>
 
                     <div className="ml-auto flex items-center gap-2">
-                        {/* Save Draft */}
+                        {/* Save Draft — only when creating */}
+                        {!isEditing && (
+                            <button
+                                type="button"
+                                onClick={handleSaveDraft}
+                                className="shrink-0 rounded-full border border-[#00A651] bg-white px-3 py-2 text-xs font-semibold text-[#00A651] transition-colors hover:bg-green-50 sm:min-w-[120px] sm:px-5"
+                            >
+                                Save Draft
+                            </button>
+                        )}
+
+                        {/* Post / Save Changes */}
                         <button
                             type="button"
-                            onClick={handleSaveDraft}
-                            className="shrink-0 rounded-full border border-[#00A651] bg-white px-3 py-2 text-xs font-semibold text-[#00A651] transition-colors hover:bg-green-50 sm:min-w-[120px] sm:px-5"
-                        >
-                            Save Draft
-                        </button>
-                        
-                        {/* Post Button */}
-                        <button
-                            type="button"
-                            onClick={handlePost}
+                            onClick={isEditing ? handleUpdatePost : handlePost}
                             className="ml-auto shrink-0 rounded-full bg-[#00A651] px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-green-700 sm:min-w-[120px] sm:px-5"
                         >
-                            Post Note
+                            {isEditing ? "Save Changes" : "Post Note"}
                         </button>
                     </div>
                 </div>
@@ -228,81 +295,122 @@ export default function PostNotesModal({
                 {/* Form */}
                 <div className="min-h-0 space-y-3 overflow-y-auto px-5 pb-6 pt-3 sm:px-8 md:px-10">
 
-                {/* Title Input */}
-                <div>
-                    <label
-                    htmlFor="note-title"
-                    className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                    Title
-                    </label>
+                    {/* Title Input */}
+                    <div>
+                        <label
+                            htmlFor="note-title"
+                            className="mb-2 block text-sm font-medium text-gray-700"
+                        >
+                            Title
+                        </label>
 
-                    <input
-                    id="note-title"
-                    type="text"
-                    value={title}
-                    onChange={(event) => {
-                        setTitle(event.target.value);
+                        <input
+                            id="note-title"
+                            type="text"
+                            value={title}
+                            onChange={(event) => {
+                                setTitle(event.target.value);
+                                setError("");
+                        }}
+                            placeholder="Enter note title"
+                            maxLength={150}
+                            className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-[#00A651]"
+                        />
+                    </div>
+
+                    {/* Course Selection */}
+                    <CourseSelector
+                        value={course}
+                        onChange={(value) => {
+                        setCourse(value);
                         setError("");
-                    }}
-                    placeholder="Enter note title"
-                    maxLength={150}
-                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-[#00A651]"
+                        }}
                     />
+
+                    {/* Notes Editor */}
+                    <div>
+                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        Body
+                        </label>
+
+                        <NotesEditor
+                        content={content}
+                        onChange={(value) => {
+                            setContent(value);
+                            setError("");
+                        }}
+                        onAttachmentsChange={setAttachments}
+                        resetKey={resetKey}
+                        />
+                    </div>
+
+                    {/* Existing Post Images */}
+                        {isEditing && existingImages.length > 0 && (
+                            <div className="space-y-3">
+                                <p className="text-sm font-medium text-gray-700">
+                                    Existing Images
+                                </p>
+
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                    {existingImages.map((image, index) => (
+                                        <div
+                                            key={`${image}-${index}`}
+                                            className="relative overflow-hidden rounded-md border border-gray-200 bg-gray-50"
+                                        >
+                                            <div className="relative h-32 w-full">
+                                                <Image
+                                                    src={image}
+                                                    alt={`Existing image ${index + 1}`}
+                                                    fill
+                                                    unoptimized
+                                                    className="object-contain"
+                                                />
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setExistingImages((previous) =>
+                                                        previous.filter((_, i) => i !== index)
+                                                    );
+                                                }}
+                                                aria-label={`Remove image ${index + 1}`}
+                                                className="absolute right-2 top-2 rounded-full bg-white px-2 py-1 text-xs font-medium text-red-500 shadow hover:bg-red-50"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Attachments Summary */}
+                        {attachments.length > 0 && (
+                            <p className="text-xs text-gray-500">
+                                {attachments.length} file(s) attached
+                            </p>
+                        )}
+
+                        {/* Validation Error */}
+                        {error && (
+                            <p role="alert" className="text-sm text-[#FF5A5F]">
+                                {error}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex justify-end px-6 pb-5 pt-2">
+                        <button
+                            type="button"
+                            onClick={handleClear}
+                            className="flex min-w-[120px] items-center justify-center rounded-full border border-[#FF5A5F] bg-white px-5 py-2 text-xs font-semibold text-[#FF5A5F] transition-colors hover:bg-[#FFF0F0]"
+                        >
+                            Clear
+                        </button>
+                    </div>
                 </div>
-
-                {/* Course Selection */}
-                <CourseSelector
-                    value={course}
-                    onChange={(value) => {
-                    setCourse(value);
-                    setError("");
-                    }}
-                />
-
-                {/* Notes Editor */}
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Body
-                    </label>
-
-                    <NotesEditor
-                    content={content}
-                    onChange={(value) => {
-                        setContent(value);
-                        setError("");
-                    }}
-                    onAttachmentsChange={setAttachments}
-                    resetKey={resetKey}
-                    />
-                </div>
-
-                    {/* Attachments Summary */}
-                    {attachments.length > 0 && (
-                        <p className="text-xs text-gray-500">
-                            {attachments.length} file(s) attached
-                        </p>
-                    )}
-
-                    {/* Validation Error */}
-                    {error && (
-                        <p role="alert" className="text-sm text-[#FF5A5F]">
-                            {error}
-                        </p>
-                    )}
-                </div>
-
-                {/* Footer */}
-                <div className="flex justify-end px-6 pb-5 pt-2">
-                    <button
-                        type="button"
-                        onClick={handleClear}
-                        className="flex min-w-[120px] items-center justify-center rounded-full border border-[#FF5A5F] bg-white px-5 py-2 text-xs font-semibold text-[#FF5A5F] transition-colors hover:bg-[#FFF0F0]"
-                    >
-                        Clear
-                    </button>
-                </div>
-            </div>
 
             {/* Clear Confirmation Modal */}
             {showClearConfirm && (
@@ -372,7 +480,7 @@ export default function PostNotesModal({
                             id="save-draft-title"
                             className="text-center text-base font-semibold text-gray-900"
                         >
-                            Save as Draft?
+                            {isEditing ? "Save Changes?" : "Save as Draft?"}
                         </h3>
 
                         {/* Description */}
@@ -380,8 +488,9 @@ export default function PostNotesModal({
                             id="save-draft-description"
                             className="mt-3 text-center text-sm text-gray-500"
                         >
-                            You have unsaved changes. Would you like to save this
-                            note as a draft before leaving?
+                            {isEditing
+                                ? "You have unsaved changes. Would you like to save your changes before leaving?"
+                                : "You have unsaved changes. Would you like to save this note as a draft before leaving?"}
                         </p>
 
                         {/* Buttons */}
@@ -408,12 +517,11 @@ export default function PostNotesModal({
                             {/* Save Draft */}
                             <button
                                 type="button"
-                                onClick={handleSaveDraft}
+                                onClick={isEditing ? handleUpdatePost : handleSaveDraft}
                                 className="min-w-[100px] rounded-full bg-[#00A651] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-green-700"
                             >
-                                Save Draft
+                                {isEditing ? "Save Changes" : "Save Draft"}
                             </button>
-
                         </div>
                     </div>
                 </div>

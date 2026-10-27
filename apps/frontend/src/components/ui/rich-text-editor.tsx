@@ -27,6 +27,7 @@ export interface EditorAttachment {
 interface RichTextEditorProps {
     variant?: "comment" | "notes";
     placeholder?: string;
+    content?: string;
     onChange?: (html: string) => void;
     onAttachmentsChange?: (attachments: EditorAttachment[]) => void;
     onSubmit?: (
@@ -39,6 +40,7 @@ interface RichTextEditorProps {
 export default function RichTextEditor({
     variant = "comment",
     placeholder = "Write something...",
+    content = "",
     onChange,
     onAttachmentsChange,
     onSubmit,
@@ -65,7 +67,7 @@ export default function RichTextEditor({
             }),
         ],
 
-        content: "",
+        content,
         immediatelyRender: false,
 
         editorProps: {
@@ -434,20 +436,14 @@ export default function RichTextEditor({
                     {/* Right Side */}
                     <div className="ml-3 flex shrink-0 items-center gap-2">
 
-                    {/* Clear */}
+                    
+                    {/* Clear Body */}
                     {isNotes && (
                         <button
                             type="button"
-                            onClick={() => {
-                                if (
-                                window.confirm(
-                                    "Are you sure you want to clear your notes?"
-                                )
-                                ) {
-                                clearEditor();
-                                }
-                            }}
-                            aria-label="Clear editor"
+                            onClick={clearEditor}
+                            aria-label="Clear body"
+                            title="Clear body"
                             className="flex h-6 w-6 items-center justify-center rounded hover:bg-red-50"
                         >
                             <Image

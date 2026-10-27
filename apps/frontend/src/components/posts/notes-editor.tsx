@@ -14,6 +14,7 @@ interface NotesEditorProps {
 }
 
 export default function NotesEditor({
+    content,
     onChange,
     onAttachmentsChange,
     resetKey,
@@ -21,7 +22,7 @@ export default function NotesEditor({
     const handleAttachmentsChange = useCallback(
         (attachments: EditorAttachment[]) => {
             onAttachmentsChange(
-            attachments.map((attachment) => attachment.file)
+                attachments.map((attachment) => attachment.file)
             );
         },
         [onAttachmentsChange]
@@ -31,6 +32,7 @@ export default function NotesEditor({
         <RichTextEditor
             variant="notes"
             placeholder="Write your notes here..."
+            content={content}
             onChange={onChange}
             onAttachmentsChange={handleAttachmentsChange}
             resetKey={resetKey}
