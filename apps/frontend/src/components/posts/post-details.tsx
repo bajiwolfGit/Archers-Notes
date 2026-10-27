@@ -12,7 +12,7 @@ import type { Post } from "@/components/home/post-card";
 import ImagePreview from "@/components/ui/image-preview";
 import CommentEditor, {
     type CommentAttachment,
-} from "@/components/ui/comment-editor";
+} from "@/components/posts/comment-editor";
 
 interface Comment {
     id: number;
