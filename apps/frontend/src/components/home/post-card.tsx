@@ -8,6 +8,7 @@ import Link from "next/link";
 
 import ImagePreview from "@/components/ui/image-preview";
 import ReportModal from "@/components/posts/report-modal";
+import DOMPurify from "isomorphic-dompurify";
 
 export interface Post {
 	id: number;
@@ -258,9 +259,12 @@ export default function PostCard({
 						{post.title}
 					</button>
 
-					<p className="whitespace-pre-line text-xs leading-relaxed">
-						{post.content}
-					</p>
+					<div
+						className="text-xs leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-md"
+						dangerouslySetInnerHTML={{
+							__html: DOMPurify.sanitize(post.content),
+						}}
+					/>
 
 					{/* Post Images */}
 					{post.images && post.images.length > 0 && (
