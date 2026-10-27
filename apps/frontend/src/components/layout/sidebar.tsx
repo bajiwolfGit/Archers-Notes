@@ -19,7 +19,11 @@ const savedNotes = [
 	"Calculus",
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  	onOpenPostNotes: () => void;
+}
+
+export default function Sidebar({ onOpenPostNotes }: SidebarProps) {
 	const [coursesOpen, setCoursesOpen] = useState(true);
 	const [savedNotesOpen, setSavedNotesOpen] = useState(true);
 
@@ -27,9 +31,10 @@ export default function Sidebar() {
 		<aside className="w-[223px] shrink-0 min-h-[calc(100vh-73px)] border-r border-gray-200 bg-white px-4 py-6">
 
 			{/* Post Notes */}
-			<Link
-				href="/main/post-notes"
-				className="flex w-full items-center gap-3 rounded bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700"
+			<button
+				type="button"
+				onClick={onOpenPostNotes}
+				className="flex w-full items-center gap-3 rounded bg-green-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700"
 			>
 				<Image
 					src="/assets/icons/create-post.svg"
@@ -38,7 +43,7 @@ export default function Sidebar() {
 					height={20}
 				/>
 				Post Notes
-			</Link>
+			</button>
 
 			<nav className="mt-6 space-y-5 text-sm">
 
