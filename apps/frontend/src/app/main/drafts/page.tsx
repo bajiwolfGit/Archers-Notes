@@ -14,7 +14,7 @@ export default function DraftsPage() {
 }
 
 function DraftsContent() {
-    const { drafts, deleteDraft } = usePosts();
+    const { drafts, deleteDraft, openEditDraft } = usePosts();
 
     const [draftToDelete, setDraftToDelete] = useState<Draft | null>(null);
 
@@ -93,9 +93,8 @@ function DraftsContent() {
 
                                 <button
                                     type="button"
-                                    disabled
-                                    title="Draft editing will be connected next"
-                                    className="cursor-not-allowed rounded-full bg-[#00A651] px-5 py-2 text-xs font-semibold text-white opacity-50"
+                                    onClick={() => openEditDraft(draft)}
+                                    className="rounded-full bg-[#00A651] px-5 py-2 text-xs font-semibold text-white transition-colors hover:bg-green-700"
                                 >
                                     Edit Draft
                                 </button>

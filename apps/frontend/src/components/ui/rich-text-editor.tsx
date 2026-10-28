@@ -18,6 +18,7 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import TiptapImage from "@tiptap/extension-image";
+import { Extension } from "@tiptap/core";
 
 export interface EditorAttachment {
     id: string;
@@ -27,6 +28,7 @@ export interface EditorAttachment {
 interface RichTextEditorProps {
     variant?: "comment" | "notes";
     placeholder?: string;
+    content?: string;
     onChange?: (html: string) => void;
     onAttachmentsChange?: (attachments: EditorAttachment[]) => void;
     onSubmit?: (
@@ -36,9 +38,74 @@ interface RichTextEditorProps {
     resetKey?: number;
 }
 
+const TAB_SPACES = "\u00A0".repeat(4);
+
+const TabIndentExtension = Extension.create({
+    name: "tabIndent",
+
+    addKeyboardShortcuts() {
+        return {
+            Tab: ({ editor }) => {
+                // Indent list items normally
+                if (editor.isActive("listItem")) {
+                    return editor.commands.sinkListItem("listItem");
+                }
+
+                // Insert four spaces at the cursor
+                return editor.commands.insertContent(TAB_SPACES);
+            },
+
+            "Shift-Tab": ({ editor }) => {
+                // Outdent list items normally
+                if (editor.isActive("listItem")) {
+                    return editor.commands.liftListItem("listItem");
+                }
+
+                const { state, view } = editor;
+                const { $from } = state.selection;
+
+                const lineStart = $from.start();
+                const cursorPosition = $from.pos;
+
+                const textBeforeCursor = state.doc.textBetween(
+                    lineStart,
+                    cursorPosition,
+                    "\n"
+                );
+
+                // Find the start of the current line
+                const lastLineBreak = textBeforeCursor.lastIndexOf("\n");
+
+                const currentLineStart =
+                    lineStart + lastLineBreak + 1;
+
+                const lineText = state.doc.textBetween(
+                    currentLineStart,
+                    Math.min(currentLineStart + 4, $from.end())
+                );
+
+                // Remove up to four leading spaces
+                const spaces = lineText.match(/^[\u00A0 ]{1,4}/);
+
+                if (spaces) {
+                    const transaction = state.tr.delete(
+                        currentLineStart,
+                        currentLineStart + spaces[0].length
+                    );
+
+                    view.dispatch(transaction);
+                }
+
+                return true;
+            },
+        };
+    },
+});
+
 export default function RichTextEditor({
     variant = "comment",
     placeholder = "Write something...",
+    content = "",
     onChange,
     onAttachmentsChange,
     onSubmit,
@@ -55,6 +122,8 @@ export default function RichTextEditor({
         extensions: [
             StarterKit,
 
+            ...(variant === "notes" ? [TabIndentExtension] : []),
+
             Placeholder.configure({
                 placeholder,
             }),
@@ -65,14 +134,14 @@ export default function RichTextEditor({
             }),
         ],
 
-        content: "",
+        content,
         immediatelyRender: false,
 
         editorProps: {
             attributes: {
                 class:
                 variant === "notes"
-                    ? "min-h-[250px] w-full outline-none text-sm leading-relaxed"
+                    ? "min-h-[250px] w-full outline-none text-sm leading-7 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
                     : "min-h-[35px] w-full outline-none text-xs leading-relaxed",
 
                 "aria-label":
@@ -114,36 +183,60 @@ export default function RichTextEditor({
         onAttachmentsChange?.([]);
     }, [editor, resetKey, onAttachmentsChange]);
 
-    // Add images inside the editor
-    function handleImageUpload(
+    async function handleImageUpload(
         event: React.ChangeEvent<HTMLInputElement>
     ) {
-        const files = Array.from(event.target.files ?? []);
-
-        if (!editor) return;
-
-        for (const file of files) {
-        if (!file.type.startsWith("image/")) continue;
-
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            if (typeof reader.result !== "string") return;
-
-            editor
-            .chain()
-            .focus()
-            .setImage({
-                src: reader.result,
-                alt: file.name,
-            })
-            .run();
-        };
-
-        reader.readAsDataURL(file);
-        }
+        const files = Array.from(event.target.files ?? []).filter(
+            (file) => file.type.startsWith("image/")
+        );
 
         event.target.value = "";
+
+        if (!editor || files.length === 0) return;
+
+        try {
+            const images = await Promise.all(
+                files.map(
+                    (file) =>
+                        new Promise<{ src: string; alt: string }>(
+                            (resolve, reject) => {
+                                const reader = new FileReader();
+
+                                reader.onload = () => {
+                                    if (typeof reader.result === "string") {
+                                        resolve({
+                                            src: reader.result,
+                                            alt: file.name,
+                                        });
+                                    } else {
+                                        reject(new Error("Failed to read image."));
+                                    }
+                                };
+
+                                reader.onerror = () => reject(reader.error);
+
+                                reader.readAsDataURL(file);
+                            }
+                        )
+                )
+            );
+
+            editor
+                .chain()
+                .focus()
+                .insertContent(
+                    images.map((image) => ({
+                        type: "image",
+                        attrs: {
+                            src: image.src,
+                            alt: image.alt,
+                        },
+                    }))
+                )
+                .run();
+        } catch (error) {
+            console.error("Failed to upload images:", error);
+        }
     }
 
     // Add document attachments
@@ -434,20 +527,14 @@ export default function RichTextEditor({
                     {/* Right Side */}
                     <div className="ml-3 flex shrink-0 items-center gap-2">
 
-                    {/* Clear */}
+                    
+                    {/* Clear Body */}
                     {isNotes && (
                         <button
                             type="button"
-                            onClick={() => {
-                                if (
-                                window.confirm(
-                                    "Are you sure you want to clear your notes?"
-                                )
-                                ) {
-                                clearEditor();
-                                }
-                            }}
-                            aria-label="Clear editor"
+                            onClick={clearEditor}
+                            aria-label="Clear body"
+                            title="Clear body"
                             className="flex h-6 w-6 items-center justify-center rounded hover:bg-red-50"
                         >
                             <Image

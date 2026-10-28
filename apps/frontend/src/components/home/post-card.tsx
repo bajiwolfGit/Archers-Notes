@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
+import { usePosts } from "@/context/posts-context";
 import ImagePreview from "@/components/ui/image-preview";
 import ReportModal from "@/components/posts/report-modal";
 import DOMPurify from "isomorphic-dompurify";
@@ -34,6 +35,7 @@ export default function PostCard({
 	isOwnPost,
 }: PostCardProps) {
 	const router = useRouter();
+	const { openEditPost } = usePosts();
 	const isOwner = isOwnPost ?? post.authorId === 1;
 	
 	const [liked, setLiked] = useState(false);
@@ -169,8 +171,8 @@ export default function PostCard({
 							<button
 								type="button"
 								onClick={(e) => {
-								e.stopPropagation();
-									// TODO: Open Edit Post modal
+									e.stopPropagation();
+									openEditPost(post);
 								}}
 								aria-label="Edit post"
 								title="Edit post"

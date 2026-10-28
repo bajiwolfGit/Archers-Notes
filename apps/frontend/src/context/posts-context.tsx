@@ -12,6 +12,7 @@ import type { Post } from "@/components/home/post-card";
 import { posts as initialPosts } from "@/data/posts";
 
 const STORAGE_KEY = "archers-notes-created-posts";
+const EDITED_POSTS_STORAGE_KEY = "archers-notes-edited-posts";
 const DRAFTS_STORAGE_KEY = "archers-notes-drafts";
 
 // Draft Interface
@@ -28,10 +29,19 @@ interface PostsContextType {
     posts: Post[];
     addPost: (post: Post) => void;
     deletePost: (id: Post["id"]) => void;
+    updatePost: (updatedPost: Post) => void;
+
+    editingPost: Post | null;
+    openEditPost: (post: Post) => void;
+    closeEditPost: () => void;
 
     drafts: Draft[];
     addDraft: (draft: Draft) => void;
     deleteDraft: (id: number) => void;
+
+    editingDraft: Draft | null;
+    openEditDraft: (draft: Draft) => void;
+    closeEditDraft: () => void;
 }
 
 const PostsContext = createContext<PostsContextType | undefined>(
@@ -44,17 +54,27 @@ export function PostsProvider({
     children: ReactNode;
 }) {
     const [createdPosts, setCreatedPosts] = useState<Post[]>([]);
+    const [editedPosts, setEditedPosts] = useState<Post[]>([]);
+    const [editingPost, setEditingPost] = useState<Post | null>(null);
     const [drafts, setDrafts] = useState<Draft[]>([]);
+    const [editingDraft, setEditingDraft] = useState<Draft | null>(null);
     const [loaded, setLoaded] = useState(false);
 
     // Load saved posts and drafts
     useEffect(() => {
         try {
             const savedPosts = localStorage.getItem(STORAGE_KEY);
+            const savedEditedPosts = localStorage.getItem(
+                EDITED_POSTS_STORAGE_KEY
+            );
             const savedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
 
             if (savedPosts) {
                 setCreatedPosts(JSON.parse(savedPosts) as Post[]);
+            }
+
+            if (savedEditedPosts) {
+                setEditedPosts(JSON.parse(savedEditedPosts) as Post[]);
             }
 
             if (savedDrafts) {
@@ -67,7 +87,7 @@ export function PostsProvider({
         }
     }, []);
 
-    // Save posts to localStorage
+    // Save created posts to localStorage
     useEffect(() => {
         if (!loaded) return;
 
@@ -80,6 +100,20 @@ export function PostsProvider({
             console.error("Failed to save posts:", error);
         }
     }, [createdPosts, loaded]);
+
+    // Save edited posts to localStorage
+    useEffect(() => {
+        if (!loaded) return;
+
+        try {
+            localStorage.setItem(
+                EDITED_POSTS_STORAGE_KEY,
+                JSON.stringify(editedPosts)
+            );
+        } catch (error) {
+            console.error("Failed to save edited posts:", error);
+        }
+    }, [editedPosts, loaded]);
 
     // Save drafts to localStorage
     useEffect(() => {
@@ -105,12 +139,53 @@ export function PostsProvider({
         setCreatedPosts((prev) =>
             prev.filter((post) => post.id !== id)
         );
+
+        setEditedPosts((prev) =>
+            prev.filter((post) => post.id !== id)
+        );
+    }
+
+    // Update an existing post
+    function updatePost(updatedPost: Post) {
+        // Update posts created by the user
+        setCreatedPosts((prev) =>
+            prev.map((post) =>
+                post.id === updatedPost.id ? updatedPost : post
+            )
+        );
+
+        // Store edited versions of posts
+        setEditedPosts((prev) => {
+            const exists = prev.some(
+                (post) => post.id === updatedPost.id
+            );
+
+            if (exists) {
+                return prev.map((post) =>
+                    post.id === updatedPost.id ? updatedPost : post
+                );
+            }
+
+            return [...prev, updatedPost];
+        });
+    }
+
+    // Open the Edit Post modal
+    function openEditPost(post: Post) {
+        setEditingPost(post);
+    }
+
+    // Close the Edit Post modal
+    function closeEditPost() {
+        setEditingPost(null);
     }
 
     // Add or update a draft
     function addDraft(draft: Draft) {
         setDrafts((prev) => {
-            const existing = prev.some((item) => item.id === draft.id);
+            const existing = prev.some(
+                (item) => item.id === draft.id
+            );
 
             if (existing) {
                 return prev.map((item) =>
@@ -129,15 +204,44 @@ export function PostsProvider({
         );
     }
 
+    // Open the Edit Draft modal
+    function openEditDraft(draft: Draft) {
+        setEditingPost(null);
+        setEditingDraft(draft);
+    }
+
+    // Close the Edit Draft modal
+    function closeEditDraft() {
+        setEditingDraft(null);
+    }
+
+    // Combine created and initial posts, applying saved edits
+    const allPosts = [...createdPosts, ...initialPosts].map(
+        (post) =>
+            editedPosts.find(
+                (edited) => edited.id === post.id
+            ) ?? post
+    );
+
     return (
         <PostsContext.Provider
             value={{
-                posts: [...createdPosts, ...initialPosts],
+                posts: allPosts,
                 addPost,
                 deletePost,
+                updatePost,
+
+                editingPost,
+                openEditPost,
+                closeEditPost,
+
                 drafts,
                 addDraft,
                 deleteDraft,
+
+                editingDraft,
+                openEditDraft,
+                closeEditDraft,
             }}
         >
             {children}
