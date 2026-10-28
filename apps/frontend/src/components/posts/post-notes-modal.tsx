@@ -114,12 +114,26 @@ export default function PostNotesModal({
             return;
         }
 
+        // Extract newly inserted images
+        const container = document.createElement("div");
+        container.innerHTML = content;
+
+        const images = Array.from(container.querySelectorAll("img"));
+
+        const newImageUrls = images
+            .map((image) => image.getAttribute("src"))
+            .filter((src): src is string => src !== null);
+
+        // Remove images from the text content
+        images.forEach((image) => image.remove());
+
+        // Preserve existing images and add new ones
         const updatedPost: Post = {
             ...editingPost,
             title: title.trim(),
             course,
-            content,
-            images: existingImages,
+            content: container.innerHTML,
+            images: [...existingImages, ...newImageUrls],
         };
 
         updatePost(updatedPost);
@@ -148,6 +162,21 @@ export default function PostNotesModal({
             return;
         }
 
+        // Separate images from the editor content
+        const container = document.createElement("div");
+        container.innerHTML = content;
+
+        const images = Array.from(container.querySelectorAll("img"));
+
+        const imageUrls = images
+            .map((image) => image.getAttribute("src"))
+            .filter((src): src is string => src !== null);
+
+        // Remove images from the text content
+        images.forEach((image) => image.remove());
+
+        const textContent = container.innerHTML;
+        
         const now = new Date();
 
         const newPost: Post = {
@@ -157,8 +186,8 @@ export default function PostNotesModal({
             course,
             time: "Just now",
             title: title.trim(),
-            content,
-            images: [],
+            content: textContent,
+            images: imageUrls,
             likes: 0,
             comments: 0,
             createdAt: now.toISOString(),
