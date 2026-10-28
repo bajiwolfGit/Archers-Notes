@@ -1,58 +1,113 @@
+/**
+ * File: components/posts/post-details.tsx
+ *
+ * Description:
+ * Renders the full details of an Archer's Notes post, including author
+ * information, note content, images, engagement controls, and comments.
+ *
+ * Features:
+ * - Links to the post author's profile and supports back navigation.
+ * - Provides owner-only pin, edit, and delete controls.
+ * - Provides a report menu for posts belonging to other users.
+ * - Supports liking, bookmarking, and sharing posts or individual comments.
+ * - Displays image grids and a full-screen image preview.
+ * - Displays comments and tracks newly added top-level comments.
+ * - Opens report and deletion confirmation modals.
+ *
+ * Note: Interaction states are local to this component unless delegated
+ * to the shared posts context or a callback.
+ */
+
 "use client";
 
+// React hooks for interaction state, document listeners, and menu references.
 import { useState, useEffect, useRef } from "react";
+
+// Next.js router for history navigation and redirects after deletion.
 import { useRouter } from "next/navigation";
 
+// Next.js optimized image component.
 import Image from "next/image";
+
+// Next.js client-side profile navigation.
 import Link from "next/link";
 
-
+// Shared post actions for deleting a post and opening the edit modal.
 import { usePosts } from "@/context/posts-context";
 
+// Child component responsible for displaying and handling post comments.
 import PostComments from "@/components/posts/post-comments";
+
+// Dialog for submitting a report about a post or comment.
 import ReportModal from "@/components/posts/report-modal";
+
+// Confirmation dialog shown before deleting an owned post.
 import DeleteNoteModal from "@/components/posts/delete-note-modal";
+
+// Image viewer for opening an attachment at its selected index.
 import ImagePreview from "@/components/ui/image-preview";
 
+// Shared TypeScript shape for post data.
 import type { Post } from "@/components/home/post-card";
 
+/** Props containing the post to display. */
 interface PostDetailsProps {
     post: Post;
 }
 
+/**
+ * PostDetails
+ *
+ * Displays one post and coordinates its actions, comments, and dialogs.
+ * @param post - The post to render, including author, images, and counts.
+ * @returns The post detail view and its associated overlays.
+ */
 export default function PostDetails({ post }: PostDetailsProps) {
+
+    // Navigation controller for returning to the previous page or redirecting.
     const router = useRouter();
+
+    // Actions provided by the shared posts context.
     const { deletePost, openEditPost } = usePosts();
 
+    // Mock ownership rule: author ID 1 represents the current user.
     const isOwner = post.authorId === 1;
 
+    // Route to the current user profile or the post author’s public profile.
     const profileHref = isOwner
         ? "/profile"
         : `/profile/${post.authorId}`;
     
+    // Normalize optional image data to an array for grid rendering.
     const images = post.images ?? [];
     
 
-    // Post interactions
+    // Post interactions: locally track pinned, liked, and saved states.
     const [isPinned, setIsPinned] = useState(false);
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
 
-    // Modals and menus
+    // Modals and menus: control the options menu and report/delete dialogs.
     const [showMoreMenu, setShowMoreMenu] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // Comments
+    // Comments: number of new top-level comments reported by PostComments.
     const [additionalComments, setAdditionalComments] = useState(0);
 
-    // Image preview
+    // Image preview: null means closed; a number selects the opening image.
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
         null
     );
 
+    // DOM reference used to detect clicks outside the post options menu.
     const moreMenuRef = useRef<HTMLDivElement>(null);
 
+    /**
+     * Register a document-level mouse listener to dismiss the post menu
+     * when a click occurs outside its referenced container.
+     * The cleanup removes the listener when the component unmounts.
+     */
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             const target = event.target;
@@ -69,11 +124,19 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
         document.addEventListener("mousedown", handleClickOutside);
 
+        // Render the post body, action controls, comments, and modal overlays.
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
+    /**
+     * Share the post or a specific comment.
+     * A comment ID adds a URL fragment so recipients can target that comment.
+     * Uses native sharing when available and clipboard copying otherwise.
+     * Cancellation of the native share sheet is not treated as an error.
+     * @param commentId - Optional ID of the comment being shared.
+     */
     async function handleShare(commentId?: number) {
         const url = new URL(window.location.href);
 
@@ -108,6 +171,10 @@ export default function PostDetails({ post }: PostDetailsProps) {
         }
     }
 
+    /**
+     * Delete the current post through context, close the confirmation
+     * dialog, and replace the current history entry with the home route.
+     */
     function handleDeletePost() {
         deletePost(post.id);
         setShowDeleteModal(false);
