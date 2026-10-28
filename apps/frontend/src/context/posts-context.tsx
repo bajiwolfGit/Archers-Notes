@@ -14,6 +14,7 @@ import { posts as initialPosts } from "@/data/posts";
 const STORAGE_KEY = "archers-notes-created-posts";
 const EDITED_POSTS_STORAGE_KEY = "archers-notes-edited-posts";
 const DRAFTS_STORAGE_KEY = "archers-notes-drafts";
+const DELETED_POSTS_STORAGE_KEY = "archers-notes-deleted-posts";
 
 // Draft Interface
 export interface Draft {
@@ -54,6 +55,7 @@ export function PostsProvider({
     children: ReactNode;
 }) {
     const [createdPosts, setCreatedPosts] = useState<Post[]>([]);
+    const [deletedPostIds, setDeletedPostIds] = useState<Post["id"][]>([]);
     const [editedPosts, setEditedPosts] = useState<Post[]>([]);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
     const [drafts, setDrafts] = useState<Draft[]>([]);
@@ -69,6 +71,10 @@ export function PostsProvider({
             );
             const savedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
 
+            const savedDeletedPosts = localStorage.getItem(
+                DELETED_POSTS_STORAGE_KEY
+            );
+
             if (savedPosts) {
                 setCreatedPosts(JSON.parse(savedPosts) as Post[]);
             }
@@ -79,6 +85,10 @@ export function PostsProvider({
 
             if (savedDrafts) {
                 setDrafts(JSON.parse(savedDrafts) as Draft[]);
+            }
+
+            if (savedDeletedPosts) {
+                setDeletedPostIds(JSON.parse(savedDeletedPosts) as Post["id"][]);
             }
         } catch (error) {
             console.error("Failed to load posts or drafts:", error);
@@ -129,6 +139,20 @@ export function PostsProvider({
         }
     }, [drafts, loaded]);
 
+    // Save deleted post IDs to localStorage
+    useEffect(() => {
+        if (!loaded) return;
+
+        try {
+            localStorage.setItem(
+                DELETED_POSTS_STORAGE_KEY,
+                JSON.stringify(deletedPostIds)
+            );
+        } catch (error) {
+            console.error("Failed to save deleted posts:", error);
+        }
+    }, [deletedPostIds, loaded]);
+
     // Add a new post
     function addPost(post: Post) {
         setCreatedPosts((prev) => [post, ...prev]);
@@ -136,12 +160,19 @@ export function PostsProvider({
 
     // Delete an existing post
     function deletePost(id: Post["id"]) {
+        // Remove from created posts
         setCreatedPosts((prev) =>
             prev.filter((post) => post.id !== id)
         );
 
+        // Remove from edited posts
         setEditedPosts((prev) =>
             prev.filter((post) => post.id !== id)
+        );
+
+        // Remember deleted posts
+        setDeletedPostIds((prev) =>
+            prev.includes(id) ? prev : [...prev, id]
         );
     }
 
@@ -216,12 +247,14 @@ export function PostsProvider({
     }
 
     // Combine created and initial posts, applying saved edits
-    const allPosts = [...createdPosts, ...initialPosts].map(
-        (post) =>
-            editedPosts.find(
-                (edited) => edited.id === post.id
-            ) ?? post
-    );
+    const allPosts = [...createdPosts, ...initialPosts]
+        .filter((post) => !deletedPostIds.includes(post.id))
+        .map(
+            (post) =>
+                editedPosts.find(
+                    (edited) => edited.id === post.id
+                ) ?? post
+        );
 
     return (
         <PostsContext.Provider
