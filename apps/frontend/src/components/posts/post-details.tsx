@@ -7,7 +7,9 @@ import Image from "next/image";
 import Link from "next/link";
 import DOMPurify from "isomorphic-dompurify";
 
+import { usePosts } from "@/context/posts-context";
 import ReportModal from "@/components/posts/report-modal";
+import DeleteNoteModal from "@/components/posts/delete-note-modal";
 import type { Post } from "@/components/home/post-card";
 import ImagePreview from "@/components/ui/image-preview";
 import CommentEditor, {
@@ -48,7 +50,10 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
     const [showMoreMenu, setShowMoreMenu] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [openCommentMenu, setOpenCommentMenu] = useState<number | null>(null);
+
+    const { deletePost } = usePosts();
 
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
         null
@@ -251,6 +256,14 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
     const isOwnPost = post.authorId === 1;
 
+    function handleDeletePost() {
+        deletePost(post.id);
+        setShowDeleteModal(false);
+
+        router.replace("/");
+        router.refresh();
+    }
+
     return (
         <>
             {/* Main Post Details Container */}
@@ -360,9 +373,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                     {/* Delete Post */}
                                     <button
                                         type="button"
-                                        onClick={() => {
-                                            // TODO: Open Delete Post confirmation modal
-                                        }}
+                                        onClick={() => setShowDeleteModal(true)}
                                         aria-label="Delete post"
                                         title="Delete post"
                                         className="flex h-7 w-7 items-center justify-center hover:opacity-60"
@@ -891,6 +902,15 @@ export default function PostDetails({ post }: PostDetailsProps) {
                 isOpen={showReportModal}
                 onClose={() => setShowReportModal(false)}
             />
+
+            {/* Delete Note Modal */}
+            {isOwnPost && (
+                <DeleteNoteModal
+                    isOpen={showDeleteModal}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={handleDeletePost}
+                />
+            )}
         </>
     );
 }

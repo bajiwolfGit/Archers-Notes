@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePosts } from "@/context/posts-context";
 import ImagePreview from "@/components/ui/image-preview";
 import ReportModal from "@/components/posts/report-modal";
+import DeleteNoteModal from "@/components/posts/delete-note-modal";
 import DOMPurify from "isomorphic-dompurify";
 
 export interface Post {
@@ -35,7 +36,7 @@ export default function PostCard({
 	isOwnPost,
 }: PostCardProps) {
 	const router = useRouter();
-	const { openEditPost } = usePosts();
+	const { openEditPost, deletePost } = usePosts();
 	const isOwner = isOwnPost ?? post.authorId === 1;
 	
 	const [liked, setLiked] = useState(false);
@@ -45,6 +46,7 @@ export default function PostCard({
 
 	const [showMoreMenu, setShowMoreMenu] = useState(false);
 	const [showReportModal, setShowReportModal] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 	const moreMenuRef = useRef<HTMLDivElement>(null);
 
@@ -149,8 +151,10 @@ export default function PostCard({
 							<button
 								type="button"
 								onClick={(e) => {
+									e.preventDefault();
 									e.stopPropagation();
-									setIsPinned(!isPinned);
+									setSelectedImageIndex(null);
+									setShowDeleteModal(true);
 								}}
 								aria-label={isPinned ? "Unpin post" : "Pin post"}
 								title={isPinned ? "Unpin post" : "Pin post"}
@@ -191,8 +195,8 @@ export default function PostCard({
 							<button
 								type="button"
 								onClick={(e) => {
-								e.stopPropagation();
-									// TODO: Open Delete Post confirmation modal
+									e.stopPropagation();
+									setShowDeleteModal(true);
 								}}
 								aria-label="Delete post"
 								title="Delete post"
@@ -414,9 +418,21 @@ export default function PostCard({
 				isOpen={showReportModal}
 				onClose={() => setShowReportModal(false)}
 			/>
+			
+			{/* Delete Note Modal */}
+			{isOwner && (
+				<DeleteNoteModal
+					isOpen={showDeleteModal}
+					onClose={() => setShowDeleteModal(false)}
+					onConfirm={() => {
+						deletePost(post.id);
+						setShowDeleteModal(false);
+					}}
+				/>
+			)}
 		
 			{/* Image Preview Modal */}
-			{selectedImageIndex !== null && post.images && (
+			{selectedImageIndex !== null && !showDeleteModal && post.images && (
 				<ImagePreview
 				images={post.images}
 				initialIndex={selectedImageIndex}
