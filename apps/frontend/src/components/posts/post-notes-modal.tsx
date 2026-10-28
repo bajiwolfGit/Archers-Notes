@@ -20,7 +20,7 @@ export default function PostNotesModal({
     editingPost = null,
     editingDraft = null,
 }: PostNotesModalProps) {
-    const { addPost, addDraft, updatePost } = usePosts();
+    const { addPost, addDraft, updatePost, deleteDraft } = usePosts();
     const isEditing = editingPost !== null;
 
     const [title, setTitle] = useState(
@@ -195,6 +195,12 @@ export default function PostNotesModal({
 
         try {
             addPost(newPost);
+
+            // Remove the draft after publishing it
+            if (editingDraft) {
+                deleteDraft(editingDraft.id);
+            }
+            
             onClose();
         } catch (error) {
             console.error("Failed to create post:", error);
