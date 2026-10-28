@@ -127,12 +127,6 @@ export default function Sidebar({ onOpenPostNotes }: SidebarProps) {
 				/>
 
 				<SidebarButton
-					icon="/assets/icons/my-quizzes.svg"
-					label="My Quizzes"
-					href="/main/my-quizzes"
-				/>
-
-				<SidebarButton
 					icon="/assets/icons/add.svg"
 					label="Create a Quiz"
 					href="/main/create-quiz"
