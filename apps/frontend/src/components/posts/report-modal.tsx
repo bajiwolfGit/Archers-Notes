@@ -1,14 +1,44 @@
+/**
+ * File: components/posts/report-modal.tsx
+ *
+ * Description:
+ * Displays a report form for flagging content in Archer's Notes.
+ * Users can select multiple report reasons, provide optional details,
+ * and view a success confirmation after submitting the form.
+ *
+ * Features:
+ * - Multi-select report reasons and optional written details.
+ * - Validation requiring at least one reason.
+ * - Dismissal by close button or clicking the report overlay.
+ * - Success confirmation dialog after local submission handling.
+ * - Portal rendering into document.body.
+ *
+ * Note: Reports are currently logged to the console, not sent to a backend.
+ */
+
+
 "use client";
 
+// React hooks for local form state and client-side mount detection.
 import { useState, useEffect } from "react";
+
+// Renders the dialogs directly inside the document body.
 import { createPortal } from "react-dom";
+
+// Optimized icons used in the report form.
 import Image from "next/image";
 
+/**
+ * Props controlling the report dialog.
+ * @property isOpen Whether the report form should be visible.
+ * @property onClose Callback for dismissing the report flow.
+ */
 interface ReportModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+/** Available report categories displayed as selectable buttons. */
 const reportReasons = [
     "Harassment",
     "Threatening Violence",
@@ -23,20 +53,42 @@ const reportReasons = [
     "Spam"
 ];
 
+/**
+ * ReportModal
+ *
+ * Presents a report form and a separate success confirmation.
+ * Submission currently validates and logs data without contacting a server.
+ *
+ * @param isOpen Whether the report form is open.
+ * @param onClose Called when the report flow is dismissed.
+ * @returns The portal containing the report and success dialogs, or null before mount.
+ */
 export default function ReportModal({
     isOpen,
     onClose,
 }: ReportModalProps) {
+
+    // Currently selected report categories (multiple selections allowed).
     const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
+    
+    // Optional explanation entered by the user.
     const [details, setDetails] = useState("");
+    
+    // Validation feedback when the user submits without a reason.
     const [error, setError] = useState("");
+    
+    // Controls the confirmation dialog shown after submission.
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    
+    // Ensures portal rendering only begins after client-side mounting.
     const [mounted, setMounted] = useState(false);
 
+    // Mark the component as mounted after the first client-side render.
     useEffect(() => {
         setMounted(true);
     }, []);
 
+    /** Toggle a report reason and clear any previous validation error. */
     const toggleReason = (reason: string) => {
         setError("");
 
@@ -47,6 +99,7 @@ export default function ReportModal({
         );
     };
 
+    /** Validate the selection, log the report, and show confirmation. */
     const handleSubmit = () => {
         if (selectedReasons.length === 0) {
             setError("Please select at least one reason.");
@@ -67,10 +120,14 @@ export default function ReportModal({
         setShowSuccessModal(true);
     };
 
+
+
     if (!mounted) return null;
 
+    // Render the dialogs at document.body to avoid parent layout constraints.
     return createPortal(
         <> 
+            {/* Show the report form only while open and before confirmation. */}
             {isOpen && !showSuccessModal &&
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4"
@@ -120,6 +177,7 @@ export default function ReportModal({
                             happening, and we&apos;ll look into it.
                         </p>
 
+                        {/* Display validation feedback when no reason is selected. */}
                         {error && (
                             <p role="alert" className="mb-3 ml-10 text-xs text-red-500">
                                 {error}
@@ -133,6 +191,7 @@ export default function ReportModal({
                             </p>
 
                             <div className="flex flex-wrap gap-2">
+                                {/* Render each reason as a toggleable selection button. */}
                                 {reportReasons.map((reason) => {
                                     const selected = selectedReasons.includes(reason);
 
@@ -192,6 +251,7 @@ export default function ReportModal({
             }
 
             {/* Success Modal */}
+            {/* Show a separate confirmation after a valid local submission. */}
             {showSuccessModal && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 px-4">
                     <div

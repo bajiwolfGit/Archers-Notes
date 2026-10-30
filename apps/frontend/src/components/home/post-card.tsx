@@ -1,17 +1,55 @@
+/**
+ * File: components/home/post-card.tsx
+ *
+ * Description:
+ * Renders a post card in the Archer's Notes feed, including author details,
+ * sanitized rich-text content, image attachments, and engagement controls.
+ *
+ * Features:
+ * - Opens post details and author profiles.
+ * - Provides owner-only edit and delete actions.
+ * - Allows reporting posts by other users.
+ * - Displays image thumbnails and a full-size image preview.
+ * - Supports local like, bookmark, and pin display state.
+ * - Shares a post through the Web Share API or copies its URL.
+ */
 
 "use client";
 
+// React hooks for local UI state, event-listener lifecycle, and dropdown references.
 import { useState, useEffect, useRef } from "react";
+
+// Next.js hook for programmatic navigation to post details.
 import { useRouter } from "next/navigation";
+
+// Next.js component for rendering post, avatar, and action images.
 import Image from "next/image";
+
+// Next.js component for navigating to author profiles.
 import Link from "next/link";
 
+
+// Shared post context exposing edit and delete operations.
 import { usePosts } from "@/context/posts-context";
+
+// Modal for browsing attached images at a larger size.
 import ImagePreview from "@/components/ui/image-preview";
+
+// Modal for reporting another user's post.
 import ReportModal from "@/components/posts/report-modal";
+
+// Confirmation modal shown before deleting an owned post.
 import DeleteNoteModal from "@/components/posts/delete-note-modal";
+
+// Sanitizes rich-text HTML before rendering it into the post card.
 import DOMPurify from "isomorphic-dompurify";
 
+/**
+ * Post
+ * Represents a note displayed in the feed, including author identity,
+ * course, rich-text content, optional attachments, and engagement counts.
+ * `createdAt` is used when sorting the feed by recency.
+ */
 export interface Post {
 	id: number;
 	authorId: number;
@@ -26,30 +64,63 @@ export interface Post {
 	createdAt: string;
 }
 
+/**
+ * Props for PostCard.
+ * @property post - The post to display.
+ * @property isOwnPost - Optional override for whether owner actions are shown.
+ */
 interface PostCardProps {
 	post: Post;
 	isOwnPost?: boolean;
 }
 
+/**
+ * PostCard
+ * Displays a clickable post with owner controls, engagement buttons,
+ * image previews, and conditional report/delete modals.
+ *
+ * @param post - Post data to render.
+ * @param isOwnPost - Optional ownership override.
+ * @returns The post card and its associated modals.
+ */
 export default function PostCard({
 	post,
 	isOwnPost,
 }: PostCardProps) {
+
+	// Router used to open the selected post.
 	const router = useRouter();
+
+	// Context actions for editing or deleting the current post.
 	const { openEditPost, deletePost } = usePosts();
+
+	// Show owner actions when explicitly requested or when authorId is 1.
 	const isOwner = isOwnPost ?? post.authorId === 1;
-	
+
+
+	// Local interaction states; these do not update shared post data.
 	const [liked, setLiked] = useState(false);
 	const [saved, setSaved] = useState(false);
+
+	// Index of the image currently open in the preview; null closes it.
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+	
+	// Local pin indicator (currently not toggled by the pin button).
 	const [isPinned, setIsPinned] = useState(false);
 
+
+	// Visibility states for the options menu and report/delete dialogs.
 	const [showMoreMenu, setShowMoreMenu] = useState(false);
 	const [showReportModal, setShowReportModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+	// DOM reference used to detect clicks outside the options menu.
 	const moreMenuRef = useRef<HTMLDivElement>(null);
 
+	/**
+	 * Close the More Options menu when a mouse click occurs outside it.
+	 * Remove the document listener on unmount to avoid leaking listeners.
+	 */
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -67,14 +138,22 @@ export default function PostCard({
 		};
 	}, []);
 	
+	/** Navigate to the details page for the current post. */
 	const openPost = () => {
 		router.push(`/posts/${post.id}`);
 	};
 
+	/**
+	 * Share the post using the device's native share dialog when supported.
+	 * Otherwise, copy the post URL to the clipboard.
+	 *
+	 * @param event - Share-button click event, stopped from opening the post.
+	 */
 	async function handleShare(event: React.MouseEvent<HTMLButtonElement>) {
 		event.preventDefault();
 		event.stopPropagation();
 
+		// Build an absolute URL for sharing or copying.
 		const postUrl = `${window.location.origin}/posts/${post.id}`;
 
 		const shareData = {
@@ -84,6 +163,7 @@ export default function PostCard({
 		};
 
 		try {
+			// Prefer native sharing; use the clipboard as a fallback.
 			if (navigator.share) {
 				await navigator.share(shareData);
 			} else {
@@ -96,12 +176,14 @@ export default function PostCard({
 				return;
 			}
 
+			// Log unexpected sharing or clipboard failures.
 			console.error("Failed to share post:", error);
 		}
 	}
 
   	return (
 		<>
+			{/* Clicking the card opens the post details page. */}
 			<article
 				onClick={openPost}
 				className="w-full cursor-pointer rounded-sm border border-gray-200 bg-white p-6 transition-colors hover:bg-gray-50"
@@ -144,6 +226,7 @@ export default function PostCard({
 					</span>
 
 					{/* Post Options */}
+					{/* Owner actions are shown instead of the report menu. */}
 					{isOwner ? (
 						<div className="ml-auto flex items-center gap-3">
 
@@ -256,6 +339,7 @@ export default function PostCard({
 				</div>
 
 				{/* Post Content */}
+				{/* Rich-text body and optional attachment grid. */}
 				<div className="ml-9 mt-3">
 					<button
 						type="button"
@@ -265,6 +349,7 @@ export default function PostCard({
 						{post.title}
 					</button>
 
+					{/* Sanitize stored HTML before injecting it into the DOM. */}
 					<div
 						className="text-xs leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-md"
 						dangerouslySetInnerHTML={{
@@ -283,6 +368,7 @@ export default function PostCard({
 								: "h-[220px] grid-cols-2 grid-rows-2"
 							}`}
 						>
+							{/* Show up to three thumbnails; preview can access all images. */}
 							{post.images.slice(0, 3).map((image, index) => (
 								<button
 									key={index}
@@ -307,6 +393,7 @@ export default function PostCard({
 									/>
 
 									{/* Dark overlay on the third image */}
+									{/* Indicate how many additional attachments are hidden. */}
 									{post.images!.length > 3 && index === 2 && (
 										<div className="absolute inset-0 flex items-center justify-center bg-black/60">
 											<span className="text-3xl font-semibold text-white">
@@ -414,12 +501,14 @@ export default function PostCard({
 				</div>
 			</article>
 		
+			{/* Report dialog, controlled by the non-owner options menu. */}
 			<ReportModal
 				isOpen={showReportModal}
 				onClose={() => setShowReportModal(false)}
 			/>
 			
 			{/* Delete Note Modal */}
+			{/* Owner-only delete confirmation; deletion is handled by PostsContext. */}
 			{isOwner && (
 				<DeleteNoteModal
 					isOpen={showDeleteModal}
@@ -432,6 +521,7 @@ export default function PostCard({
 			)}
 		
 			{/* Image Preview Modal */}
+			{/* Full-size image preview opens when a thumbnail is selected. */}
 			{selectedImageIndex !== null && !showDeleteModal && post.images && (
 				<ImagePreview
 				images={post.images}

@@ -1,50 +1,103 @@
+/**
+ * File: components/posts/post-notes-modal.tsx
+ *
+ * Description:
+ * Provides the create/edit note dialog, including draft saving, course
+ * selection, rich-text content, image management, validation, and
+ * confirmation dialogs for clearing or leaving with unsaved changes.
+ *
+ * Features:
+ * - Creates new posts, edits existing posts, and saves drafts.
+ * - Extracts embedded image URLs from rich-text HTML.
+ * - Validates required fields before publishing.
+ * - Prevents background scrolling and supports Escape-key dismissal.
+ * - Confirms clearing content and leaving with unsaved changes.
+ */
+
 "use client";
 
+// React hooks for managing modal state and browser event effects.
 import { useEffect, useState } from "react";
+
+// Next.js image component for icons and existing image previews.
 import Image from "next/image";
 
+
+// Dropdown for selecting the course associated with a note.
 import CourseSelector from "./course-selector";
+
+// Rich-text editor for note content and attachments.
 import NotesEditor from "./notes-editor";
 
+
+// Shared post/draft actions and the Draft data type.
 import { usePosts, type Draft } from "@/context/posts-context";
+
+// Post data type used when publishing or updating a note.
 import type { Post } from "@/components/home/post-card";
 
+/**
+ * Properties passed from the layout to the note editor dialog.
+ * @property onClose - Closes the dialog and resets editing selection upstream.
+ * @property editingPost - Existing post to edit, if any.
+ * @property editingDraft - Saved draft to resume, if any.
+ */
 interface PostNotesModalProps {
     onClose: () => void;
     editingPost?: Post | null;
     editingDraft?: Draft | null;
 }
 
+/**
+ * PostNotesModal
+ * Renders the note creation/editing workflow and its confirmation dialogs.
+ * @returns The editor dialog and conditional confirmation overlays.
+ */
 export default function PostNotesModal({
     onClose,
     editingPost = null,
     editingDraft = null,
 }: PostNotesModalProps) {
+
+    // Access shared actions for publishing, updating, and managing drafts.
     const { addPost, addDraft, updatePost, deleteDraft } = usePosts();
+
+    // Distinguish editing an existing post from creating a post or resuming a draft.
     const isEditing = editingPost !== null;
 
+    // Note title, initialized from the selected post or draft.
     const [title, setTitle] = useState(
         editingPost?.title ?? editingDraft?.title ?? ""
     );
 
+    // Selected course, initialized from the selected post or draft.
     const [course, setCourse] = useState(
         editingPost?.course ?? editingDraft?.course ?? ""
     );
 
+    // Rich-text HTML content, initialized from the selected post or draft.
     const [content, setContent] = useState(
         editingPost?.content ?? editingDraft?.content ?? ""
     );
 
+    // Files currently attached through the editor.
     const [attachments, setAttachments] = useState<File[]>([]);
 
+    // Previously published image URLs retained while editing a post.
     const [existingImages, setExistingImages] = useState<string[]>(
         editingPost?.images ?? []
     );
     
+    // Incremented when clearing the form to reset the nested rich-text editor.
     const [resetKey, setResetKey] = useState(0);
+
+    // Validation or publishing error shown beneath the form.
     const [error, setError] = useState("");
 
+    // Controls the confirmation prompt for unsaved changes on close.
     const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+
+    // Controls the confirmation prompt before clearing the editor.
     const [showClearConfirm, setShowClearConfirm] = useState(false);
 
     // Prevent background scrolling while modal is open
@@ -57,6 +110,7 @@ export default function PostNotesModal({
         };
     }, []);
 
+    // Handle Escape: dismiss a confirmation first, otherwise request editor closure.
     useEffect(() => {
         function handleEscape(event: KeyboardEvent) {
             if (event.key !== "Escape") return;
@@ -77,6 +131,7 @@ export default function PostNotesModal({
         };
     });
 
+    /** Save current form values as a draft, preserving the draft ID when editing. */
     function handleSaveDraft() {
         const draft: Draft = {
             id: editingDraft?.id ?? Date.now(),
@@ -91,6 +146,7 @@ export default function PostNotesModal({
     }
     
     // Update an existing post
+    /** Validate and update an existing post, preserving retained images. */
     function handleUpdatePost() {
         if (!editingPost) return;
 
@@ -141,6 +197,7 @@ export default function PostNotesModal({
     }
 
     // Publish Note
+    /** Validate and publish a new post; remove its source draft if applicable. */
     function handlePost() {
         if (!title.trim()) {
             setError("Please enter a title.");
@@ -209,10 +266,12 @@ export default function PostNotesModal({
     }
 
     // Clear Note
+    /** Request confirmation before clearing the form. */
     function handleClear() {
         setShowClearConfirm(true);
     }
 
+    /** Reset form values, attachment state, and the nested editor. */
     function confirmClear() {
         setTitle("");
         setCourse("");
@@ -226,6 +285,7 @@ export default function PostNotesModal({
     }
 
     // Close confirmation
+    /** Close immediately if unchanged, or ask how to handle unsaved changes. */
     function handleRequestClose() {
         if (showClearConfirm) {
             setShowClearConfirm(false);
@@ -258,6 +318,7 @@ export default function PostNotesModal({
         }
     }
 
+    // Modal backdrop: clicking outside the dialog requests closure.
     return (
         <div
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-3 py-3 sm:px-4 sm:py-6"
@@ -277,7 +338,7 @@ export default function PostNotesModal({
                 aria-labelledby="post-notes-title"
                 className="flex max-h-[90dvh] w-full max-w-[850px] flex-col overflow-hidden rounded-[20px] bg-white shadow-xl sm:rounded-[30px]"
             >
-                {/* Header */}
+                {/* Header: close control, editor mode title, and save/publish actions. */}
                 <div className="flex shrink-0 items-center gap-3 px-4 pb-3 pt-4 sm:gap-5 sm:px-6">
 
                     {/* Close */}
@@ -327,7 +388,7 @@ export default function PostNotesModal({
                     </div>
                 </div>
 
-                {/* Form */}
+                {/* Form: note title, course, rich text, images, and validation. */}
                 <div className="min-h-0 space-y-3 overflow-y-auto px-5 pb-6 pt-3 sm:px-8 md:px-10">
 
                     {/* Title Input */}
@@ -379,73 +440,73 @@ export default function PostNotesModal({
                         />
                     </div>
 
-                    {/* Existing Post Images */}
-                        {isEditing && existingImages.length > 0 && (
-                            <div className="space-y-3">
-                                <p className="text-sm font-medium text-gray-700">
-                                    Existing Images
-                                </p>
+                    {/* Existing Post Images: allow removal of previously attached images. */}
+                    {isEditing && existingImages.length > 0 && (
+                        <div className="space-y-3">
+                            <p className="text-sm font-medium text-gray-700">
+                                Existing Images
+                            </p>
 
-                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                    {existingImages.map((image, index) => (
-                                        <div
-                                            key={`${image}-${index}`}
-                                            className="relative overflow-hidden rounded-md border border-gray-200 bg-gray-50"
-                                        >
-                                            <div className="relative h-32 w-full">
-                                                <Image
-                                                    src={image}
-                                                    alt={`Existing image ${index + 1}`}
-                                                    fill
-                                                    unoptimized
-                                                    className="object-contain"
-                                                />
-                                            </div>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setExistingImages((previous) =>
-                                                        previous.filter((_, i) => i !== index)
-                                                    );
-                                                }}
-                                                aria-label={`Remove image ${index + 1}`}
-                                                className="absolute right-2 top-2 rounded-full bg-white px-2 py-1 text-xs font-medium text-red-500 shadow hover:bg-red-50"
-                                            >
-                                                Remove
-                                            </button>
+                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                {existingImages.map((image, index) => (
+                                    <div
+                                        key={`${image}-${index}`}
+                                        className="relative overflow-hidden rounded-md border border-gray-200 bg-gray-50"
+                                    >
+                                        <div className="relative h-32 w-full">
+                                            <Image
+                                                src={image}
+                                                alt={`Existing image ${index + 1}`}
+                                                fill
+                                                unoptimized
+                                                className="object-contain"
+                                            />
                                         </div>
-                                    ))}
-                                </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setExistingImages((previous) =>
+                                                    previous.filter((_, i) => i !== index)
+                                                );
+                                            }}
+                                            aria-label={`Remove image ${index + 1}`}
+                                            className="absolute right-2 top-2 rounded-full bg-white px-2 py-1 text-xs font-medium text-red-500 shadow hover:bg-red-50"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                        )}
+                        </div>
+                    )}
                         
-                        {/* Attachments Summary */}
-                        {attachments.length > 0 && (
-                            <p className="text-xs text-gray-500">
-                                {attachments.length} file(s) attached
-                            </p>
-                        )}
+                    {/* Attachments Summary */}
+                    {attachments.length > 0 && (
+                        <p className="text-xs text-gray-500">
+                            {attachments.length} file(s) attached
+                        </p>
+                    )}
 
-                        {/* Validation Error */}
-                        {error && (
-                            <p role="alert" className="text-sm text-[#FF5A5F]">
-                                {error}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex justify-end px-6 pb-5 pt-2">
-                        <button
-                            type="button"
-                            onClick={handleClear}
-                            className="flex min-w-[120px] items-center justify-center rounded-full border border-[#FF5A5F] bg-white px-5 py-2 text-xs font-semibold text-[#FF5A5F] transition-colors hover:bg-[#FFF0F0]"
-                        >
-                            Clear
-                        </button>
-                    </div>
+                    {/* Validation Error */}
+                    {error && (
+                        <p role="alert" className="text-sm text-[#FF5A5F]">
+                            {error}
+                        </p>
+                    )}
                 </div>
+
+                {/* Footer */}
+                <div className="flex justify-end px-6 pb-5 pt-2">
+                    <button
+                        type="button"
+                        onClick={handleClear}
+                        className="flex min-w-[120px] items-center justify-center rounded-full border border-[#FF5A5F] bg-white px-5 py-2 text-xs font-semibold text-[#FF5A5F] transition-colors hover:bg-[#FFF0F0]"
+                    >
+                        Clear
+                    </button>
+                </div>
+            </div>
 
             {/* Clear Confirmation Modal */}
             {showClearConfirm && (

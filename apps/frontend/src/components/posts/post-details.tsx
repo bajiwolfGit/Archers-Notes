@@ -1,74 +1,118 @@
+/**
+ * File: components/posts/post-details.tsx
+ *
+ * Description:
+ * Renders the full details of an Archer's Notes post, including author
+ * information, note content, images, engagement controls, and comments.
+ *
+ * Features:
+ * - Links to the post author's profile and supports back navigation.
+ * - Provides owner-only pin, edit, and delete controls.
+ * - Provides a report menu for posts belonging to other users.
+ * - Supports liking, bookmarking, and sharing posts or individual comments.
+ * - Displays image grids and a full-screen image preview.
+ * - Displays comments and tracks newly added top-level comments.
+ * - Opens report and deletion confirmation modals.
+ *
+ * Note: Interaction states are local to this component unless delegated
+ * to the shared posts context or a callback.
+ */
+
 "use client";
 
+// React hooks for interaction state, document listeners, and menu references.
 import { useState, useEffect, useRef } from "react";
+
+// Next.js router for history navigation and redirects after deletion.
 import { useRouter } from "next/navigation";
 
+// Next.js optimized image component.
 import Image from "next/image";
+
+// Next.js client-side profile navigation.
 import Link from "next/link";
-import DOMPurify from "isomorphic-dompurify";
 
+// Shared post actions for deleting a post and opening the edit modal.
 import { usePosts } from "@/context/posts-context";
+
+// Child component responsible for displaying and handling post comments.
+import PostComments from "@/components/posts/post-comments";
+
+// Dialog for submitting a report about a post or comment.
 import ReportModal from "@/components/posts/report-modal";
+
+// Confirmation dialog shown before deleting an owned post.
 import DeleteNoteModal from "@/components/posts/delete-note-modal";
-import type { Post } from "@/components/home/post-card";
+
+// Image viewer for opening an attachment at its selected index.
 import ImagePreview from "@/components/ui/image-preview";
-import CommentEditor, {
-    type CommentAttachment,
-} from "@/components/posts/comment-editor";
 
-interface Comment {
-    id: number;
-    authorId: number;
-    name: string;
-    course: string;
-    text: string;
-    time: string;
-    likes: number;
-    replies: Comment[];
-    attachments?: CommentAttachment[];
-}
+// Shared TypeScript shape for post data.
+import type { Post } from "@/components/home/post-card";
 
+/** Props containing the post to display. */
 interface PostDetailsProps {
     post: Post;
 }
 
+/**
+ * PostDetails
+ *
+ * Displays one post and coordinates its actions, comments, and dialogs.
+ * @param post - The post to render, including author, images, and counts.
+ * @returns The post detail view and its associated overlays.
+ */
 export default function PostDetails({ post }: PostDetailsProps) {
-    const isOwner = post.authorId === 1;
-    const [isPinned, setIsPinned] = useState(false);
-    
-    const [replyingTo, setReplyingTo] = useState<number | null>(null);
-    const [replyText, setReplyText] = useState("");
-    
+
+    // Navigation controller for returning to the previous page or redirecting.
     const router = useRouter();
 
-    const [likedComments, setLikedComments] = useState<Set<number>>(
-        new Set()
-    );
+    // Actions provided by the shared posts context.
+    const { deletePost, openEditPost } = usePosts();
 
+    // Mock ownership rule: author ID 1 represents the current user.
+    const isOwner = post.authorId === 1;
+
+    // Route to the current user profile or the post author’s public profile.
+    const profileHref = isOwner
+        ? "/profile"
+        : `/profile/${post.authorId}`;
+    
+    // Normalize optional image data to an array for grid rendering.
+    const images = post.images ?? [];
+    
+
+    // Post interactions: locally track pinned, liked, and saved states.
+    const [isPinned, setIsPinned] = useState(false);
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
 
+    // Modals and menus: control the options menu and report/delete dialogs.
     const [showMoreMenu, setShowMoreMenu] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [openCommentMenu, setOpenCommentMenu] = useState<number | null>(null);
 
-    const { deletePost } = usePosts();
+    // Comments: number of new top-level comments reported by PostComments.
+    const [additionalComments, setAdditionalComments] = useState(0);
 
+    // Image preview: null means closed; a number selects the opening image.
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
         null
     );
 
-    const [commentImagePreview, setCommentImagePreview] = useState<{
-        images: string[];
-        initialIndex: number;
-    } | null>(null);
-
+    // DOM reference used to detect clicks outside the post options menu.
     const moreMenuRef = useRef<HTMLDivElement>(null);
 
+    /**
+     * Register a document-level mouse listener to dismiss the post menu
+     * when a click occurs outside its referenced container.
+     * The cleanup removes the listener when the component unmounts.
+     */
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            const target = event.target as HTMLElement;
+        function handleClickOutside(event: MouseEvent) {
+            const target = event.target;
+
+            if (!(target instanceof Node)) return;
 
             if (
                 moreMenuRef.current &&
@@ -76,151 +120,23 @@ export default function PostDetails({ post }: PostDetailsProps) {
             ) {
                 setShowMoreMenu(false);
             }
-
-            if (!target.closest("[data-comment-menu]")) {
-                setOpenCommentMenu(null);
-            }
-        };
+        }
 
         document.addEventListener("mousedown", handleClickOutside);
 
+        // Render the post body, action controls, comments, and modal overlays.
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-    
-    const [comments, setComments] = useState<Comment[]>([
-        {
-            id: 1,
-            name: "Carmy Berzatto",
-            authorId: 3,
-            course: "CCS Student",
-            text: "<p>Wow! Thank for this :)</p>",
-            time: "15 mins ago",
-            likes: 2,
-            replies: [
-                {
-                    id: 2,
-                    authorId: 4,
-                    name: "Alan Smith",
-                    course: "CCS Student",
-                    text: "<p>You're welcome!</p>",
-                    time: "2 mins ago",
-                    likes: 0,
-                    replies: [],
-                },
-            ],
-        },
-    ]);
 
-    function handleComment(
-        html: string,
-        attachments: CommentAttachment[]
-        ) {
-        setComments((previous) => [
-            ...previous,
-            {
-                id: Date.now(),
-                authorId: 1,
-                name: "You",
-                course: "CCS Student",
-                text: html,
-                time: "Just now",
-                likes: 0,
-                replies: [],
-                attachments,
-            },
-        ]);
-    }
-
-    // Like or unlike a comment
-    function handleLikeComment(commentId: number) {
-        setLikedComments((previous) => {
-            const updated = new Set(previous);
-
-            if (updated.has(commentId)) {
-                updated.delete(commentId);
-            } else {
-                updated.add(commentId);
-            }
-
-            return updated;
-        });
-    }
-
-    // Add a reply to a comment
-    function handleReply(commentId: number, text: string) {
-        if (!text.trim()) return;
-
-        setComments((previous) =>
-            previous.map((comment) => {
-                if (comment.id !== commentId) return comment;
-
-                return {
-                    ...comment,
-                    replies: [
-                        ...comment.replies,
-                        {
-                            id: Date.now(),
-                            authorId: 1,
-                            name: "You",
-                            course: "CCS Student",
-                            text: `<p>${text.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</p>`,
-                            time: "Just now",
-                            likes: 0,
-                            replies: [],
-                        },
-                    ],
-                };
-            })
-        );
-    }
-
-    function handleCommentImageClick(
-        event: React.MouseEvent<HTMLDivElement>
-    ) {
-        const target = event.target;
-
-        if (!(target instanceof HTMLImageElement)) return;
-
-        const container = event.currentTarget;
-
-        const images = Array.from(
-            container.querySelectorAll("img")
-        ).map((image) => image.src);
-
-        const initialIndex = Array.from(
-            container.querySelectorAll("img")
-        ).indexOf(target);
-
-        if (initialIndex === -1) return;
-
-        setCommentImagePreview({
-            images,
-            initialIndex,
-        });
-    }
-
-    const images = post.images ?? [];
-
-    const [collapsedReplies, setCollapsedReplies] = useState<Set<number>>(
-        new Set()
-    );
-
-    function toggleReplies(commentId: number) {
-        setCollapsedReplies((previous) => {
-            const updated = new Set(previous);
-
-            if (updated.has(commentId)) {
-                updated.delete(commentId);
-            } else {
-                updated.add(commentId);
-            }
-
-            return updated;
-        });
-    }
-
+    /**
+     * Share the post or a specific comment.
+     * A comment ID adds a URL fragment so recipients can target that comment.
+     * Uses native sharing when available and clipboard copying otherwise.
+     * Cancellation of the native share sheet is not treated as an error.
+     * @param commentId - Optional ID of the comment being shared.
+     */
     async function handleShare(commentId?: number) {
         const url = new URL(window.location.href);
 
@@ -231,9 +147,10 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
         const shareData = {
             title: post.title,
-            text: commentId
-            ? "Check out this comment on Archers Notes!"
-            : `Check out ${post.title} on Archers Notes!`,
+            text:
+                commentId !== undefined
+                    ? "Check out this comment on Archer's Notes!"
+                    : `Check out ${post.title} on Archer's Notes!`,
             url: url.toString(),
         };
 
@@ -254,14 +171,14 @@ export default function PostDetails({ post }: PostDetailsProps) {
         }
     }
 
-    const isOwnPost = post.authorId === 1;
-
+    /**
+     * Delete the current post through context, close the confirmation
+     * dialog, and replace the current history entry with the home route.
+     */
     function handleDeletePost() {
         deletePost(post.id);
         setShowDeleteModal(false);
-
         router.replace("/");
-        router.refresh();
     }
 
     return (
@@ -295,7 +212,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
                             {/* Profile Picture */}
                             <Link
-                                href={post.authorId === 1 ? "/profile" : `/profile/${post.authorId}`}
+                                href={profileHref}
                                 aria-label={`View ${post.name}'s profile`}
                                 className="shrink-0"
                             >
@@ -312,7 +229,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
                             {/* Author */}
                             <div>
                                 <Link
-                                    href={post.authorId === 1 ? "/profile" : `/profile/${post.authorId}`}
+                                    href={profileHref}
                                     className="text-sm font-semibold hover:underline"
                                 >
                                     {post.name}
@@ -335,7 +252,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                     {/* Pin Post */}
                                     <button
                                         type="button"
-                                        onClick={() => setIsPinned(!isPinned)}
+                                        onClick={() => setIsPinned((previous) => !previous)}
                                         aria-label={isPinned ? "Unpin post" : "Pin post"}
                                         title={isPinned ? "Unpin post" : "Pin post"}
                                         className={`flex h-7 w-7 items-center justify-center transition-opacity hover:opacity-60 ${
@@ -354,9 +271,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                     {/* Edit Post */}
                                     <button
                                         type="button"
-                                        onClick={() => {
-                                            // TODO: Open Edit Post modal
-                                        }}
+                                        onClick={() => openEditPost(post)}
                                         aria-label="Edit post"
                                         title="Edit post"
                                         className="flex h-7 w-7 items-center justify-center hover:opacity-60"
@@ -489,7 +404,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                 {/* Like */}
                                 <button
                                     type="button"
-                                    onClick={() => setLiked(!liked)}
+                                    onClick={() => setLiked((previous) => !previous)}
                                     aria-pressed={liked}
                                     className="flex shrink-0 items-center gap-2"
                                 >
@@ -519,14 +434,14 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                     />
 
                                     <span className="text-sm">
-                                        {post.comments + comments.length - 1}
+                                        {post.comments + additionalComments}
                                     </span>
                                 </div>
 
                                 {/* Bookmark */}
                                 <button
                                     type="button"
-                                    onClick={() => setSaved(!saved)}
+                                    onClick={() => setSaved((previous) => !previous)}
                                     aria-pressed={saved}
                                     aria-label={saved ? "Unsave post" : "Save post"}
                                     className="ml-auto"
@@ -560,318 +475,13 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                 </button>
                             </div>
 
-                            {/* Comment Input - Tiptap Editor */}
-                            <CommentEditor onSubmit={handleComment} />
-
-                            {/* Comments Section */}
-                            <div className="mt-7 space-y-7">
-                                {comments.map((item) => {
-                                    const isLiked = likedComments.has(item.id);
-
-                                    return (
-                                        <div
-                                            key={item.id}
-                                            id={`comment-${item.id}`}
-                                            className="scroll-mt-24"
-                                        >
-
-                                            {/* Comment Header */}
-                                            <div className="flex items-start gap-3">
-                                                <Link
-                                                    href={item.authorId === 1 ? "/profile" : `/profile/${item.authorId}`}
-                                                    aria-label={`View ${item.name}'s profile`}
-                                                    className="shrink-0"
-                                                >
-                                                    <Image
-                                                        src="/assets/icons/profile.svg"
-                                                        alt=""
-                                                        width={32}
-                                                        height={32}
-                                                        className="h-8 w-8"
-                                                    />
-                                                </Link>
-
-                                                <div className="min-w-0 flex-1">
-
-                                                    <div className="flex items-center gap-4">
-                                                        <div>
-                                                            <Link
-                                                                href={item.authorId === 1 ? "/profile" : `/profile/${item.authorId}`}
-                                                                className="text-xs font-semibold hover:underline"
-                                                            >
-                                                                {item.name}
-                                                            </Link>
-
-                                                            <p className="text-[10px] text-gray-600">
-                                                                {item.course}
-                                                            </p>
-                                                        </div>
-
-                                                        <span className="text-[10px] text-gray-500">
-                                                            {item.time}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Comment Text */}
-                                                    <div
-                                                        onClick={handleCommentImageClick}
-                                                        className="comment-content mt-3 break-words text-[11px] leading-relaxed [&_p]:whitespace-pre-wrap [&_strong]:font-bold [&_em]:italic [&_img]:cursor-zoom-in"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: DOMPurify.sanitize(item.text),
-                                                        }}
-                                                    />
-
-                                                        {/* File Attachments */}
-                                                        {item.attachments?.map((attachment) => (
-                                                            <div
-                                                                key={attachment.id}
-                                                                className="mt-2 rounded border border-gray-200 bg-gray-50 px-3 py-2"
-                                                            >
-                                                                <p className="text-xs">
-                                                                    {attachment.file.name}
-                                                                </p>
-                                                            </div>
-                                                        ))}
-
-                                                        {/* Comment Actions */}
-                                                        <div className="mt-4 flex items-center gap-7">
-
-                                                        {/* Like */}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleLikeComment(item.id)}
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <Image
-                                                                src={
-                                                                    isLiked
-                                                                    ? "/assets/icons/like-active.svg"
-                                                                    : "/assets/icons/like.svg"
-                                                                }
-                                                                alt=""
-                                                                width={25}
-                                                                height={23}
-                                                            />
-
-                                                            <span className="text-xs">
-                                                                {item.likes + (isLiked ? 1 : 0)}
-                                                            </span>
-                                                        </button>
-
-                                                        {/* Comment Count */}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                            setReplyingTo(
-                                                                replyingTo === item.id ? null : item.id
-                                                            )
-                                                            }
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <Image
-                                                                src="/assets/icons/comment.svg"
-                                                                alt=""
-                                                                width={23}
-                                                                height={23}
-                                                            />
-
-                                                            <span className="text-xs">
-                                                                {item.replies.length}
-                                                            </span>
-                                                        </button>
-
-                                                        {/* Share Comment */}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleShare(item.id)}
-                                                            aria-label="Share comment"
-                                                            title="Share comment"
-                                                            className="cursor-pointer"
-                                                        >
-                                                            <Image
-                                                                src="/assets/icons/share.svg"
-                                                                alt=""
-                                                                width={23}
-                                                                height={23}
-                                                            />
-                                                        </button>
-
-                                                        {/* More Options for Comment */}
-                                                        <div className="relative" data-comment-menu>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setShowMoreMenu(false);
-                                                                    setOpenCommentMenu(
-                                                                        openCommentMenu === item.id ? null : item.id
-                                                                    );
-                                                                }}
-                                                                aria-label="More comment options"
-                                                                aria-expanded={openCommentMenu === item.id}
-                                                            >
-                                                                <Image
-                                                                    src="/assets/icons/more.svg"
-                                                                    alt=""
-                                                                    width={23}
-                                                                    height={6}
-                                                                />
-                                                            </button>
-
-                                                            {/* Popup */}
-                                                            {openCommentMenu === item.id && (
-                                                                <div className="absolute right-0 top-full z-30 mt-2 w-[120px] rounded-md border border-gray-200 bg-white py-1 shadow-md">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            setOpenCommentMenu(null);
-                                                                            setShowReportModal(true);
-                                                                        }}
-                                                                        className="w-full px-4 py-2 text-left text-xs text-gray-700 hover:bg-gray-50"
-                                                                    >
-                                                                        Report
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Shared positioning for the collapse button and thread line */}
-                                                    <div className="relative mt-3">
-
-                                                        {/* Thread line: centered at 10px, the center of the 20px button */}
-                                                        {item.replies.length > 0 && !collapsedReplies.has(item.id) && (
-                                                            <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-[9px] top-8 w-[2px] bg-gray-200" />
-                                                        )}
-
-                                                        {/* Reply controls */}
-                                                        <div className="flex items-center gap-3">
-                                        
-                                                            {/* Collapse and Expand Button*/}
-                                                            {item.replies.length > 0 && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => toggleReplies(item.id)}
-                                                                    aria-expanded={!collapsedReplies.has(item.id)}
-                                                                    aria-label={
-                                                                        collapsedReplies.has(item.id)
-                                                                            ? "Expand replies"
-                                                                            : "Collapse replies"
-                                                                    }
-                                                                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-400"
-                                                                >
-                                                                    <span className="text-sm leading-none">
-                                                                        {collapsedReplies.has(item.id) ? "+" : "−"}
-                                                                    </span>
-                                                                </button>
-                                                            )}
-
-                                                            {/* Reply Button */}
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    setReplyingTo(replyingTo === item.id ? null : item.id)
-                                                                }
-                                                                className="inline-flex items-center gap-2 text-[11px] text-gray-400 hover:text-[#00A651]"
-                                                            >
-                                                                <Image
-                                                                    src="/assets/icons/reply.svg"
-                                                                    alt=""
-                                                                    width={16}
-                                                                    height={14}
-                                                                    className="shrink-0"
-                                                                />
-                                                                <span>Reply</span>
-                                                            </button>
-                                                        </div>
-
-                                                        {/* Reply Input */}
-                                                        {replyingTo === item.id && (
-                                                            <div className="relative z-10 mt-3 ml-9 flex gap-2">
-                                                                <input
-                                                                    type="text"
-                                                                    value={replyText}
-                                                                    onChange={(event) =>
-                                                                        setReplyText(event.target.value)
-                                                                    }
-                                                                    placeholder="Write a reply..."
-                                                                    className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#00A651]"
-                                                                />
-
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        handleReply(item.id, replyText);
-                                                                        setReplyText("");
-                                                                        setReplyingTo(null);
-                                                                    }}
-                                                                    className="rounded bg-[#00A651] px-3 py-2 text-xs text-white"
-                                                                >
-                                                                        Reply
-                                                                </button>
-                                                            </div>
-                                                        )}
-
-                                                        {/* Nested Replies */}
-                                                        {item.replies.length > 0 && !collapsedReplies.has(item.id) && (
-                                                            <div className="relative mt-3 pl-9">
-                                                                
-                                                                {item.replies.map((reply) => (
-                                                                    <div
-                                                                        key={reply.id}
-                                                                        className="mb-5 flex gap-2 last:mb-0"
-                                                                    >
-                                                                        <Link
-                                                                            href={reply.authorId === 1 ? "/profile" : `/profile/${reply.authorId}`}
-                                                                            aria-label={`View ${reply.name}'s profile`}
-                                                                            className="shrink-0"
-                                                                        >
-                                                                            <Image
-                                                                                src="/assets/icons/profile.svg"
-                                                                                alt=""
-                                                                                width={32}
-                                                                                height={32}
-                                                                                className="h-8 w-8"
-                                                                            />
-                                                                        </Link>
-
-                                                                        <div>
-                                                                            <div className="flex items-center gap-4">
-                                                                                <div>
-                                                                                    <Link
-                                                                                        href={reply.authorId === 1 ? "/profile" : `/profile/${reply.authorId}`}
-                                                                                        className="text-xs font-semibold hover:underline"
-                                                                                    >
-                                                                                        {reply.name}
-                                                                                    </Link>
-
-                                                                                    <p className="text-[10px] text-gray-600">
-                                                                                        {reply.course}
-                                                                                    </p>
-                                                                                </div>
-
-                                                                                <span className="text-[10px] text-gray-500">
-                                                                                    {reply.time}
-                                                                                </span>
-                                                                            </div>
-
-                                                                            <div
-                                                                                className="comment-content mt-3 break-words text-[11px] leading-relaxed [&_strong]:font-bold [&_em]:italic"
-                                                                                dangerouslySetInnerHTML={{
-                                                                                    __html: DOMPurify.sanitize(reply.text),
-                                                                                }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>     
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                            {/* Comments */}
+                            <PostComments
+                                onShare={handleShare}
+                                onReport={() => setShowReportModal(true)}
+                                onCommentCountChange={setAdditionalComments}
+                                onOpenCommentMenu={() => setShowMoreMenu(false)}
+                            />
                         </div>
                     </div>
                 </div>
@@ -887,16 +497,6 @@ export default function PostDetails({ post }: PostDetailsProps) {
                 />
             )}
 
-            {/* Comment Image Preview */}
-            {commentImagePreview !== null && (
-                <ImagePreview
-                    images={commentImagePreview.images}
-                    initialIndex={commentImagePreview.initialIndex}
-                    alt="Comment attachment"
-                    onClose={() => setCommentImagePreview(null)}
-                />
-            )}
-
             {/* Report Modal */}
             <ReportModal
                 isOpen={showReportModal}
@@ -904,7 +504,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
             />
 
             {/* Delete Note Modal */}
-            {isOwnPost && (
+            {isOwner && (
                 <DeleteNoteModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
