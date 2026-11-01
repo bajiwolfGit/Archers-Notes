@@ -141,7 +141,7 @@ export const auth = betterAuth({
 
     fields: {
       email: "gmail",
-      image: "image",
+      image: "avatar_url",
       createdAt: "created_at",
       updatedAt: "updatedAt",
     },

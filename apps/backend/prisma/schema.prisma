@@ -141,7 +141,6 @@ model users {
   name          String
   gmail         String   @unique @db.VarChar(255)
   emailVerified Boolean  @default(false)
-  image         String?
 
   // Application profile
   username      String   @unique @db.VarChar(50)
