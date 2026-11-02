@@ -108,12 +108,37 @@ export default function ProfileHeader({
 	 * @param updatedProfile - Updated user profile information.
 	 * @returns void
 	 */
-	function handleSave(updatedProfile: ProfileData) {
+	async function handleSave(updatedProfile: ProfileData) {
+
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/users/me`,
+			{
+    			method: "PATCH",
+      			credentials: "include",
+      			headers: {
+        			"Content-Type": "application/json",
+    			},
+				body: JSON.stringify({
+					name: updatedProfile.name,
+					bio: updatedProfile.bio,
+				}),
+			}
+		);
+
+ 		 if (!response.ok) { throw new Error("Failed to update profile."); }
+
+  		const user = await response.json();
 
 		// Notify the parent component of the updated profile data.
-		onProfileChange(updatedProfile);
+		onProfileChange({
+			...updatedProfile,
+			name: user.name,
+			email: user.gmail,
+			bio: user.bio ?? "",
+			avatar: user.avatar_url,
+  		});
 
-		// Close the edit profile modal after saving.
+		// Close the edit profile modal after a sucessful update.
 		setIsEditing(false);
 	}
 

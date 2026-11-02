@@ -18,7 +18,7 @@
 "use client";
 
 // React hook for managing component state.
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Shared application layout containing the navigation bar and sidebar.
 import MainLayout from "@/components/layout/main-layout";
@@ -37,6 +37,19 @@ import {
 	initialProfile,
 	type ProfileData,
 } from "@/components/profile/profile-types";
+
+// Backend Stuff
+const API_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
+interface UserProfileResponse {
+  id: string;
+  name: string;
+  gmail: string;
+  username: string;
+  bio: string | null;
+  avatar_url: string | null;
+}
 
 /**
  * ProfilePage Component
@@ -65,6 +78,40 @@ export default function ProfilePage() {
 	 * the profile information displayed throughout the page.
 	 */
 	const [profile, setProfile] = useState<ProfileData>(initialProfile);
+
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const response = await fetch(`${API_URL}/users/me`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to load profile (${response.status})`);
+        }
+
+        const user: UserProfileResponse = await response.json();
+
+        setProfile((currentProfile) => ({
+          ...currentProfile,
+          name: user.name,
+          email: user.gmail,
+          bio: user.bio ?? "",
+          avatar: user.avatar_url,
+        }));
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        setError("Unable to load your profile. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProfile();
+  	}, []);
 
 	return (
 		<MainLayout>

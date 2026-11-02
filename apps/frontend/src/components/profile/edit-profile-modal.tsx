@@ -7,7 +7,7 @@ import type { ProfileData } from "./profile-types";
 interface EditProfileModalProps {
 	profile: ProfileData;
 	onClose: () => void;
-	onSave: (profile: ProfileData) => void;
+	onSave: (profile: ProfileData) => Promise<void>;
 }
 
 export default function EditProfileModal({
@@ -25,6 +25,9 @@ export default function EditProfileModal({
 
 	const avatarInputRef = useRef<HTMLInputElement>(null);
 	const coverInputRef = useRef<HTMLInputElement>(null);
+
+	const [isSaving, setIsSaving] = useState(false);
+	const [saveError, setSaveError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const previousOverflow = document.body.style.overflow;
@@ -89,17 +92,27 @@ export default function EditProfileModal({
 		}));
 	}
 
-	function handleSave() {
+	async function handleSave() {
 		if (!draft.name.trim()) {
 			alert("Please enter a nickname.");
 			return;
 		}
 
-		onSave({
+		setIsSaving(true);
+		setSaveError(null);
+
+		try {
+			await onSave({
 			...draft,
 			name: draft.name.trim(),
 			bio: draft.bio.trim(),
-		});
+			});
+		} catch (error) {
+			console.error("Error saving profile:", error);
+			setSaveError("Unable to save your profile. Please try again.");
+		} finally {
+			setIsSaving(false);
+	}
 	}
 
   	return (
@@ -146,11 +159,19 @@ export default function EditProfileModal({
 					<button
 						type="button"
 						onClick={handleSave}
+						disabled={isSaving}
 						className="rounded-full bg-[#00A651] px-7 py-2.5 text-xs font-semibold text-white transition hover:bg-[#008C45]"
 					>
-						Save Changes
+						{isSaving ? "Saving..." : "Save Changes"}
 					</button>
 				</div>
+
+				{/* Save Error Message */}
+				{saveError && (
+					<p className="px-7 py-2 text-xs text-red-500">
+						{saveError}
+					</p>
+				)}
 
 				{/* Scrollable Modal Body */}
 				<div className="min-h-0 flex-1 overflow-y-auto pb-8">
