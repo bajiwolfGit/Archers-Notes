@@ -19,7 +19,7 @@
 "use client";
 
 // React hook for managing component state.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Next.js component for optimized image rendering.
 import Image from "next/image";
@@ -29,6 +29,9 @@ import Link from "next/link";
 
 // Reusable component for displaying sidebar navigation buttons.
 import SidebarButton from "../ui/sidebar-button";
+
+// Import the component for adding new courses.
+import AddCourseModal from "./add-course-modal";
 
 /**
  * Courses Data
@@ -40,12 +43,19 @@ import SidebarButton from "../ui/sidebar-button";
  *
  * Currently uses static mock data.
  */
-const courses = [
-	"CSADPRG",
-	"CSARCH1",
-	"CSNETWK",
-	"DATA103",
+const defaultCourses = [
+    { code: "CSADPRG", name: "CSADPRG" },
+    { code: "CSARCH1", name: "CSARCH1" },
+    { code: "CSNETWK", name: "CSNETWK" },
+    { code: "DATA103", name: "DATA103" },
 ];
+
+interface Course {
+    code: string;
+    name: string;
+}
+
+const COURSES_STORAGE_KEY = "archers-notes-courses";
 
 /**
  * Saved Notes Data
@@ -113,6 +123,81 @@ export default function Sidebar({ onOpenPostNotes }: SidebarProps) {
 	 */
 	const [savedNotesOpen, setSavedNotesOpen] = useState(true);
 
+	// Controls the Add Course popup.
+	const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
+
+	// Stores the user's courses.
+	const [courses, setCourses] = useState<Course[]>(defaultCourses);
+
+	// Prevents overwriting saved courses before loading finishes.
+	const [coursesLoaded, setCoursesLoaded] = useState(false);
+
+	// Load saved courses when the sidebar mounts.
+	useEffect(() => {
+		try {
+			const storedCourses = localStorage.getItem(COURSES_STORAGE_KEY);
+
+			if (storedCourses) {
+				const parsedCourses = JSON.parse(storedCourses);
+
+				if (Array.isArray(parsedCourses)) {
+					setCourses(parsedCourses);
+				}
+			}
+		} catch (error) {
+			console.error("Failed to load courses:", error);
+		} finally {
+			setCoursesLoaded(true);
+		}
+	}, []);
+
+	// Save courses whenever they change.
+	useEffect(() => {
+		if (!coursesLoaded) return;
+
+		try {
+			localStorage.setItem(
+				COURSES_STORAGE_KEY,
+				JSON.stringify(courses)
+			);
+		} catch (error) {
+			console.error("Failed to save courses:", error);
+		}
+	}, [courses, coursesLoaded]);
+
+	// Add a new course and prevent duplicates.
+	function handleAddCourse(code: string, name: string): boolean {
+		if (
+			courses.some(
+				(course) => course.code.toLowerCase() === code.toLowerCase()
+			)
+		) {
+			return false;
+		}
+
+		const updatedCourses = [
+			...courses,
+			{ code, name },
+		];
+
+		// Update the sidebar.
+		setCourses(updatedCourses);
+
+		// Persist the updated courses.
+		localStorage.setItem(
+			COURSES_STORAGE_KEY,
+			JSON.stringify(updatedCourses)
+		);
+
+		// Notify other components that courses have changed.
+		window.dispatchEvent(new Event("courses-updated"));
+
+		// Ensure the Courses section is expanded.
+		setCoursesOpen(true);
+
+		return true;
+	}
+	
 	return (
 		/*
 		 * Sidebar Container:
@@ -124,251 +209,269 @@ export default function Sidebar({ onOpenPostNotes }: SidebarProps) {
 		 * The right border separates the sidebar from
 		 * the application's main content.
 		 */
-		<aside className="w-[223px] shrink-0 min-h-[calc(100vh-73px)] border-r border-gray-200 bg-white px-4 py-6">
-
-			{/*
-			 * Post Notes Button:
-			 * Allows users to open the Create Post modal.
-			 *
-			 * Calls the onOpenPostNotes callback provided
-			 * by the parent MainLayout component.
-			 */}
-			<button
-				type="button"
-				onClick={onOpenPostNotes}
-				className="flex w-full items-center gap-3 rounded bg-green-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700"
-			>
-				{/* Create Post icon. */}
-				<Image
-					src="/assets/icons/create-post.svg"
-					alt=""
-					width={20}
-					height={20}
-				/>
-				Post Notes
-			</button>
-
-			{/*
-			 * Sidebar Navigation:
-			 * Contains the main navigation links and
-			 * expandable sections of the application.
-			 */}
-			<nav className="mt-6 space-y-5 text-sm">
+		<>
+			<aside className="w-[223px] shrink-0 min-h-[calc(100vh-73px)] border-r border-gray-200 bg-white px-4 py-6">
 
 				{/*
-				 * Drafts Navigation:
-				 * Navigates to the page containing
-				 * the user's saved drafts.
-				 */}
-				<SidebarButton
-					icon="/assets/icons/drafts.svg"
-					label="Drafts"
-					href="/main/drafts"
-				/>
-
-				{/* Separator between navigation sections. */}
-				<hr className="border-gray-200" />
-
-				{/*
-				 * Home Navigation:
-				 * Navigates to the application's main feed.
-				 *
-				 * The active property applies the active
-				 * navigation styling to this button.
-				 */}
-				<SidebarButton
-					icon="/assets/icons/home.svg"
-					label="Home"
-					href="/main"
-					active
-				/>
-
-				{/* Separator between navigation sections. */}
-				<hr className="border-gray-200" />
+				* Post Notes Button:
+				* Allows users to open the Create Post modal.
+				*
+				* Calls the onOpenPostNotes callback provided
+				* by the parent MainLayout component.
+				*/}
+				<button
+					type="button"
+					onClick={onOpenPostNotes}
+					className="flex w-full items-center gap-3 rounded bg-green-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700"
+				>
+					{/* Create Post icon. */}
+					<Image
+						src="/assets/icons/create-post.svg"
+						alt=""
+						width={20}
+						height={20}
+					/>
+					Post Notes
+				</button>
 
 				{/*
-				 * Courses Section:
-				 * Displays an expandable list of courses.
-				 *
-				 * Users can expand or collapse the course list
-				 * and navigate to individual course pages.
-				 */}
-				<section>
+				* Sidebar Navigation:
+				* Contains the main navigation links and
+				* expandable sections of the application.
+				*/}
+				<nav className="mt-6 space-y-5 text-sm">
 
 					{/*
-					 * Courses Toggle Button:
-					 * Toggles the visibility of the course list.
-					 *
-					 * The aria-expanded attribute indicates
-					 * whether the section is currently expanded.
-					 */}
-					<button
-						type="button"
-						onClick={() => setCoursesOpen(!coursesOpen)}
-						aria-expanded={coursesOpen}
-						className="flex w-full items-center gap-4 rounded-md px-4 py-2 font-semibold hover:bg-gray-100"
-					>
-						{/* Courses section icon. */}
-						<Image
-							src="/assets/icons/courses.svg"
-							alt=""
-							width={20}
-							height={20}
-						/>
+					* Drafts Navigation:
+					* Navigates to the page containing
+					* the user's saved drafts.
+					*/}
+					<SidebarButton
+						icon="/assets/icons/drafts.svg"
+						label="Drafts"
+						href="/main/drafts"
+					/>
 
-						{/* Courses section label. */}
-						<span>Courses</span>
+					{/* Separator between navigation sections. */}
+					<hr className="border-gray-200" />
+
+					{/*
+					* Home Navigation:
+					* Navigates to the application's main feed.
+					*
+					* The active property applies the active
+					* navigation styling to this button.
+					*/}
+					<SidebarButton
+						icon="/assets/icons/home.svg"
+						label="Home"
+						href="/main"
+						active
+					/>
+
+					{/* Separator between navigation sections. */}
+					<hr className="border-gray-200" />
+
+					{/*
+					* Courses Section:
+					* Displays an expandable list of courses.
+					*
+					* Users can expand or collapse the course list
+					* and navigate to individual course pages.
+					*/}
+					<section>
 
 						{/*
-						 * Dropdown Indicator:
-						 * Rotates depending on whether
-						 * the Courses section is expanded.
-						 */}
-						<Image
-							src="/assets/icons/dropdown.svg"
-							alt=""
-							width={10}
-							height={10}
-							className={`transition-transform duration-200 ${
-								coursesOpen ? "" : "-rotate-90"
-							}`}
-						/>
-					</button>
+						* Courses Toggle Button:
+						* Toggles the visibility of the course list.
+						*
+						* The aria-expanded attribute indicates
+						* whether the section is currently expanded.
+						*/}
+						<button
+							type="button"
+							onClick={() => setCoursesOpen(!coursesOpen)}
+							aria-expanded={coursesOpen}
+							className="flex w-full items-center gap-4 rounded-md px-4 py-2 font-semibold hover:bg-gray-100"
+						>
+							{/* Courses section icon. */}
+							<Image
+								src="/assets/icons/courses.svg"
+								alt=""
+								width={20}
+								height={20}
+							/>
 
-					{/*
-					 * Courses List:
-					 * Displays the predefined course links
-					 * when coursesOpen is true.
-					 *
-					 * Each course code is converted to lowercase
-					 * when generating its navigation URL.
-					 */}
-					{coursesOpen && (
-						<div className="ml-14 mt-4 space-y-1 text-xs">
-							{courses.map((course) => (
-								<Link
-									key={course}
-									href={`/main/courses/${course.toLowerCase()}`}
-									className="block rounded px-1 py-2 hover:bg-gray-100"
-								>
-								{course}
-								</Link>
-							))}
-						</div>
-					)}
+							{/* Courses section label. */}
+							<span>Courses</span>
 
-					{/*
-					 * Add a Course Navigation:
-					 * Provides a link to the page
-					 * for adding a new course.
-					 */}
-					<div className="mt-5">
-						<SidebarButton
-							icon="/assets/icons/add.svg"
-							label="Add a Course"
-							href="/main/add-course"
-						/>
-					</div>
-				</section>
-
-				{/* Separator between navigation sections. */}
-				<hr className="border-gray-200" />
-
-				{/*
-				 * Quizbits Navigation:
-				 * Navigates to the application's quiz section.
-				 */}
-				<SidebarButton
-					icon="/assets/icons/quizbits.svg"
-					label="Quizbits"
-					href="/main/quizbits"
-				/>
-
-				{/*
-				 * Create Quiz Navigation:
-				 * Navigates to the page for creating a new quiz.
-				 */}
-				<SidebarButton
-					icon="/assets/icons/add.svg"
-					label="Create a Quiz"
-					href="/main/create-quiz"
-				/>
-
-				{/* Separator between navigation sections. */}
-				<hr className="border-gray-200" />
-
-				{/*
-				 * Saved Notes Section:
-				 * Displays an expandable list of saved notes.
-				 *
-				 * Users can expand or collapse the list
-				 * and navigate to individual saved notes.
-				 */}
-				<section>
-
-					{/*
-					 * Saved Notes Toggle Button:
-					 * Toggles the visibility of the saved notes list.
-					 *
-					 * The aria-expanded attribute indicates
-					 * whether the section is currently expanded.
-					 */}
-					<button
-						type="button"
-						onClick={() => setSavedNotesOpen(!savedNotesOpen)}
-						aria-expanded={savedNotesOpen}
-						className="flex w-full items-center gap-4 rounded-md px-4 py-2 font-semibold hover:bg-gray-100"
-					>
-						{/* Saved Notes section icon. */}
-						<Image
-							src="/assets/icons/bookmark.svg"
-							alt=""
-							width={20}
-							height={20}
-						/>
-
-						{/* Saved Notes section label. */}
-						<span>Saved Notes</span>
+							{/*
+							* Dropdown Indicator:
+							* Rotates depending on whether
+							* the Courses section is expanded.
+							*/}
+							<Image
+								src="/assets/icons/dropdown.svg"
+								alt=""
+								width={10}
+								height={10}
+								className={`transition-transform duration-200 ${
+									coursesOpen ? "" : "-rotate-90"
+								}`}
+							/>
+						</button>
 
 						{/*
-						 * Dropdown Indicator:
-						 * Rotates depending on whether
-						 * the Saved Notes section is expanded.
-						 */}
-						<Image
-							src="/assets/icons/dropdown.svg"
-							alt=""
-							width={10}
-							height={10}
-							className={`transition-transform duration-200 ${
-								savedNotesOpen ? "" : "-rotate-90"
-							}`}
-						/>
-					</button>
+						* Courses List:
+						* Displays the predefined course links
+						* when coursesOpen is true.
+						*
+						* Each course code is converted to lowercase
+						* when generating its navigation URL.
+						*/}
+						{coursesOpen && (
+							<div className="ml-14 mt-4 space-y-1 text-xs">
+								{courses.map((course) => (
+									<Link
+										key={course.code}
+										href={`/main/courses/${course.code.toLowerCase()}`}
+										title={course.name}
+										className="block rounded px-1 py-2 hover:bg-gray-100"
+									>
+										{course.code}
+									</Link>
+								))}
+							</div>
+						)}
+
+						{/*
+						* Add a Course Navigation:
+						* Provides a link to the page
+						* for adding a new course.
+						*/}
+						<div className="mt-5">
+							<button
+								type="button"
+								onClick={() => setIsAddCourseOpen(true)}
+								className="flex w-full items-center gap-4 rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
+							>
+								<Image
+									src="/assets/icons/add.svg"
+									alt=""
+									width={20}
+									height={20}
+								/>
+								<span>Add a Course</span>
+							</button>
+						</div>
+					</section>
+
+					{/* Separator between navigation sections. */}
+					<hr className="border-gray-200" />
 
 					{/*
-					 * Saved Notes List:
-					 * Displays the predefined saved notes
-					 * when savedNotesOpen is true.
-					 *
-					 * Each note uses its array index plus one
-					 * to generate the navigation URL.
-					 */}
-					{savedNotesOpen && (
-						<div className="ml-14 mt-4 space-y-1 text-xs">
-							{savedNotes.map((note, index) => (
-								<Link
-									key={note}
-									href={`/main/saved-notes/${index + 1}`}
-									className="block rounded px-1 py-2 hover:bg-gray-100"
-								>
-								{note}
-								</Link>
-							))}
-						</div>
-					)}
-				</section>
-			</nav>
-		</aside>
-	);
+					* Quizbits Navigation:
+					* Navigates to the application's quiz section.
+					*/}
+					<SidebarButton
+						icon="/assets/icons/quizbits.svg"
+						label="Quizbits"
+						href="/main/quizbits"
+					/>
+
+					{/*
+					* Create Quiz Navigation:
+					* Navigates to the page for creating a new quiz.
+					*/}
+					<SidebarButton
+						icon="/assets/icons/add.svg"
+						label="Create a Quiz"
+						href="/main/create-quiz"
+					/>
+
+					{/* Separator between navigation sections. */}
+					<hr className="border-gray-200" />
+
+					{/*
+					* Saved Notes Section:
+					* Displays an expandable list of saved notes.
+					*
+					* Users can expand or collapse the list
+					* and navigate to individual saved notes.
+					*/}
+					<section>
+
+						{/*
+						* Saved Notes Toggle Button:
+						* Toggles the visibility of the saved notes list.
+						*
+						* The aria-expanded attribute indicates
+						* whether the section is currently expanded.
+						*/}
+						<button
+							type="button"
+							onClick={() => setSavedNotesOpen(!savedNotesOpen)}
+							aria-expanded={savedNotesOpen}
+							className="flex w-full items-center gap-4 rounded-md px-4 py-2 font-semibold hover:bg-gray-100"
+						>
+							{/* Saved Notes section icon. */}
+							<Image
+								src="/assets/icons/bookmark.svg"
+								alt=""
+								width={20}
+								height={20}
+							/>
+
+							{/* Saved Notes section label. */}
+							<span>Saved Notes</span>
+
+							{/*
+							* Dropdown Indicator:
+							* Rotates depending on whether
+							* the Saved Notes section is expanded.
+							*/}
+							<Image
+								src="/assets/icons/dropdown.svg"
+								alt=""
+								width={10}
+								height={10}
+								className={`transition-transform duration-200 ${
+									savedNotesOpen ? "" : "-rotate-90"
+								}`}
+							/>
+						</button>
+
+						{/*
+						* Saved Notes List:
+						* Displays the predefined saved notes
+						* when savedNotesOpen is true.
+						*
+						* Each note uses its array index plus one
+						* to generate the navigation URL.
+						*/}
+						{savedNotesOpen && (
+							<div className="ml-14 mt-4 space-y-1 text-xs">
+								{savedNotes.map((note, index) => (
+									<Link
+										key={note}
+										href={`/main/saved-notes/${index + 1}`}
+										className="block rounded px-1 py-2 hover:bg-gray-100"
+									>
+									{note}
+									</Link>
+								))}
+							</div>
+						)}
+					</section>
+				</nav>
+			</aside>
+
+			{isAddCourseOpen && (
+				<AddCourseModal
+					onClose={() => setIsAddCourseOpen(false)}
+					onAddCourse={handleAddCourse}
+				/>
+			)}
+    	</>
+    );
 }
