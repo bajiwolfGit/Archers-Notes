@@ -34,6 +34,7 @@ import { usePosts } from "@/context/posts-context";
  */
 interface NotesFeedProps {
     sortBy: "Trending" | "Latest";
+    course?: string;
 }
 
 /**
@@ -52,7 +53,10 @@ interface NotesFeedProps {
  * @param sortBy - The selected sorting option for the notes feed.
  * @returns A list of sorted posts rendered using PostCard components.
  */
-export default function NotesFeed({ sortBy }: NotesFeedProps) {
+export default function NotesFeed({
+    sortBy,
+    course,
+}: NotesFeedProps) {
     
     // Retrieve the current list of posts from the shared PostsContext.
     const { posts } = usePosts();
@@ -67,7 +71,17 @@ export default function NotesFeed({ sortBy }: NotesFeedProps) {
      * - Trending: Sort posts by likes in descending order.
      * - Latest: Sort posts by creation date in descending order.
      */
-    const sortedPosts = [...posts].sort((a, b) => {
+    // Filter posts by course when a course is selected.
+    const filteredPosts = course
+        ? posts.filter(
+            (post) =>
+                post.course?.trim().toLowerCase() ===
+                course.trim().toLowerCase()
+        )
+        : posts;
+
+    // Sort the filtered posts.
+    const sortedPosts = [...filteredPosts].sort((a, b) => {
         
         // Sort posts by popularity, placing the most liked posts first.
         if (sortBy === "Trending") {
@@ -80,6 +94,14 @@ export default function NotesFeed({ sortBy }: NotesFeedProps) {
             new Date(a.createdAt).getTime()
         );
     });
+
+    if (course && sortedPosts.length === 0) {
+        return (
+            <div className="py-12 text-center text-sm text-gray-500">
+                No notes available for this course yet.
+            </div>
+        );
+    }
 
     return (
         /*
