@@ -82,41 +82,36 @@ export default function Navbar() {
              * The search bar has a width of 480px, with a
              * responsive maximum width based on available space.
              */}
-            <div className="absolute left-1/2 flex w-[480px] max-w-[calc(100%-320px)] -translate-x-1/2 items-center gap-3 rounded-[10px] border border-[#E5E7EB] bg-white px-6 py-2">
-                
-                {/*
-                 * Search Icon:
-                 * Displays a visual indicator for the search field.
-                 */}
-                <Image
-                    src="/assets/icons/search.svg"
-                    alt=""
-                    width={20}
-                    height={20}
+            <form
+                action="/search"
+                method="GET"
+                role="search"
+                className="absolute left-1/2 flex w-[480px] max-w-[calc(100%-320px)] -translate-x-1/2 items-center gap-3 rounded-[10px] border border-[#E5E7EB] bg-white px-6 py-2"
+            >
+                <button
+                    type="submit"
+                    aria-label="Search notes"
                     className="shrink-0"
-                />
+                >
+                    <Image
+                        src="/assets/icons/search.svg"
+                        alt=""
+                        width={20}
+                        height={20}
+                    />
+                </button>
 
-                {/*
-                 * Search Input:
-                 * Allows users to enter text for searching.
-                 *
-                 * Uses the HTML search input type.
-                 * Browser autocomplete is disabled to prevent
-                 * unwanted autofill suggestions.
-                 *
-                 * The input currently provides the search interface
-                 * but does not implement search functionality.
-                 */}
                 <input
                     id="site-search"
-                    name="site-search"
+                    name="q"
                     type="search"
                     autoComplete="off"
                     placeholder="Search"
                     aria-label="Search"
+                    required
                     className="w-full bg-transparent text-sm font-semibold text-[#00A651] placeholder:text-[#00A651] outline-none"
                 />
-            </div>
+            </form>
 
             {/*
              * Right Navigation Section:
