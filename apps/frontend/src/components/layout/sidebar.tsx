@@ -210,7 +210,7 @@ export default function Sidebar({ onOpenPostNotes }: SidebarProps) {
 		 * the application's main content.
 		 */
 		<>
-			<aside className="w-[223px] shrink-0 min-h-[calc(100vh-73px)] border-r border-gray-200 bg-white px-4 py-6">
+			<aside className="w-55.75 shrink-0 min-h-[calc(100vh-73px)] border-r border-gray-200 bg-white px-4 py-6">
 
 				{/*
 				* Post Notes Button:
