@@ -49,7 +49,7 @@ export default function Navbar() {
          * Relative positioning provides the reference
          * for the absolutely positioned search bar.
          */
-        <header className="relative flex h-[73px] items-center justify-between border-b border-gray-200 px-6">
+        <header className="relative flex h-18.25 items-center justify-between border-b border-gray-200 px-6">
 
             {/*
              * Application Logo:
@@ -86,7 +86,7 @@ export default function Navbar() {
                 action="/search"
                 method="GET"
                 role="search"
-                className="absolute left-1/2 flex w-[480px] max-w-[calc(100%-320px)] -translate-x-1/2 items-center gap-3 rounded-[10px] border border-[#E5E7EB] bg-white px-6 py-2"
+                className="absolute left-1/2 flex w-120 max-w-[calc(100%-320px)] -translate-x-1/2 items-center gap-3 rounded-[10px] border border-[#E5E7EB] bg-white px-6 py-2"
             >
                 <button
                     type="submit"

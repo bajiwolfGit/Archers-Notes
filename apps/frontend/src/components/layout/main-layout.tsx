@@ -201,7 +201,7 @@ function MainLayoutContent({ children }: MainLayoutProps) {
                  * The sidebar-scroll class provides custom
                  * scrollbar styling defined elsewhere.
                  */}
-                <div className="sidebar-scroll sticky top-[66px] h-[calc(100vh-66px)] shrink-0 overflow-y-auto">
+                <div className="sidebar-scroll sticky top-16.5 h-[calc(100vh-66px)] shrink-0 overflow-y-auto">
                     <Sidebar
                         onOpenPostNotes={handleOpenPostNotes}
                     />
