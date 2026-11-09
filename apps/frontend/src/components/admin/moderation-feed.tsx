@@ -18,53 +18,42 @@
 
 import { useState } from "react";
 
+import { posts } from "@/data/posts";
+
 import ModerationNoteCard, {
     type ModerationNote,
 } from "./moderation-note-card";
 
+
 /**
- * Mock Moderation Notes
+ * Mock Moderation Data
  *
- * Temporary note data for testing the admin interface.
+ * Converts existing user-created posts into moderation notes.
+ * Assigns temporary moderation statuses for testing.
  */
-const initialNotes: ModerationNote[] = [
-    {
-        id: 1,
-        author: "John Doe",
-        course: "STALGCM",
-        time: "3 days ago",
-        title: "Midterms Reviewer",
-        content: "Here are some notes for Midterms!",
-        likes: 67,
-        comments: 22,
-        attachments: 2,
-        status: "Approved",
-    },
-    {
-        id: 2,
-        author: "Jane Doe",
-        course: "CSADPRG",
-        time: "2 hours ago",
-        title: "Programming Notes",
-        content: "Here are my programming notes!",
-        likes: 35,
-        comments: 12,
-        attachments: 1,
-        status: "Under Review",
-    },
-    {
-        id: 3,
-        author: "Carmy Berzatto",
-        course: "CSARCH1",
-        time: "1 hour ago",
-        title: "Computer Architecture Reviewer",
-        content: "Sharing my reviewer for the upcoming exam.",
-        likes: 48,
-        comments: 16,
-        attachments: 3,
-        status: "Flagged",
-    },
-];
+const initialNotes: ModerationNote[] = posts.map((post) => {
+    const mockStatuses: Record<number, ModerationNote["status"]> = {
+        101: "Flagged",
+        102: "Under Review",
+        103: "Approved",
+        104: "Flagged",
+        105: "Hidden",
+    };
+
+    return {
+        id: post.id,
+        author: post.name,
+        course: post.course,
+        time: post.time,
+        title: post.title,
+        content: post.content,
+        likes: post.likes,
+        comments: post.comments,
+        attachments: post.images?.length ?? 0,
+        status: mockStatuses[post.id] ?? "Approved",
+    };
+});
+
 
 /**
  * FeedTab Type
@@ -81,6 +70,25 @@ export default function ModerationFeed() {
     // Stores the moderation notes and their current status.
     const [notes, setNotes] =
         useState<ModerationNote[]>(initialNotes);
+    
+    /**
+     * Approve Note
+     *
+     * Updates the selected note's moderation status
+     * to Approved.
+     */
+    function handleApprove(id: number) {
+        setNotes((previous) =>
+            previous.map((note) =>
+                note.id === id
+                    ? {
+                        ...note,
+                        status: "Approved",
+                    }
+                    : note
+            )
+        );
+    }
 
     /**
      * Hide / Unhide Note
@@ -186,6 +194,7 @@ export default function ModerationFeed() {
                         <ModerationNoteCard
                             key={note.id}
                             note={note}
+                            onApprove={handleApprove}
                             onHide={handleHide}
                             onRemove={handleRemove}
                         />

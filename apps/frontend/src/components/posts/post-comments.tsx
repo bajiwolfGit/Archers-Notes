@@ -65,6 +65,7 @@ import ImagePreview from "@/components/ui/image-preview";
  *                               a comment menu is toggled.
  */
 interface PostCommentsProps {
+    mode?: "user" | "admin";
     onShare: (commentId: number) => void;
     onReport: () => void;
     onCommentCountChange: (count: number) => void;
@@ -135,11 +136,14 @@ const initialComments: Comment[] = [
  * @returns The interactive comments section of a post.
  */
 export default function PostComments({
+    mode = "user",
     onShare,
     onReport,
     onCommentCountChange,
     onOpenCommentMenu,
 }: PostCommentsProps) {
+
+    const isAdmin = mode === "admin";
 
     /**
      * Comments State
@@ -499,7 +503,9 @@ export default function PostComments({
              * passes its HTML content and attachments
              * to handleComment.
              */}
-            <CommentEditor onSubmit={handleComment} />
+            {!isAdmin && (
+                <CommentEditor onSubmit={handleComment} />
+            )}
 
             {/*
              * Comments List:
@@ -509,7 +515,7 @@ export default function PostComments({
              * which receives the comment's data, current
              * interaction states, and event handlers.
              */}
-            <div className="mt-7 space-y-7">
+            <div className={isAdmin ? "mt-4 space-y-7" : "mt-7 space-y-7"}>
                 {comments.map((item) => (
                     <CommentItem
                         key={item.id}

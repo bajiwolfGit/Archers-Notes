@@ -102,7 +102,7 @@ export default async function PostPage({
 				 *
 				 * The content has a maximum width of 480px.
 				 */}
-				<div className="relative left-1/2 w-full max-w-[480px] -translate-x-[calc(50%+111px)]">
+				<div className="relative left-1/2 w-full max-w-120 -translate-x-[calc(50%+111px)]">
 					
 					{/*
 					 * PostDetails Component:
@@ -125,7 +125,7 @@ export default async function PostPage({
 				 * Hidden on smaller screens and becomes visible
 				 * at the xl breakpoint and above.
 				 */}
-				<div className="fixed right-6 top-[88px] hidden w-[225px] xl:block">
+				<div className="fixed right-6 top-22 hidden w-56.25 xl:block">
 					<RecentPosts />
 				</div>
 			</div>

@@ -1,4 +1,3 @@
-
 /**
  * File: components/admin/moderation-note-card.tsx
  *
@@ -15,7 +14,7 @@
  */
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 /**
  * ModerationStatus Type
@@ -54,6 +53,7 @@ export interface ModerationNote {
  */
 interface ModerationNoteCardProps {
     note: ModerationNote;
+    onApprove: (id: number) => void;
     onHide: (id: number) => void;
     onRemove: (id: number) => void;
 }
@@ -78,11 +78,31 @@ const statusStyles: Record<ModerationStatus, string> = {
  */
 export default function ModerationNoteCard({
     note,
+    onApprove,
     onHide,
     onRemove,
 }: ModerationNoteCardProps) {
+    const router = useRouter();
+
+    function handleOpenNote() {
+        router.push(`/admin/notes/${note.id}`);
+    }
     return (
-        <article className="rounded-[10px] border border-gray-200 bg-white p-5">
+        <article
+            role="link"
+            tabIndex={0}
+            aria-label={`View ${note.title}`}
+            onClick={handleOpenNote}
+            onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleOpenNote();
+                }
+            }}
+            className="cursor-pointer rounded-[10px] border border-gray-200 bg-white p-5 transition-all duration-200 hover:border-green-300 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-green-600"
+        >
 
             {/* Author Information and Moderation Status */}
             <div className="flex items-start justify-between gap-3">
@@ -174,15 +194,23 @@ export default function ModerationNoteCard({
                 </div>
 
                 {/* Moderation Action Buttons */}
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-
-                    {/* Review Note */}
-                    <Link
-                        href={`/posts/${note.id}`}
-                        className="rounded-full bg-green-600 px-5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-green-700"
+                <div
+                    className="mt-4 flex flex-wrap items-center gap-2"
+                    onClick={(event) => event.stopPropagation()}
+                    onKeyDown={(event) => event.stopPropagation()}
+                >
+                    {/* Approve Note */}
+                    <button
+                        type="button"
+                        onClick={() => onApprove(note.id)}
+                        disabled={
+                            note.status === "Approved" ||
+                            note.status === "Removed"
+                        }
+                        className="rounded-full bg-green-600 px-5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        Review
-                    </Link>
+                        {note.status === "Approved" ? "Approved" : "Approve"}
+                    </button>
 
                     {/* Hide / Unhide Note */}
                     <button
@@ -191,9 +219,7 @@ export default function ModerationNoteCard({
                         disabled={note.status === "Removed"}
                         className="rounded-full border border-green-600 px-5 py-1.5 text-xs font-semibold text-green-600 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        {note.status === "Hidden"
-                            ? "Unhide"
-                            : "Hide"}
+                        {note.status === "Hidden" ? "Unhide" : "Hide"}
                     </button>
 
                     {/* Remove Note */}
