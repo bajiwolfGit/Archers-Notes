@@ -53,6 +53,8 @@ import type { Post } from "@/components/home/post-card";
 /** Props containing the post to display. */
 interface PostDetailsProps {
     post: Post;
+    mode?: "user" | "admin";
+    adminActions?: React.ReactNode;
 }
 
 /**
@@ -62,7 +64,12 @@ interface PostDetailsProps {
  * @param post - The post to render, including author, images, and counts.
  * @returns The post detail view and its associated overlays.
  */
-export default function PostDetails({ post }: PostDetailsProps) {
+export default function PostDetails({
+    post,
+    mode = "user",
+    adminActions,
+}: PostDetailsProps) {
+    const isAdmin = mode === "admin";
 
     // Navigation controller for returning to the previous page or redirecting.
     const router = useRouter();
@@ -184,7 +191,13 @@ export default function PostDetails({ post }: PostDetailsProps) {
     return (
         <>
             {/* Main Post Details Container */}
-            <div className="mx-auto w-full max-w-[540px] py-2">
+            <div
+                className={
+                    isAdmin
+                        ? "w-full py-2"
+                        : "mx-auto w-full max-w-135 py-2"
+                }
+            >
 
                 {/* Back Button + Post Content */}
                 <div className="relative">
@@ -245,8 +258,15 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                 {post.time}
                             </span>
 
+                            {/* Admin Report Badge */}
+                            {isAdmin && (
+                                <span className="ml-auto whitespace-nowrap rounded-full bg-red-500 px-3 py-1 text-[10px] font-semibold text-white">
+                                    3 reports
+                                </span>
+                            )}
+
                             {/* Post Options */}
-                            {isOwner ? (
+                            {!isAdmin && (isOwner ? (
                                 <div className="ml-auto flex items-center gap-3">
 
                                     {/* Pin Post */}
@@ -324,7 +344,7 @@ export default function PostDetails({ post }: PostDetailsProps) {
 
                                     {/* Report Popup */}
                                     {showMoreMenu && (
-                                    <div className="absolute right-0 top-full z-50 mt-1 w-[120px] rounded-md border border-gray-200 bg-white py-1 shadow-md">
+                                    <div className="absolute right-0 top-full z-50 mt-1 w-30 rounded-md border border-gray-200 bg-white py-1 shadow-md">
                                         <button
                                         type="button"
                                         onClick={() => {
@@ -338,11 +358,11 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                     </div>
                                     )}
                                 </div>
-                            )}
+                            ))}
                         </div>
 
                         {/* Post Content */}
-                        <div className="ml-9 mt-3">
+                        <div className={isAdmin ? "ml-6 mt-3" : "ml-9 mt-3"}>
 
                             {/* Post Title */}
                             <h2 className="text-sm font-semibold">
@@ -359,10 +379,10 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                 <div
                                     className={`mt-5 grid w-full gap-2 overflow-hidden rounded-sm ${
                                         images.length === 1
-                                        ? "h-[250px] grid-cols-1"
+                                        ? "h-62.5 grid-cols-1"
                                         : images.length === 2
-                                        ? "h-[220px] grid-cols-2"
-                                        : "h-[190px] grid-cols-2 grid-rows-2"
+                                        ? "h-55 grid-cols-2"
+                                        : "h-47.5 grid-cols-2 grid-rows-2"
                                     }`}
                                 >
                                     {images.slice(0, 3).map((image, index) => (
@@ -437,46 +457,71 @@ export default function PostDetails({ post }: PostDetailsProps) {
                                         {post.comments + additionalComments}
                                     </span>
                                 </div>
+                                
+                                {/* Admin Attachment Count */}
+                                {isAdmin && images.length > 0 && (
+                                    <span className="whitespace-nowrap text-xs text-gray-600">
+                                        · {images.length} {images.length === 1 ? "Attachment" : "Attachments"}
+                                    </span>
+                                )}
 
-                                {/* Bookmark */}
-                                <button
-                                    type="button"
-                                    onClick={() => setSaved((previous) => !previous)}
-                                    aria-pressed={saved}
-                                    aria-label={saved ? "Unsave post" : "Save post"}
-                                    className="ml-auto"
-                                >
-                                    <Image
-                                        src={
-                                        saved
-                                            ? "/assets/icons/bookmark-active.svg"
-                                            : "/assets/icons/bookmark.svg"
-                                        }
-                                        alt=""
-                                        width={23}
-                                        height={29}
-                                    />
-                                </button>
+                                {!isAdmin && (
+                                    <>                 
+                                        {/* Bookmark */}
+                                        <button
+                                            type="button"
+                                            onClick={() => setSaved((previous) => !previous)}
+                                            aria-pressed={saved}
+                                            aria-label={saved ? "Unsave post" : "Save post"}
+                                            className="ml-auto"
+                                        >
+                                            <Image
+                                                src={
+                                                saved
+                                                    ? "/assets/icons/bookmark-active.svg"
+                                                    : "/assets/icons/bookmark.svg"
+                                                }
+                                                alt=""
+                                                width={23}
+                                                height={29}
+                                            />
+                                        </button>
 
-                                {/* Share */}
-                                <button
-                                    type="button"
-                                    onClick={() => handleShare()}
-                                    aria-label="Share post"
-                                    title="Share post"
-                                    className="cursor-pointer"
-                                >
-                                    <Image
-                                        src="/assets/icons/share.svg"
-                                        alt=""
-                                        width={24}
-                                        height={24}
-                                    />
-                                </button>
+                                        {/* Share */}
+                                        <button
+                                            type="button"
+                                            onClick={() => handleShare()}
+                                            aria-label="Share post"
+                                            title="Share post"
+                                            className="cursor-pointer"
+                                        >
+                                            <Image
+                                                src="/assets/icons/share.svg"
+                                                alt=""
+                                                width={24}
+                                                height={24}
+                                            />
+                                        </button>
+                                    </>
+                                )}
                             </div>
 
+                            {/* Admin Moderation Actions */}
+                            {isAdmin && adminActions && (
+                                <div className="mt-4 rounded-sm border border-gray-200 bg-[#F7FAF8] px-3 py-2">
+                                    {adminActions}
+                                </div>
+                            )}
+
                             {/* Comments */}
+                            {isAdmin && (
+                                <h3 className="mb-4 mt-7 text-sm font-semibold text-[#303a36]">
+                                    Comments ({post.comments + additionalComments})
+                                </h3>
+                            )}
+
                             <PostComments
+                                mode={mode}
                                 onShare={handleShare}
                                 onReport={() => setShowReportModal(true)}
                                 onCommentCountChange={setAdditionalComments}

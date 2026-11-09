@@ -318,7 +318,7 @@ export default function PostCard({
 							
 							{showMoreMenu && (
 								<div
-									className="absolute right-0 top-full z-30 mt-1 w-[120px] rounded-md border border-gray-200 bg-white py-1 shadow-md"
+									className="absolute right-0 top-full z-30 mt-1 w-30 rounded-md border border-gray-200 bg-white py-1 shadow-md"
 									onClick={(e) => e.stopPropagation()}
 								>
 									<button
@@ -362,10 +362,10 @@ export default function PostCard({
 						<div
 							className={`mt-3 grid w-full gap-2 overflow-hidden rounded-sm ${
 								post.images.length === 1
-								? "h-[250px] grid-cols-1"
+								? "h-62.5 grid-cols-1"
 								: post.images.length === 2
-								? "h-[220px] grid-cols-2"
-								: "h-[220px] grid-cols-2 grid-rows-2"
+								? "h-55 grid-cols-2"
+								: "h-55 grid-cols-2 grid-rows-2"
 							}`}
 						>
 							{/* Show up to three thumbnails; preview can access all images. */}
@@ -429,7 +429,7 @@ export default function PostCard({
 							alt=""
 							width={30}
 							height={27}
-							className="h-[27px] w-[30px] shrink-0 object-contain"
+							className="h-6.75 w-7.5 shrink-0 object-contain"
 						/>
 
 						<span className="text-sm">
@@ -452,7 +452,7 @@ export default function PostCard({
 							alt=""
 							width={24}
 							height={24}
-							className="h-6 w-[25px] shrink-0 object-contain"
+							className="h-6 w-6.25 shrink-0 object-contain"
 						/>
 
 						<span className="text-sm">{post.comments}</span>
@@ -478,7 +478,7 @@ export default function PostCard({
 							alt=""
 							width={29}
 							height={29}
-							className="h-[23px] w-[19px] shrink-0 object-contain"
+							className="h-5.75 w-4.75 shrink-0 object-contain"
 						/>
 					</button>
 
