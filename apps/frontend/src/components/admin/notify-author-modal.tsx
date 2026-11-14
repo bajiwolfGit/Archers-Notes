@@ -290,16 +290,6 @@ export default function NotifyAuthorModal({
                                                 {option.description}
                                             </p>
                                         </div>
-
-                                        {type === option.value && (
-                                            <Image
-                                                src="/assets/icons/check.svg"
-                                                alt=""
-                                                width={16}
-                                                height={16}
-                                                className="ml-3 h-4 w-4 shrink-0 object-contain"
-                                            />
-                                        )}
                                     </button>
                                 ))}
                             </div>
