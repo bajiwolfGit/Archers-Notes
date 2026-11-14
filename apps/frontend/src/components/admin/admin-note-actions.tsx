@@ -18,7 +18,9 @@
 import { useState } from "react";
 
 import NotifyAuthorModal from "@/components/admin/notify-author-modal";
-import RemoveNoteModal from "@/components/admin/remove-note-modal";
+import RemoveNoteModal, {
+    type RemovalDetails,
+} from "@/components/admin/remove-note-modal";
 
 interface AdminNoteActionsProps {
     noteId: number;
@@ -87,8 +89,17 @@ export default function AdminNoteActions({
         setIsRemoveModalOpen(true);
     }
 
-    function handleConfirmRemove() {
-        setStatus("Removed");
+    function handleConfirmRemove(details: RemovalDetails) {
+        if (details.mode === "hide") {
+            setStatus("Hidden");
+        } else {
+            setStatus("Removed");
+        }
+
+        console.log("Moderation action:", {
+            noteId,
+            ...details,
+        });
     }
 
     return (
@@ -154,6 +165,9 @@ export default function AdminNoteActions({
                 onClose={() => setIsRemoveModalOpen(false)}
                 onConfirm={handleConfirmRemove}
                 noteTitle={noteTitle}
+                authorName={authorName}
+                likes={0}
+                comments={0}
             />
         </>
     );
