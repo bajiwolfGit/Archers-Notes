@@ -15,11 +15,15 @@ import AdminNoteActions from "@/components/admin/admin-note-actions";
 
 interface AdminNoteModerationProps {
     noteId: number;
+    noteTitle: string;
+    authorName: string;
     reportCount?: number;
 }
 
 export default function AdminNoteModeration({
     noteId,
+    noteTitle,
+    authorName,
     reportCount = 3,
 }: AdminNoteModerationProps) {
     const [internalNote, setInternalNote] = useState("");
@@ -102,7 +106,11 @@ export default function AdminNoteModeration({
                 Moderation actions
             </h3>
 
-            <AdminNoteActions noteId={noteId} />
+            <AdminNoteActions
+                noteId={noteId}
+                noteTitle={noteTitle}
+                authorName={authorName}
+            />
 
         </aside>
     );

@@ -65,6 +65,8 @@ export default async function AdminNotePage({
 
                     <AdminNoteModeration
                         noteId={post.id}
+                        noteTitle={post.title}
+                        authorName={post.name}
                         reportCount={3}
                     />
 
