@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * File: components/layout/navbar.tsx
  *
@@ -21,6 +23,8 @@ import Image from "next/image";
 // Next.js component for client-side navigation between pages.
 import Link from "next/link";
 
+import { useEffect, useState } from "react";
+
 /**
  * Navbar Component
  *
@@ -37,6 +41,32 @@ import Link from "next/link";
  * @returns The application's main navigation bar.
  */
 export default function Navbar() {
+    const [avatar, setAvatar] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function fetchProfile() {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/users/me`,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                    }
+                );
+
+                if (!response.ok) return;
+
+                const user = await response.json();
+
+                setAvatar(user.avatar_url);
+            } catch (error) {
+                console.error("Failed to load navbar avatar:", error);
+            }
+        }
+
+        fetchProfile();
+    }, []);
+
     return (
 
         /*
@@ -162,13 +192,24 @@ export default function Navbar() {
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-75"
                 >
                     {/* Default user profile icon. */}
-                    <Image
-                        src="/assets/icons/profile.svg"
-                        alt="Profile"
-                        width={36}
-                        height={36}
-                        className="h-9 w-9 object-contain"
-                    />
+                    {avatar ? (
+                        <Image
+                            src={avatar}
+                            alt="Profile"
+                            width={36}
+                            height={36}
+                            unoptimized
+                            className="h-9 w-9 rounded-full object-cover"
+                        />
+                    ) : (
+                        <Image
+                            src="/assets/icons/profile.svg"
+                            alt="Profile"
+                            width={36}
+                            height={36}
+                            className="h-9 w-9 object-contain"
+                        />
+                    )}
                 </Link>
             </div>
         </header>

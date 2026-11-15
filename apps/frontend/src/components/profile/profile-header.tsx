@@ -137,6 +137,7 @@ export default function ProfileHeader({
 			bio: user.bio ?? "",
 			avatar: user.avatar_url,
 			cover: user.cover_url,
+			createdAt: user.created_at,
   		});
 
 		// Close the edit profile modal after a sucessful update.
