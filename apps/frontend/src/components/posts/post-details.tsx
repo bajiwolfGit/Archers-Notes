@@ -50,6 +50,9 @@ import ImagePreview from "@/components/ui/image-preview";
 // Shared TypeScript shape for post data.
 import type { Post } from "@/components/home/post-card";
 
+// Sanitizes rich-text HTML before rendering it into the post body.
+import DOMPurify from "isomorphic-dompurify";
+
 /** Props containing the post to display. */
 interface PostDetailsProps {
     post: Post;
@@ -75,10 +78,10 @@ export default function PostDetails({
     const router = useRouter();
 
     // Actions provided by the shared posts context.
-    const { deletePost, openEditPost } = usePosts();
+    const { deletePost, openEditPost, currentUserId } = usePosts();
 
-    // Mock ownership rule: author ID 1 represents the current user.
-    const isOwner = post.authorId === 1;
+    // The logged-in user owns the post when they are its author.
+    const isOwner = currentUserId !== null && post.authorId === currentUserId;
 
     // Route to the current user profile or the post author’s public profile.
     const profileHref = isOwner
@@ -370,9 +373,13 @@ export default function PostDetails({
                             </h2>
 
                             {/* Post Description */}
-                            <p className="mt-4 whitespace-pre-line text-xs leading-relaxed">
-                                {post.content}
-                            </p>
+                            {/* Sanitize stored HTML before injecting it into the DOM. */}
+                            <div
+                                className="mt-4 whitespace-pre-line text-xs leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-md"
+                                dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(post.content),
+                                }}
+                            />
 
                             {/* Post Images */}
                             {images.length > 0 && (

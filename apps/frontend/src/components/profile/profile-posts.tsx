@@ -56,7 +56,7 @@ export default function ProfilePosts() {
      * allowing the profile to reflect newly created,
      * edited, or deleted posts.
      */
-    const { posts } = usePosts();
+    const { posts, currentUserId } = usePosts();
 
     /**
      * Filter Current User's Posts
@@ -65,16 +65,14 @@ export default function ProfilePosts() {
      * created by the currently logged-in user.
      *
      * The authorId property identifies the
-     * user who created each post.
-     *
-     * Currently, authorId === 1 represents
-     * the logged-in user.
+     * user who created each post, and currentUserId
+     * is the ID of the logged-in user.
      *
      * Array.filter() returns only the posts
      * that satisfy this condition.
      */
     const profilePosts = posts.filter(
-        (post) => post.authorId === 1
+        (post) => currentUserId !== null && post.authorId === currentUserId
     );
 
     return (

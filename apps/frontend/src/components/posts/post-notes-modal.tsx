@@ -60,7 +60,7 @@ export default function PostNotesModal({
 }: PostNotesModalProps) {
 
     // Access shared actions for publishing, updating, and managing drafts.
-    const { addPost, addDraft, updatePost, deleteDraft } = usePosts();
+    const { addPost, addDraft, updatePost } = usePosts();
 
     // Distinguish editing an existing post from creating a post or resuming a draft.
     const isEditing = editingPost !== null;
@@ -100,6 +100,9 @@ export default function PostNotesModal({
     // Controls the confirmation prompt before clearing the editor.
     const [showClearConfirm, setShowClearConfirm] = useState(false);
 
+    // True while a save request is in flight; prevents saving the note twice.
+    const [isSaving, setIsSaving] = useState(false);
+
     // Prevent background scrolling while modal is open
     useEffect(() => {
         const previousOverflow = document.body.style.overflow;
@@ -131,8 +134,42 @@ export default function PostNotesModal({
         };
     });
 
+    /**
+     * Run a save request and close the dialog once it succeeds.
+     * On failure the dialog stays open and shows the reason.
+     */
+    async function submit(action: () => Promise<void>) {
+        if (isSaving) return;
+
+        setIsSaving(true);
+
+        try {
+            await action();
+            onClose();
+        } catch (error) {
+            console.error("Failed to save note:", error);
+
+            // Reveal the form so the error message is visible.
+            setShowCloseConfirm(false);
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Something went wrong while saving your note."
+            );
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
     /** Save current form values as a draft, preserving the draft ID when editing. */
-    function handleSaveDraft() {
+    async function handleSaveDraft() {
+        // Every saved note, drafts included, belongs to a course.
+        if (!course) {
+            setShowCloseConfirm(false);
+            setError("Please select a course.");
+            return;
+        }
+
         const draft: Draft = {
             id: editingDraft?.id ?? Date.now(),
             title: title.trim(),
@@ -141,13 +178,12 @@ export default function PostNotesModal({
             updatedAt: new Date().toISOString(),
         };
 
-        addDraft(draft);
-        onClose();
+        await submit(() => addDraft(draft, attachments));
     }
-    
+
     // Update an existing post
     /** Validate and update an existing post, preserving retained images. */
-    function handleUpdatePost() {
+    async function handleUpdatePost() {
         if (!editingPost) return;
 
         if (!title.trim()) {
@@ -174,7 +210,10 @@ export default function PostNotesModal({
         const container = document.createElement("div");
         container.innerHTML = content;
 
-        const images = Array.from(container.querySelectorAll("img"));
+        // Uploaded images are embedded as data URLs; they are stored as files.
+        const images = Array.from(
+            container.querySelectorAll('img[src^="data:"]')
+        );
 
         const newImageUrls = images
             .map((image) => image.getAttribute("src"))
@@ -192,13 +231,12 @@ export default function PostNotesModal({
             images: [...existingImages, ...newImageUrls],
         };
 
-        updatePost(updatedPost);
-        onClose();
+        await submit(() => updatePost(updatedPost, attachments));
     }
 
     // Publish Note
     /** Validate and publish a new post; remove its source draft if applicable. */
-    function handlePost() {
+    async function handlePost() {
         if (!title.trim()) {
             setError("Please enter a title.");
             return;
@@ -223,7 +261,10 @@ export default function PostNotesModal({
         const container = document.createElement("div");
         container.innerHTML = content;
 
-        const images = Array.from(container.querySelectorAll("img"));
+        // Uploaded images are embedded as data URLs; they are stored as files.
+        const images = Array.from(
+            container.querySelectorAll('img[src^="data:"]')
+        );
 
         const imageUrls = images
             .map((image) => image.getAttribute("src"))
@@ -250,19 +291,8 @@ export default function PostNotesModal({
             createdAt: now.toISOString(),
         };
 
-        try {
-            addPost(newPost);
-
-            // Remove the draft after publishing it
-            if (editingDraft) {
-                deleteDraft(editingDraft.id);
-            }
-            
-            onClose();
-        } catch (error) {
-            console.error("Failed to create post:", error);
-            setError("Something went wrong while creating your post.");
-        }
+        // When the note was opened from a draft, that draft is the one published.
+        await submit(() => addPost(newPost, attachments, editingDraft?.id));
     }
 
     // Clear Note

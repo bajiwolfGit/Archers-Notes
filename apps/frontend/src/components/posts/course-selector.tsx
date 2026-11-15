@@ -7,7 +7,7 @@
  * when creating or editing a post.
  *
  * Features:
- * - Displays a dropdown containing predefined course codes.
+ * - Displays a dropdown containing the verified course codes.
  * - Allows users to select a course from the available options.
  * - Receives the currently selected course from a parent component.
  * - Notifies the parent component when the selected course changes.
@@ -32,26 +32,8 @@ interface CourseSelectorProps {
     onChange: (course: string) => void;
 }
 
-/**
- * Courses Data
- *
- * Contains the predefined course codes available
- * for selection in the dropdown menu.
- *
- * Each course is represented by a string containing
- * its corresponding course code.
- *
- * Currently uses static data rather than retrieving
- * courses from a database or shared context.
- */
-const courses = [
-    "CSADPRG",
-    "CSARCH1",
-    "CSNETWK",
-    "DATA103",
-    "STALGCM",
-    "FNDACCT",
-];
+// Shared posts context, which loads the courses from the database.
+import { usePosts } from "@/context/posts-context";
 
 /**
  * CourseSelector Component
@@ -73,6 +55,24 @@ export default function CourseSelector({
     value,
     onChange,
 }: CourseSelectorProps) {
+
+    /**
+     * Courses Data
+     *
+     * Course codes available for selection, retrieved from the
+     * courses table through PostsContext. The backend only returns
+     * verified courses, so unverified ones never appear here.
+     */
+    const { courses: verifiedCourses } = usePosts();
+
+    const courses = verifiedCourses.map((course) => course.code);
+
+    // Keep the current selection visible even if its course is no
+    // longer in the list (for example, while the list is loading).
+    if (value && !courses.includes(value)) {
+        courses.unshift(value);
+    }
+
     return (
 
         /*
@@ -135,7 +135,7 @@ export default function CourseSelector({
 
                 {/*
                  * Course Options:
-                 * Iterates through the predefined courses array
+                 * Iterates through the verified courses array
                  * and creates an option for each course.
                  *
                  * Each option uses the course code as its

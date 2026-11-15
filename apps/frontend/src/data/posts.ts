@@ -44,7 +44,11 @@ import type { Post } from "@/components/home/post-card";
  * The array is exported so other components and modules
  * can import and use the predefined posts.
  */
-export const posts: Post[] = [
+
+// Mock posts keep numeric IDs, unlike posts loaded from the database.
+type MockPost = Post & { id: number; authorId: number };
+
+export const posts: MockPost[] = [
 	{
 		id: 1,
 		authorId: 1,

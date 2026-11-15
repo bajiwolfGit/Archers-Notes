@@ -27,8 +27,11 @@ import PostDetails from "@/components/posts/post-details";
 // Component displaying recently viewed posts on the right side of the page.
 import RecentPosts from "@/components/home/recent-posts";
 
-// Mock post data used to retrieve the requested post.
-import { posts } from "@/data/posts";
+// Backend request for a single post and its conversion to the Post shape.
+import { fetchPost, toPost } from "@/lib/posts-api";
+
+// Shared TypeScript shape for post data.
+import type { Post } from "@/components/home/post-card";
 
 /**
  * PostPageProps Interface
@@ -63,16 +66,18 @@ export default async function PostPage({
 	const { id } = await params;
 
 	/**
-	 * Find the post matching the requested ID.
+	 * Retrieve the post matching the requested ID from the backend.
 	 *
-	 * Converts the URL parameter from a string to a number
-	 * before comparing it with the IDs in the posts array.
-	 *
-	 * Returns undefined if no matching post is found.
+	 * The request fails when the post does not exist, was deleted,
+	 * or is not published, in which case post stays undefined.
 	 */
-	const post = posts.find(
-		(item) => item.id === Number(id)
-	);
+	let post: Post | undefined;
+
+	try {
+		post = toPost(await fetchPost(id));
+	} catch {
+		post = undefined;
+	}
 
 	// Display the Next.js 404 page if the requested post does not exist.
 	if (!post) {

@@ -51,8 +51,9 @@ import DOMPurify from "isomorphic-dompurify";
  * `createdAt` is used when sorting the feed by recency.
  */
 export interface Post {
-	id: number;
-	authorId: number;
+	// Posts from the database use UUID strings; mock posts use numbers.
+	id: number | string;
+	authorId: number | string;
 	name: string;
 	course: string;
 	time: string;
@@ -92,10 +93,13 @@ export default function PostCard({
 	const router = useRouter();
 
 	// Context actions for editing or deleting the current post.
-	const { openEditPost, deletePost } = usePosts();
+	const { openEditPost, deletePost, currentUserId } = usePosts();
 
-	// Show owner actions when explicitly requested or when authorId is 1.
-	const isOwner = isOwnPost ?? post.authorId === 1;
+	// Whether the logged-in user wrote this post.
+	const isAuthor = currentUserId !== null && post.authorId === currentUserId;
+
+	// Show owner actions when explicitly requested or when the logged-in user is the author.
+	const isOwner = isOwnPost ?? isAuthor;
 
 
 	// Local interaction states; these do not update shared post data.
@@ -194,7 +198,7 @@ export default function PostCard({
 
 					{/* Clickable Profile Picture */}
 					<Link
-						href={post.authorId === 1 ? "/profile" : `/profile/${post.authorId}`}
+						href={isAuthor ? "/profile" : `/profile/${post.authorId}`}
 						onClick={(e) => e.stopPropagation()}
 						aria-label={`View ${post.name}'s profile`}
 						className="shrink-0"

@@ -8,196 +8,307 @@ import {
     type ReactNode,
 } from "react";
 
-import type { Post } from "@/components/home/post-card";
-import { posts as initialPosts } from "@/data/posts";
+import { useRouter } from "next/navigation";
 
-const STORAGE_KEY = "archers-notes-created-posts";
-const EDITED_POSTS_STORAGE_KEY = "archers-notes-edited-posts";
-const DRAFTS_STORAGE_KEY = "archers-notes-drafts";
-const DELETED_POSTS_STORAGE_KEY = "archers-notes-deleted-posts";
+import type { Post } from "@/components/home/post-card";
+import { authClient } from "@/lib/auth-client";
+import {
+    createPost as createPostRequest,
+    deletePost as deletePostRequest,
+    fetchCourses,
+    fetchMyPosts,
+    fetchPosts,
+    isImageFile,
+    toDraft,
+    toPost,
+    updatePost as updatePostRequest,
+    type ApiCourse,
+    type ApiPost,
+    type Draft,
+    type NewPostFile,
+} from "@/lib/posts-api";
 
 // Draft Interface
-export interface Draft {
-    id: number;
-    title: string;
-    course: string;
-    content: string;
-    updatedAt: string;
-}
+export type { Draft };
 
 // Context Interface
 interface PostsContextType {
     posts: Post[];
-    addPost: (post: Post) => void;
-    deletePost: (id: Post["id"]) => void;
-    updatePost: (updatedPost: Post) => void;
+    addPost: (
+        post: Post,
+        attachments?: File[],
+        fromDraftId?: Draft["id"]
+    ) => Promise<void>;
+    deletePost: (id: Post["id"]) => Promise<void>;
+    updatePost: (updatedPost: Post, attachments?: File[]) => Promise<void>;
 
     editingPost: Post | null;
     openEditPost: (post: Post) => void;
     closeEditPost: () => void;
 
     drafts: Draft[];
-    addDraft: (draft: Draft) => void;
-    deleteDraft: (id: number) => void;
+    addDraft: (draft: Draft, attachments?: File[]) => Promise<void>;
+    deleteDraft: (id: Draft["id"]) => Promise<void>;
 
     editingDraft: Draft | null;
     openEditDraft: (draft: Draft) => void;
     closeEditDraft: () => void;
+
+    // Verified courses a note can be posted under
+    courses: ApiCourse[];
+
+    // ID of the logged-in user, or null when nobody is signed in
+    currentUserId: string | null;
 }
 
 const PostsContext = createContext<PostsContextType | undefined>(
     undefined
 );
 
+// What the note editor hands over when a post or draft is saved
+interface SaveInput {
+    // ID of the post or draft being changed; left out when creating
+    id?: Post["id"];
+    title: string;
+    course: string;
+    content: string;
+    // Images the post should end up with
+    images: string[];
+    // Documents picked with the editor's "Attach file" button
+    attachments: File[];
+    // Left out when editing a post, so its status stays as it is
+    status?: "draft" | "published";
+}
+
+// Read a picked file as a base64 data URL, the form the backend stores
+function readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            if (typeof reader.result === "string") {
+                resolve(reader.result);
+            } else {
+                reject(new Error(`Failed to read ${file.name}.`));
+            }
+        };
+
+        reader.onerror = () =>
+            reject(new Error(`Failed to read ${file.name}.`));
+
+        reader.readAsDataURL(file);
+    });
+}
+
+// Separate the uploaded images from a draft's HTML
+function splitDraftContent(content: string) {
+    const container = document.createElement("div");
+    container.innerHTML = content;
+
+    const imageElements = Array.from(
+        container.querySelectorAll('img[src^="data:"]')
+    );
+
+    const images = imageElements
+        .map((image) => image.getAttribute("src"))
+        .filter((src): src is string => src !== null);
+
+    imageElements.forEach((image) => image.remove());
+
+    return { body: container.innerHTML, images };
+}
+
 export function PostsProvider({
     children,
 }: {
     children: ReactNode;
 }) {
-    const [createdPosts, setCreatedPosts] = useState<Post[]>([]);
-    const [deletedPostIds, setDeletedPostIds] = useState<Post["id"][]>([]);
-    const [editedPosts, setEditedPosts] = useState<Post[]>([]);
+    const router = useRouter();
+
+    // The logged-in user, taken from the Better Auth session
+    const { data: session } = authClient.useSession();
+    const currentUserId = session?.user.id ?? null;
+
+    // Published posts shown in the feed
+    const [feedPosts, setFeedPosts] = useState<ApiPost[]>([]);
+
+    // The logged-in user's own posts, drafts included
+    const [ownPosts, setOwnPosts] = useState<ApiPost[]>([]);
+
+    const [courses, setCourses] = useState<ApiCourse[]>([]);
+
     const [editingPost, setEditingPost] = useState<Post | null>(null);
-    const [drafts, setDrafts] = useState<Draft[]>([]);
     const [editingDraft, setEditingDraft] = useState<Draft | null>(null);
-    const [loaded, setLoaded] = useState(false);
 
-    // Load saved posts and drafts
+    // Nobody else's drafts are ever held: without a session there are none
+    const myPosts = currentUserId ? ownPosts : [];
+
+    // Load the feed and the course list
     useEffect(() => {
-        try {
-            const savedPosts = localStorage.getItem(STORAGE_KEY);
-            const savedEditedPosts = localStorage.getItem(
-                EDITED_POSTS_STORAGE_KEY
-            );
-            const savedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
+        let cancelled = false;
 
-            const savedDeletedPosts = localStorage.getItem(
-                DELETED_POSTS_STORAGE_KEY
-            );
+        async function load() {
+            try {
+                const [loadedPosts, loadedCourses] = await Promise.all([
+                    fetchPosts(),
+                    fetchCourses(),
+                ]);
 
-            if (savedPosts) {
-                setCreatedPosts(JSON.parse(savedPosts) as Post[]);
+                if (cancelled) return;
+
+                setFeedPosts(loadedPosts);
+                setCourses(loadedCourses);
+            } catch (error) {
+                console.error("Failed to load posts or courses:", error);
             }
-
-            if (savedEditedPosts) {
-                setEditedPosts(JSON.parse(savedEditedPosts) as Post[]);
-            }
-
-            if (savedDrafts) {
-                setDrafts(JSON.parse(savedDrafts) as Draft[]);
-            }
-
-            if (savedDeletedPosts) {
-                setDeletedPostIds(JSON.parse(savedDeletedPosts) as Post["id"][]);
-            }
-        } catch (error) {
-            console.error("Failed to load posts or drafts:", error);
-        } finally {
-            setLoaded(true);
         }
+
+        load();
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
-    // Save created posts to localStorage
+    // Load the user's own posts and drafts once they are signed in
     useEffect(() => {
-        if (!loaded) return;
+        if (!currentUserId) return;
 
-        try {
-            localStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(createdPosts)
-            );
-        } catch (error) {
-            console.error("Failed to save posts:", error);
+        let cancelled = false;
+
+        async function load() {
+            try {
+                const loadedPosts = await fetchMyPosts();
+
+                if (!cancelled) {
+                    setOwnPosts(loadedPosts);
+                }
+            } catch (error) {
+                console.error("Failed to load your posts:", error);
+            }
         }
-    }, [createdPosts, loaded]);
 
-    // Save edited posts to localStorage
-    useEffect(() => {
-        if (!loaded) return;
+        load();
 
-        try {
-            localStorage.setItem(
-                EDITED_POSTS_STORAGE_KEY,
-                JSON.stringify(editedPosts)
-            );
-        } catch (error) {
-            console.error("Failed to save edited posts:", error);
+        return () => {
+            cancelled = true;
+        };
+    }, [currentUserId]);
+
+    // Reload everything after a change so every page shows the saved state
+    async function refresh() {
+        const [loadedPosts, loadedOwnPosts] = await Promise.all([
+            fetchPosts(),
+            currentUserId ? fetchMyPosts() : Promise.resolve([]),
+        ]);
+
+        setFeedPosts(loadedPosts);
+        setOwnPosts(loadedOwnPosts);
+
+        // Re-render server-rendered pages such as the post details page
+        router.refresh();
+    }
+
+    // Create a post/draft, or update the one with the given ID
+    async function save(input: SaveInput) {
+        const courseId = courses.find(
+            (course) => course.code === input.course
+        )?.course_id;
+
+        if (courseId === undefined) {
+            throw new Error("Please select a course.");
         }
-    }, [editedPosts, loaded]);
 
-    // Save drafts to localStorage
-    useEffect(() => {
-        if (!loaded) return;
+        const attachmentFiles: NewPostFile[] = await Promise.all(
+            input.attachments.map(async (file) => ({
+                file_url: await readFileAsDataUrl(file),
+            }))
+        );
 
-        try {
-            localStorage.setItem(
-                DRAFTS_STORAGE_KEY,
-                JSON.stringify(drafts)
-            );
-        } catch (error) {
-            console.error("Failed to save drafts:", error);
+        const existing =
+            input.id === undefined
+                ? undefined
+                : [...myPosts, ...feedPosts].find(
+                      (post) => post.post_id === String(input.id)
+                  );
+
+        if (!existing) {
+            await createPostRequest({
+                header: input.title,
+                course_id: courseId,
+                body: input.content,
+                status: input.status ?? "published",
+                files: [
+                    ...input.images.map((image) => ({ file_url: image })),
+                    ...attachmentFiles,
+                ],
+            });
+        } else {
+            // Only send the images that changed; documents are left alone
+            const storedImages = existing.files.filter(isImageFile);
+            const storedUrls = storedImages.map((file) => file.file_url);
+
+            await updatePostRequest(existing.post_id, {
+                header: input.title,
+                course_id: courseId,
+                body: input.content,
+                status: input.status,
+                add_files: [
+                    ...input.images
+                        .filter((image) => !storedUrls.includes(image))
+                        .map((image) => ({ file_url: image })),
+                    ...attachmentFiles,
+                ],
+                remove_file_ids: storedImages
+                    .filter((file) => !input.images.includes(file.file_url))
+                    .map((file) => file.file_id),
+            });
         }
-    }, [drafts, loaded]);
 
-    // Save deleted post IDs to localStorage
-    useEffect(() => {
-        if (!loaded) return;
+        await refresh();
+    }
 
-        try {
-            localStorage.setItem(
-                DELETED_POSTS_STORAGE_KEY,
-                JSON.stringify(deletedPostIds)
-            );
-        } catch (error) {
-            console.error("Failed to save deleted posts:", error);
-        }
-    }, [deletedPostIds, loaded]);
-
-    // Add a new post
-    function addPost(post: Post) {
-        setCreatedPosts((prev) => [post, ...prev]);
+    // Publish a new post, or publish the draft it was written in
+    async function addPost(
+        post: Post,
+        attachments: File[] = [],
+        fromDraftId?: Draft["id"]
+    ) {
+        await save({
+            id: fromDraftId,
+            title: post.title,
+            course: post.course,
+            content: post.content,
+            images: post.images ?? [],
+            attachments,
+            status: "published",
+        });
     }
 
     // Delete an existing post
-    function deletePost(id: Post["id"]) {
-        // Remove from created posts
-        setCreatedPosts((prev) =>
-            prev.filter((post) => post.id !== id)
-        );
-
-        // Remove from edited posts
-        setEditedPosts((prev) =>
-            prev.filter((post) => post.id !== id)
-        );
-
-        // Remember deleted posts
-        setDeletedPostIds((prev) =>
-            prev.includes(id) ? prev : [...prev, id]
-        );
+    async function removePost(id: Post["id"]) {
+        try {
+            await deletePostRequest(String(id));
+            await refresh();
+        } catch (error) {
+            console.error("Failed to delete post:", error);
+            alert(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to delete post."
+            );
+        }
     }
 
     // Update an existing post
-    function updatePost(updatedPost: Post) {
-        // Update posts created by the user
-        setCreatedPosts((prev) =>
-            prev.map((post) =>
-                post.id === updatedPost.id ? updatedPost : post
-            )
-        );
-
-        // Store edited versions of posts
-        setEditedPosts((prev) => {
-            const exists = prev.some(
-                (post) => post.id === updatedPost.id
-            );
-
-            if (exists) {
-                return prev.map((post) =>
-                    post.id === updatedPost.id ? updatedPost : post
-                );
-            }
-
-            return [...prev, updatedPost];
+    async function updatePost(updatedPost: Post, attachments: File[] = []) {
+        await save({
+            id: updatedPost.id,
+            title: updatedPost.title,
+            course: updatedPost.course,
+            content: updatedPost.content,
+            images: updatedPost.images ?? [],
+            attachments,
         });
     }
 
@@ -212,27 +323,18 @@ export function PostsProvider({
     }
 
     // Add or update a draft
-    function addDraft(draft: Draft) {
-        setDrafts((prev) => {
-            const existing = prev.some(
-                (item) => item.id === draft.id
-            );
+    async function addDraft(draft: Draft, attachments: File[] = []) {
+        const { body, images } = splitDraftContent(draft.content);
 
-            if (existing) {
-                return prev.map((item) =>
-                    item.id === draft.id ? draft : item
-                );
-            }
-
-            return [draft, ...prev];
+        await save({
+            id: draft.id,
+            title: draft.title,
+            course: draft.course,
+            content: body,
+            images,
+            attachments,
+            status: "draft",
         });
-    }
-
-    // Delete a draft
-    function deleteDraft(id: number) {
-        setDrafts((prev) =>
-            prev.filter((draft) => draft.id !== id)
-        );
     }
 
     // Open the Edit Draft modal
@@ -246,22 +348,20 @@ export function PostsProvider({
         setEditingDraft(null);
     }
 
-    // Combine created and initial posts, applying saved edits
-    const allPosts = [...createdPosts, ...initialPosts]
-        .filter((post) => !deletedPostIds.includes(post.id))
-        .map(
-            (post) =>
-                editedPosts.find(
-                    (edited) => edited.id === post.id
-                ) ?? post
-        );
+    // Published posts for the feed, search and profile
+    const allPosts = feedPosts.map(toPost);
+
+    // Only the logged-in user's own drafts
+    const drafts = myPosts
+        .filter((post) => post.status === "draft")
+        .map(toDraft);
 
     return (
         <PostsContext.Provider
             value={{
                 posts: allPosts,
                 addPost,
-                deletePost,
+                deletePost: removePost,
                 updatePost,
 
                 editingPost,
@@ -270,11 +370,14 @@ export function PostsProvider({
 
                 drafts,
                 addDraft,
-                deleteDraft,
+                deleteDraft: removePost,
 
                 editingDraft,
                 openEditDraft,
                 closeEditDraft,
+
+                courses,
+                currentUserId,
             }}
         >
             {children}
