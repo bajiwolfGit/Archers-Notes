@@ -42,9 +42,25 @@ export interface ProfileData {
 	email: string;
 	subtitle: string;
 	bio: string;
-	courses: string[];
+	courses: Course[];
 	avatar: string | null;
 	cover: string | null;
+}
+
+/**
+ * Course Interface
+ * 
+ * Defines the structure of the course
+ * 
+ * @property course_id - id number of the course.
+ * @property code - code for the subject at hand.
+ * @property name - the name of the subject.
+ * 
+ */
+export interface Course {
+  course_id: number;
+  code: string;
+  name: string;
 }
 
 /**
@@ -70,7 +86,7 @@ export const initialProfile: ProfileData = {
 	email: "john.doe@dlsu.edu.ph",
 	subtitle: "CCS Student",
 	bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-	courses: ["CSADPRG", "CSARCH1", "CSNETWK", "DATA103"],
+	courses: [],
 	avatar: null,
 	cover: null,
 };

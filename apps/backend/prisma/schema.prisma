@@ -149,6 +149,7 @@ model users {
   username   String    @unique @db.VarChar(50)
   bio        String?
   avatar_url String?
+  cover_url  String?
   role       user_role @default(student)
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
