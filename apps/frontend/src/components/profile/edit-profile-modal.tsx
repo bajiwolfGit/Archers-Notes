@@ -35,6 +35,9 @@ export default function EditProfileModal({
 	const [isSaving, setIsSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 
+	const [avatarFile, setAvatarFile] = useState<File | null>(null);
+	const [coverFile, setCoverFile] = useState<File | null>(null);
+
 	useEffect(() => {
 		const previousOverflow = document.body.style.overflow;
 		document.body.style.overflow = "hidden";
@@ -69,28 +72,46 @@ export default function EditProfileModal({
 	function handleImageUpload(
 		event: React.ChangeEvent<HTMLInputElement>,
 		type: "avatar" | "cover"
-	) {
+		) {
 		const file = event.target.files?.[0];
 
 		if (!file) return;
 
-		if (!file.type.startsWith("image/")) {
-			alert("Please select an image file.");
+		const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+		if (!allowedTypes.includes(file.type)) {
+			alert("Only JPEG, PNG, and WebP images are allowed.");
+			event.target.value = "";
 			return;
 		}
 
-    	const reader = new FileReader();
+		if (file.size > 5 * 1024 * 1024) {
+			alert("Image must not exceed 5 MB.");
+			event.target.value = "";
+			return;
+		}
+
+		// Keep the actual file for uploading later.
+		if (type === "avatar") {
+			setAvatarFile(file);
+		} else {
+			setCoverFile(file);
+		}
+
+		// Generate a temporary preview.
+		const reader = new FileReader();
 
 		reader.onload = () => {
 			if (typeof reader.result === "string") {
-				setDraft((previous) => ({
+			setDraft((previous) => ({
 				...previous,
 				[type]: reader.result as string,
-				}));
+			}));
 			}
 		};
 
 		reader.readAsDataURL(file);
+
 		event.target.value = "";
 	}
 
@@ -122,10 +143,10 @@ export default function EditProfileModal({
 			courses: [...previous.courses, selectedCourse],
 		}));
 
-	setCourseError(null);
-	setNewCourse("");
-	setShowCourseInput(false);
-}
+		setCourseError(null);
+		setNewCourse("");
+		setShowCourseInput(false);
+	}
 
 	function removeCourse(courseId: number) {
 		setDraft((previous) => ({
@@ -191,12 +212,58 @@ export default function EditProfileModal({
 			throw new Error("Failed to update courses.");
 			}
 
+			// Upload the new profile picture, if one was selected.
+			let updatedAvatar = draft.avatar;
+
+			if (avatarFile) {
+			const formData = new FormData();
+			formData.append("file", avatarFile);
+
+			const response = await fetch(`${API_URL}/users/me/avatar`, {
+				method: "POST",
+				credentials: "include",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to upload profile picture.");
+			}
+
+			const updatedProfile = await response.json();
+			updatedAvatar = updatedProfile.avatar_url;
+			}
+
+			// Upload the new cover image, if one was selected.
+			let updatedCover = draft.cover;
+
+			if (coverFile) {
+			const formData = new FormData();
+			formData.append("file", coverFile);
+
+			const response = await fetch(`${API_URL}/users/me/cover`, {
+				method: "POST",
+				credentials: "include",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to upload cover image.");
+			}
+
+			const updatedProfile = await response.json();
+			updatedCover = updatedProfile.cover_url;
+			}
+
 			// Save the other profile information
 			await onSave({
 			...draft,
+			avatar: updatedAvatar,
+  			cover: updatedCover,
 			name: draft.name.trim(),
 			bio: draft.bio.trim(),
 			});
+			setAvatarFile(null);
+			setCoverFile(null);
 		} catch (error) {
 			console.error("Error saving profile:", error);
 			setSaveError("Unable to save your profile. Please try again.");

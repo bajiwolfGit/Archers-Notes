@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { SupabaseStorageService, type ImageType } from '../storage/supabase-storage.service.js';
+import type { Express } from 'express';
 
 @Injectable()
 export class UsersService {
-constructor(private readonly prisma: PrismaService) {}
+constructor(private readonly prisma: PrismaService,
+            private readonly storageService: SupabaseStorageService,
+) {}
 
  // Retrieve a user's profile
 async getProfile(userId: string) {
@@ -16,6 +20,8 @@ async getProfile(userId: string) {
       username: true,
       bio: true,
       avatar_url: true,
+      cover_url: true,
+      created_at: true,
       colleges: {
         select: {
           college_id: true,
@@ -47,6 +53,8 @@ async getProfile(userId: string) {
     username: user.username,
     bio: user.bio,
     avatar_url: user.avatar_url,
+    cover_url: user.cover_url,
+    created_at: user.created_at,
     college: user.colleges,
     courses: user.user_courses.map((item) => item.courses),
   };
@@ -72,6 +80,30 @@ async updateProfile(
             : { connect: { college_id: data.college_id } },
       }),
     },
+  });
+
+  return this.getProfile(userId);
+}
+
+async uploadImage(
+  userId: string,
+  type: ImageType,
+  file: Express.Multer.File,
+) {
+  // Upload the image to Supabase Storage
+  const uploadedImage = await this.storageService.uploadImage(
+    userId,
+    type,
+    file,
+  );
+
+  // Save the resulting URL in the user's database record
+  await this.prisma.users.update({
+    where: { id: userId },
+    data:
+      type === 'avatar'
+        ? { avatar_url: uploadedImage.url }
+        : { cover_url: uploadedImage.url },
   });
 
   return this.getProfile(userId);

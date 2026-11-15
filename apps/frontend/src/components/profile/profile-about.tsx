@@ -9,6 +9,42 @@ interface ProfileAboutProps {
 	isOwnProfile?: boolean;
 }
 
+function getAccountAge(createdAt: string): string {
+	if (!createdAt) return "Unknown";
+
+	const created = new Date(createdAt);
+
+	if (Number.isNaN(created.getTime())) return "Unknown";
+
+	const now = new Date();
+
+	let months =
+		(now.getFullYear() - created.getFullYear()) * 12 +
+		(now.getMonth() - created.getMonth());
+
+	if (now.getDate() < created.getDate()) {
+		months--;
+	}
+
+	if (months < 0) return "Unknown";
+	if (months === 0) return "Less than a month";
+
+	const years = Math.floor(months / 12);
+	const remainingMonths = months % 12;
+
+	if (years === 0) {
+		return `${months} ${months === 1 ? "month" : "months"}`;
+	}
+
+	if (remainingMonths === 0) {
+		return `${years} ${years === 1 ? "year" : "years"}`;
+	}
+
+	return `${years} ${years === 1 ? "year" : "years"} ${remainingMonths} ${
+		remainingMonths === 1 ? "month" : "months"
+	}`;
+}
+
 export default function ProfileAbout({
 	profile,
 	isOwnProfile = true,
@@ -28,6 +64,15 @@ export default function ProfileAbout({
 
   	const [showAddLink, setShowAddLink] = useState(false);
 	const [newLink, setNewLink] = useState("");
+
+	const joinedDate = profile.createdAt
+	? new Date(profile.createdAt).toLocaleDateString("en-US", {
+			month: "long",
+			year: "numeric",
+		})
+	: "Unknown";
+
+const accountAge = getAccountAge(profile.createdAt);
 	
 	// Loads the latest courses from localStorage.
 	// Removed useEffect
@@ -46,8 +91,7 @@ export default function ProfileAbout({
 
 		setNewLink("");
 		setShowAddLink(false);
-	}
-
+	}	
 	return (
 		<aside className="w-full rounded-sm border border-gray-200 bg-white p-5">
 
@@ -164,7 +208,9 @@ export default function ProfileAbout({
 				</div>
 
 				<div className="col-span-2">
-					<p className="text-sm font-semibold">9 months</p>
+					<p className="text-sm font-semibold">
+						{getAccountAge(profile.createdAt)}
+					</p>
 					<p className="text-xs text-gray-400">
 						Account Age
 					</p>

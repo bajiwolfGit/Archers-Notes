@@ -136,6 +136,7 @@ export default function ProfileHeader({
 			email: user.gmail,
 			bio: user.bio ?? "",
 			avatar: user.avatar_url,
+			cover: user.cover_url,
   		});
 
 		// Close the edit profile modal after a sucessful update.

@@ -33,7 +33,9 @@
  *                    A null value indicates no image is set.
  * @property cover - URL of the user's profile cover image.
  *                   A null value indicates no image is set.
- *
+ * @property createdAt - date of when the user's account was 
+ * 						created.
+ * 
  * This interface is exported so it can be reused
  * across profile-related components.
  */
@@ -45,6 +47,7 @@ export interface ProfileData {
 	courses: Course[];
 	avatar: string | null;
 	cover: string | null;
+	createdAt: string;
 }
 
 /**
@@ -89,4 +92,5 @@ export const initialProfile: ProfileData = {
 	courses: [],
 	avatar: null,
 	cover: null,
+	createdAt: "",
 };

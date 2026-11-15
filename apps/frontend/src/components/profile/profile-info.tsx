@@ -17,6 +17,13 @@ export default function ProfileInfo({
 }: ProfileInfoProps) {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+	const joinedDate = profile.createdAt
+	? new Date(profile.createdAt).toLocaleDateString("en-US", {
+			month: "long",
+			year: "numeric",
+		})
+	: "Unknown";
+
 	return (
 		<>
 			{/* Profile Information */}
@@ -76,7 +83,7 @@ export default function ProfileInfo({
 						className="h-6 w-6 object-contain"
 					/>
 
-					<span>Joined January 2026</span>
+					<span>Joined {joinedDate}</span>
 				</div>
 
 				<div className="mt-3 flex gap-5 text-sm text-[#343B36]">

@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Patch, Post, Delete, Param, ParseIntPipe} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Delete, Param, ParseIntPipe, UploadedFile, UseInterceptors} from '@nestjs/common';
 import { CurrentUser, type AuthUser } from '@nestm/better-auth';
 import { auth } from '../auth.js';
 import { UsersService } from './users.service.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
 import { AddCourseDto } from './dto/add-course.dto.js';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -40,6 +41,38 @@ export class UsersController {
     @Param('courseId', ParseIntPipe) courseId: number,
   ) {
     return this.usersService.removeCourse(user.id, courseId);
+  }
+
+  // Upload the User's profile pic
+  @Post('me/avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 5 * 1024 * 1024,
+      },
+    }),
+  )
+  uploadAvatar(
+    @CurrentUser() user: AuthUser<typeof auth>,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.uploadImage(user.id, 'avatar', file);
+  }
+
+  // Upload the User's cover pic
+  @Post('me/cover')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 5 * 1024 * 1024,
+      },
+    }),
+  )
+  uploadCover(
+    @CurrentUser() user: AuthUser<typeof auth>,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.uploadImage(user.id, 'cover', file);
   }
 }
 
