@@ -19,6 +19,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install robotframework-browser
           python -m Browser.entry init
+          npm install
       
       - name: Run Server
         run: |
