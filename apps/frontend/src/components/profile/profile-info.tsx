@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import DeleteAccountModal from "./delete-account-modal";
+import FollowListModal from "./follow-list-modal";
 import type { ProfileData } from "./profile-types";
 
 interface ProfileInfoProps {
@@ -11,11 +12,31 @@ interface ProfileInfoProps {
 	onEdit: () => void;
 }
 
+
 export default function ProfileInfo({
 	profile,
 	onEdit,
 }: ProfileInfoProps) {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+	// Stores the users currently followed.
+	const [followingIds, setFollowingIds] = useState<number[]>([2, 3]);
+
+	// Mock followers.
+	const followerIds = [2, 3, 4];
+
+	// Follow or unfollow a user.
+	function handleToggleFollow(userId: number) {
+		setFollowingIds((previous) =>
+			previous.includes(userId)
+				? previous.filter((id) => id !== userId)
+				: [...previous, userId]
+		);
+	}
+
+	const [activeFollowTab, setActiveFollowTab] = useState<
+		"following" | "followers" | null
+	>(null);
 
 	return (
 		<>
@@ -80,8 +101,21 @@ export default function ProfileInfo({
 				</div>
 
 				<div className="mt-3 flex gap-5 text-sm text-[#343B36]">
-					<span>5 Following</span>
-					<span>34 Followers</span>
+					<button
+						type="button"
+						onClick={() => setActiveFollowTab("following")}
+						className="hover:text-[#00A651] hover:underline"
+					>
+						{followingIds.length} Following
+					</button>
+
+					<button
+						type="button"
+						onClick={() => setActiveFollowTab("followers")}
+						className="hover:text-[#00A651] hover:underline"
+					>
+						{followerIds.length} Followers
+					</button>
 				</div>
 			</div>
 
@@ -90,14 +124,22 @@ export default function ProfileInfo({
 				<DeleteAccountModal
 					onClose={() => setIsDeleteModalOpen(false)}
 					onConfirm={(password) => {
-						// TODO: Send the password securely to your backend
-						// to verify the user's identity before deleting the account.
-
-						// Do not store or log the password.
+					// TODO: Verify password through backend
 						void password;
 
 						alert("Account deletion requires backend integration.");
 					}}
+				/>
+			)}
+
+			{/* Following / Followers Modal */}
+			{activeFollowTab && (
+				<FollowListModal
+					initialTab={activeFollowTab}
+					followingIds={followingIds}
+					followerIds={followerIds}
+					onToggleFollow={handleToggleFollow}
+					onClose={() => setActiveFollowTab(null)}
 				/>
 			)}
 		</>
