@@ -1,4 +1,5 @@
 import {
+  IsInt,
   IsOptional,
   IsString,
   MaxLength,
@@ -16,4 +17,8 @@ export class UpdateProfileDto {
   @IsString()
   @MaxLength(500)
   bio?: string | null;
+
+  @IsOptional()
+  @IsInt()
+  college_id?: number | null;
 }

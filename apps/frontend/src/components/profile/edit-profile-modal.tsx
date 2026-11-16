@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import type { ProfileData } from "./profile-types";
+import type { ProfileData, Course } from "./profile-types";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 interface EditProfileModalProps {
 	profile: ProfileData;
@@ -23,11 +26,17 @@ export default function EditProfileModal({
 	const [showCourseInput, setShowCourseInput] = useState(false);
 	const [newCourse, setNewCourse] = useState("");
 
+	const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
+	const [courseError, setCourseError] = useState<string | null>(null);
+
 	const avatarInputRef = useRef<HTMLInputElement>(null);
 	const coverInputRef = useRef<HTMLInputElement>(null);
 
 	const [isSaving, setIsSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
+
+	const [avatarFile, setAvatarFile] = useState<File | null>(null);
+	const [coverFile, setCoverFile] = useState<File | null>(null);
 
 	useEffect(() => {
 		const previousOverflow = document.body.style.overflow;
@@ -38,57 +47,113 @@ export default function EditProfileModal({
 		};
   	}, []);
 
+	useEffect(() => {
+  		async function fetchCourses() {
+    		try {
+      			const response = await fetch(`${API_URL}/courses`, {
+        		credentials: "include",
+      	});
+
+		if (!response.ok) {
+			throw new Error("Failed to load available courses.");
+		}
+
+      	const courses: Course[] = await response.json();
+      	setAvailableCourses(courses);
+    		}	catch (error) {
+				console.error("Error fetching courses:", error);
+				setCourseError("Unable to load available courses.");
+		}
+	}
+
+	fetchCourses();
+	}, []);
+
 	function handleImageUpload(
 		event: React.ChangeEvent<HTMLInputElement>,
 		type: "avatar" | "cover"
-	) {
+		) {
 		const file = event.target.files?.[0];
 
 		if (!file) return;
 
-		if (!file.type.startsWith("image/")) {
-			alert("Please select an image file.");
+		const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+		if (!allowedTypes.includes(file.type)) {
+			alert("Only JPEG, PNG, and WebP images are allowed.");
+			event.target.value = "";
 			return;
 		}
 
-    	const reader = new FileReader();
+		if (file.size > 5 * 1024 * 1024) {
+			alert("Image must not exceed 5 MB.");
+			event.target.value = "";
+			return;
+		}
+
+		// Keep the actual file for uploading later.
+		if (type === "avatar") {
+			setAvatarFile(file);
+		} else {
+			setCoverFile(file);
+		}
+
+		// Generate a temporary preview.
+		const reader = new FileReader();
 
 		reader.onload = () => {
 			if (typeof reader.result === "string") {
-				setDraft((previous) => ({
+			setDraft((previous) => ({
 				...previous,
 				[type]: reader.result as string,
-				}));
+			}));
 			}
 		};
 
 		reader.readAsDataURL(file);
+
 		event.target.value = "";
 	}
 
 	function addCourse() {
-		const course = newCourse.trim().toUpperCase();
+ 		const courseCode = newCourse.trim().toUpperCase();
 
-		if (!course) return;
+  		if (!courseCode) return;
 
-		if (draft.courses.includes(course)) {
-			setNewCourse("");
+  		const selectedCourse = availableCourses.find(
+    		(course) => course.code.toUpperCase() === courseCode
+  		);
+
+  		if (!selectedCourse) {
+    		setCourseError("Course code not found.");
+    		return;
+		}
+
+		if (
+			draft.courses.some(
+			(course) => course.course_id === selectedCourse.course_id
+			)
+		) {
+			setCourseError("You have already added this course.");
 			return;
 		}
 
 		setDraft((previous) => ({
 			...previous,
-			courses: [...previous.courses, course],
+			courses: [...previous.courses, selectedCourse],
 		}));
 
+		setCourseError(null);
 		setNewCourse("");
 		setShowCourseInput(false);
-  	}
+	}
 
-	function removeCourse(course: string) {
+	function removeCourse(courseId: number) {
 		setDraft((previous) => ({
 			...previous,
-			courses: previous.courses.filter((item) => item !== course),
+			courses: previous.courses.filter(
+			(course) => course.course_id !== courseId
+			),
 		}));
 	}
 
@@ -102,11 +167,103 @@ export default function EditProfileModal({
 		setSaveError(null);
 
 		try {
+			// Find courses that were added
+			const addedCourses = draft.courses.filter(
+			(course) =>
+				!profile.courses.some(
+				(original) => original.course_id === course.course_id
+				)
+			);
+
+			// Find courses that were removed
+			const removedCourses = profile.courses.filter(
+			(course) =>
+				!draft.courses.some(
+				(current) => current.course_id === course.course_id
+				)
+			);
+
+			// Save course additions and removals
+			const courseRequests = [
+			...addedCourses.map((course) =>
+				fetch(`${API_URL}/users/me/courses`, {
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					course_id: course.course_id,
+				}),
+				})
+			),
+
+			...removedCourses.map((course) =>
+				fetch(`${API_URL}/users/me/courses/${course.course_id}`, {
+				method: "DELETE",
+				credentials: "include",
+				})
+			),
+			];
+
+			const responses = await Promise.all(courseRequests);
+
+			if (responses.some((response) => !response.ok)) {
+			throw new Error("Failed to update courses.");
+			}
+
+			// Upload the new profile picture, if one was selected.
+			let updatedAvatar = draft.avatar;
+
+			if (avatarFile) {
+			const formData = new FormData();
+			formData.append("file", avatarFile);
+
+			const response = await fetch(`${API_URL}/users/me/avatar`, {
+				method: "POST",
+				credentials: "include",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to upload profile picture.");
+			}
+
+			const updatedProfile = await response.json();
+			updatedAvatar = updatedProfile.avatar_url;
+			}
+
+			// Upload the new cover image, if one was selected.
+			let updatedCover = draft.cover;
+
+			if (coverFile) {
+			const formData = new FormData();
+			formData.append("file", coverFile);
+
+			const response = await fetch(`${API_URL}/users/me/cover`, {
+				method: "POST",
+				credentials: "include",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to upload cover image.");
+			}
+
+			const updatedProfile = await response.json();
+			updatedCover = updatedProfile.cover_url;
+			}
+
+			// Save the other profile information
 			await onSave({
 			...draft,
+			avatar: updatedAvatar,
+  			cover: updatedCover,
 			name: draft.name.trim(),
 			bio: draft.bio.trim(),
 			});
+			setAvatarFile(null);
+			setCoverFile(null);
 		} catch (error) {
 			console.error("Error saving profile:", error);
 			setSaveError("Unable to save your profile. Please try again.");
@@ -315,21 +472,27 @@ export default function EditProfileModal({
 								Courses
 							</span>
 
+							{courseError && (
+								<p className="mt-2 text-xs text-red-500">
+									{courseError}
+								</p>
+							)}
+
 							<div className="mt-2 flex flex-wrap gap-2">
 								{draft.courses.map((course) => (
 									<span
-										key={course}
+										key={course.course_id}
 										className="flex items-center gap-1 rounded-full bg-[#E4EBE7] px-3 py-1 text-[10px] font-medium text-[#343B36]"
 									>
-										{course}
+										{course.code}
 
 										<button
-											type="button"
-											onClick={() => removeCourse(course)}
-											aria-label={`Remove ${course}`}
-											className="text-sm leading-none hover:text-red-500"
+										type="button"
+										onClick={() => removeCourse(course.course_id)}
+										aria-label={`Remove ${course.code}`}
+										className="text-sm leading-none hover:text-red-500"
 										>
-											x
+										x
 										</button>
 									</span>
 								))}

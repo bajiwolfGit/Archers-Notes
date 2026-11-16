@@ -27,6 +27,13 @@ interface UserProfileResponse {
   username: string;
   bio: string | null;
   avatar_url: string | null;
+  cover_url: string | null;
+  created_at: string;
+  courses: {
+    course_id: number;
+    code: string;
+    name: string;
+  }[];
 }
 
 export default function ProfilePage() {
@@ -56,6 +63,9 @@ export default function ProfilePage() {
           email: user.gmail,
           bio: user.bio ?? "",
           avatar: user.avatar_url,
+          cover: user.cover_url,
+          createdAt: user.created_at,
+          courses: user.courses ?? [],
         }));
       } catch (err) {
         console.error("Error fetching profile:", err);

@@ -1,19 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import type { ProfileData } from "./profile-types";
-
-interface Course {
-    code: string;
-    name: string;
-}
-
-const COURSES_STORAGE_KEY = "archers-notes-courses";
 
 interface ProfileAboutProps {
 	profile: ProfileData;
 	isOwnProfile?: boolean;
+}
+
+function getAccountAge(createdAt: string): string {
+	if (!createdAt) return "Unknown";
+
+	const created = new Date(createdAt);
+
+	if (Number.isNaN(created.getTime())) return "Unknown";
+
+	const now = new Date();
+
+	let months =
+		(now.getFullYear() - created.getFullYear()) * 12 +
+		(now.getMonth() - created.getMonth());
+
+	if (now.getDate() < created.getDate()) {
+		months--;
+	}
+
+	if (months < 0) return "Unknown";
+	if (months === 0) return "Less than a month";
+
+	const years = Math.floor(months / 12);
+	const remainingMonths = months % 12;
+
+	if (years === 0) {
+		return `${months} ${months === 1 ? "month" : "months"}`;
+	}
+
+	if (remainingMonths === 0) {
+		return `${years} ${years === 1 ? "year" : "years"}`;
+	}
+
+	return `${years} ${years === 1 ? "year" : "years"} ${remainingMonths} ${
+		remainingMonths === 1 ? "month" : "months"
+	}`;
 }
 
 export default function ProfileAbout({
@@ -35,51 +64,18 @@ export default function ProfileAbout({
 
   	const [showAddLink, setShowAddLink] = useState(false);
 	const [newLink, setNewLink] = useState("");
+
+	const joinedDate = profile.createdAt
+	? new Date(profile.createdAt).toLocaleDateString("en-US", {
+			month: "long",
+			year: "numeric",
+		})
+	: "Unknown";
+
+const accountAge = getAccountAge(profile.createdAt);
 	
-	// Stores the courses displayed on the profile.
-	const [courses, setCourses] = useState<string[]>(profile.courses);
-
 	// Loads the latest courses from localStorage.
-	useEffect(() => {
-		function loadCourses() {
-			// Other users' profiles retain their own course data.
-			if (!isOwnProfile) {
-				setCourses(profile.courses);
-				return;
-			}
-
-			try {
-				const storedCourses = localStorage.getItem(COURSES_STORAGE_KEY);
-
-				if (!storedCourses) {
-					setCourses(profile.courses);
-					return;
-				}
-
-				const parsedCourses: Course[] = JSON.parse(storedCourses);
-
-				if (Array.isArray(parsedCourses)) {
-					setCourses(parsedCourses.map((course) => course.code));
-				}
-			} catch (error) {
-				console.error("Failed to load profile courses:", error);
-				setCourses(profile.courses);
-			}
-		}
-
-		loadCourses();
-
-		// Listen for course additions in the same browser tab.
-		window.addEventListener("courses-updated", loadCourses);
-
-		// Listen for changes from other browser tabs.
-		window.addEventListener("storage", loadCourses);
-
-		return () => {
-			window.removeEventListener("courses-updated", loadCourses);
-			window.removeEventListener("storage", loadCourses);
-		};
-	}, [profile.courses, isOwnProfile]);
+	// Removed useEffect
 
 	function handleAddLink() {
 		if (!newLink.trim()) return;
@@ -95,8 +91,7 @@ export default function ProfileAbout({
 
 		setNewLink("");
 		setShowAddLink(false);
-	}
-
+	}	
 	return (
 		<aside className="w-full rounded-sm border border-gray-200 bg-white p-5">
 
@@ -213,7 +208,9 @@ export default function ProfileAbout({
 				</div>
 
 				<div className="col-span-2">
-					<p className="text-sm font-semibold">9 months</p>
+					<p className="text-sm font-semibold">
+						{getAccountAge(profile.createdAt)}
+					</p>
 					<p className="text-xs text-gray-400">
 						Account Age
 					</p>
@@ -229,9 +226,11 @@ export default function ProfileAbout({
 				</h2>
 
 				<div className="space-y-2 pl-2 text-xs text-gray-700">
-					{courses.length > 0 ? (
-						courses.map((course) => (
-							<p key={course}>{course}</p>
+					{profile.courses.length > 0 ? (
+						profile.courses.map((course) => (
+							<p key={course.course_id}>
+								{course.code}
+							</p>
 						))
 					) : (
 						<p className="text-gray-400">
@@ -240,7 +239,6 @@ export default function ProfileAbout({
 					)}
 				</div>
 			</section>
-
 		</aside>
 	);
 }

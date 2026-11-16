@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * File: components/layout/navbar.tsx
  *
@@ -30,6 +32,7 @@ import AdminNotificationsPopup from "@/components/admin/admin-notifications-popu
 interface NavbarProps {
     isAdmin?: boolean;
 }
+import { useEffect, useState } from "react";
 
 /**
  * Navbar Component
@@ -49,6 +52,60 @@ interface NavbarProps {
 export default function Navbar({
     isAdmin = false,
 }: NavbarProps) {
+    const [avatar, setAvatar] = useState<string | null>(null);
+    const [isSigningOut, setIsSigningOut] = useState(false);
+
+    async function handleSignOut() {
+        try {
+            setIsSigningOut(true);
+
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/sign-out`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to sign out.");
+            }
+
+            setAvatar(null);
+
+            // Redirect to the landing page.
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Sign-out error:", error);
+            alert("Unable to sign out. Please try again.");
+            setIsSigningOut(false);
+        }
+    }
+
+    useEffect(() => {
+        async function fetchProfile() {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/users/me`,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                    }
+                );
+
+                if (!response.ok) return;
+
+                const user = await response.json();
+
+                setAvatar(user.avatar_url);
+            } catch (error) {
+                console.error("Failed to load navbar avatar:", error);
+            }
+        }
+
+        fetchProfile();
+    }, []);
+
     return (
 
         /*
@@ -172,13 +229,26 @@ export default function Navbar({
                         aria-haspopup="menu"
                         className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-75"
                     >
+                    {/* Default user profile icon. */}
+                    {avatar ? (
+                        <Image
+                            src={avatar}
+                            alt="Profile"
+                            width={36}
+                            height={36}
+                            unoptimized
+                            className="h-9 w-9 rounded-full object-cover"
+                        />
+                    ) : (
                         <Image
                             src="/assets/icons/profile.svg"
                             alt="Profile"
                             width={36}
                             height={36}
+                            unoptimized
                             className="h-9 w-9 object-contain"
                         />
+                    )}
                     </button>
 
                     {/* Dropdown Menu */}
@@ -234,10 +304,9 @@ export default function Navbar({
                             {/* Sign Out - Both User and Admin */}
                             <button
                                 type="button"
-                                onClick={() => {
-                                    // TODO: Connect authentication sign-out.
-                                }}
-                                className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                                onClick={handleSignOut}
+                                disabled={isSigningOut}
+                                className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
                             >
                                 <Image
                                     src="/assets/icons/sign-out.svg"
@@ -246,7 +315,7 @@ export default function Navbar({
                                     height={18}
                                     className="h-4.5 w-4.5 object-contain"
                                 />
-                                Sign Out
+                                {isSigningOut ? "Signing Out..." : "Sign Out"}
                             </button>
 
                         </div>
