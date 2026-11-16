@@ -19,8 +19,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install robotframework-browser
           python -m Browser.entry init
-          
-      - run: robot --outputdir results/tests tests/robot/google_login
+      
+      - name: Run Server
+        run: |
+          npm run build
+          sleep 15
+          npm run dev
+          sleep 15
+
+      - name: Run Test Script
+        run: robot --outputdir results/tests tests/robot/google_login
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
