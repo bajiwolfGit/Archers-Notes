@@ -1,32 +1,25 @@
+
 /**
  * File: components/posts/course-selector.tsx
  *
  * Description:
- * Provides a reusable course selection dropdown for the
- * Archer's Notes application. Allows users to select a course
- * when creating or editing a post.
+ * Provides a reusable course selection dropdown for
+ * creating and editing notes in Archer's Notes.
  *
  * Features:
- * - Displays a dropdown containing predefined course codes.
- * - Allows users to select a course from the available options.
- * - Receives the currently selected course from a parent component.
- * - Notifies the parent component when the selected course changes.
- * - Provides a default placeholder option.
- * - Uses a controlled select element for consistent state management.
+ * - Displays predefined course codes.
+ * - Matches the College dropdown design.
+ * - Highlights the selected course in green.
+ * - Supports keyboard navigation.
+ * - Closes when clicking outside.
+ * - Uses a scrollable dropdown menu.
  */
 
 "use client";
 
-/**
- * CourseSelectorProps Interface
- *
- * Defines the properties required by the CourseSelector component.
- *
- * @property value - The currently selected course code.
- * @property onChange - Callback function executed when the user
- *                      selects a course. Receives the selected
- *                      course code as a string.
- */
+import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
+
 interface CourseSelectorProps {
     value: string;
     onChange: (course: string) => void;
@@ -73,80 +66,203 @@ export default function CourseSelector({
     value,
     onChange,
 }: CourseSelectorProps) {
-    return (
+    const [isOpen, setIsOpen] = useState(false);
 
-        /*
-         * Course Selector Container:
-         * Wraps the course label and dropdown menu.
-         *
-         * Uses the full available width of the parent container.
-         */
-        <div className="w-full">
-            
-            {/*
-             * Course Label:
-             * Displays the label for the course selection field.
-             *
-             * The htmlFor attribute associates the label
-             * with the select element using its ID.
-             *
-             * This improves accessibility by allowing users
-             * to focus the dropdown when clicking the label.
-             */}
+    const containerRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+    // Close when clicking outside.
+    useEffect(() => {
+        function handleOutsideClick(event: MouseEvent) {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        }
+
+        document.addEventListener(
+            "mousedown",
+            handleOutsideClick
+        );
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                handleOutsideClick
+            );
+        };
+    }, []);
+
+    // Focus the selected course when opened.
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const selectedIndex = Math.max(
+            courses.indexOf(value),
+            0
+        );
+
+        optionRefs.current[selectedIndex]?.focus();
+    }, [isOpen, value]);
+
+    // Select a course.
+    function handleSelect(course: string) {
+        onChange(course);
+        setIsOpen(false);
+        buttonRef.current?.focus();
+    }
+
+    // Keyboard navigation.
+    function handleKeyDown(
+        event: KeyboardEvent<HTMLDivElement>
+    ) {
+        if (!isOpen) return;
+
+        const currentIndex = optionRefs.current.findIndex(
+            (option) => option === document.activeElement
+        );
+
+        if (event.key === "Escape") {
+            event.preventDefault();
+            event.stopPropagation();
+
+            setIsOpen(false);
+            buttonRef.current?.focus();
+        }
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+
+            const nextIndex =
+                (currentIndex + 1) % courses.length;
+
+            optionRefs.current[nextIndex]?.focus();
+        }
+
+        if (event.key === "ArrowUp") {
+            event.preventDefault();
+
+            const previousIndex =
+                (currentIndex - 1 + courses.length) %
+                courses.length;
+
+            optionRefs.current[previousIndex]?.focus();
+        }
+    }
+
+    return (
+        <div
+            ref={containerRef}
+            className="relative w-full"
+            onKeyDown={handleKeyDown}
+        >
+            {/* Course Label */}
             <label
-                htmlFor="note-course"
+                id="note-course-label"
                 className="mb-2 block text-sm font-medium text-gray-700"
             >
                 Course
             </label>
 
-            {/*
-             * Course Dropdown:
-             * Displays the available courses for selection.
-             *
-             * The value property determines which course
-             * is currently selected.
-             *
-             * The onChange handler retrieves the selected
-             * course code and passes it to the parent
-             * component through the onChange callback.
-             *
-             * The dropdown includes a green border
-             * when focused.
-             */}
-            <select
+            {/* Dropdown Trigger */}
+            <button
+                ref={buttonRef}
                 id="note-course"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className="w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-green-600"
+                type="button"
+                aria-labelledby="note-course-label note-course"
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                onClick={() => setIsOpen((previous) => !previous)}
+                className={`
+                    flex w-full items-center justify-between
+                    rounded-md border bg-white
+                    px-4 py-3 text-left text-sm
+                    outline-none transition-colors
+                    ${
+                        isOpen
+                            ? "border-[#00A651]"
+                            : "border-gray-200 hover:border-gray-300"
+                    }
+                `}
             >
+                <span
+                    className={
+                        value
+                            ? "text-gray-800"
+                            : "text-gray-400"
+                    }
+                >
+                    {value || "Select a course"}
+                </span>
 
-                {/*
-                 * Default Placeholder Option:
-                 * Prompts the user to select a course.
-                 *
-                 * Uses an empty string as its value.
-                 * The disabled attribute prevents users
-                 * from selecting it after choosing a course.
-                 */}
-                <option value="" disabled>
-                    Select a course
-                </option>
+                {/* Chevron */}
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    className={`
+                        shrink-0 text-gray-700
+                        transition-transform duration-200
+                        ${isOpen ? "rotate-180" : ""}
+                    `}
+                >
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
 
-                {/*
-                 * Course Options:
-                 * Iterates through the predefined courses array
-                 * and creates an option for each course.
-                 *
-                 * Each option uses the course code as its
-                 * unique React key and selection value.
-                 */}
-                {courses.map((course) => (
-                    <option key={course} value={course}>
-                        {course}
-                    </option>
-                ))}
-            </select>
+            {/* Dropdown Menu */}
+            {isOpen && (
+                <div
+                    role="listbox"
+                    aria-labelledby="note-course-label"
+                    className="
+                        absolute left-0 top-full z-50 mt-1
+                        max-h-[240px] w-full
+                        overflow-y-auto
+                        rounded-md border border-gray-200
+                        bg-white py-1 shadow-md
+                    "
+                >
+                    {courses.map((course, index) => {
+                        const isSelected = value === course;
+
+                        return (
+                            <button
+                                key={course}
+                                ref={(element) => {
+                                    optionRefs.current[index] =
+                                        element;
+                                }}
+                                type="button"
+                                role="option"
+                                aria-selected={isSelected}
+                                onClick={() => handleSelect(course)}
+                                className={`
+                                    flex w-full items-center
+                                    px-4 py-3 text-left text-sm
+                                    outline-none transition-colors
+                                    ${
+                                        isSelected
+                                            ? "bg-[#E8F7EF] text-[#00A651]"
+                                            : "text-gray-800 hover:bg-gray-50 focus:bg-gray-100"
+                                    }
+                                `}
+                            >
+                                {course}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
