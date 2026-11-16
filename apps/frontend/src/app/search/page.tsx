@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +17,9 @@ type SearchTab = "All" | "Notes" | "Courses" | "People";
 export default function SearchPage() {
     return (
         <MainLayout>
-            <SearchResults />
+            <Suspense fallback={null}>
+                <SearchResults />
+            </Suspense>
         </MainLayout>
     );
 }
