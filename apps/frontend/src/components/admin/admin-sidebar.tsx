@@ -11,7 +11,7 @@
  * - Organizes navigation into Overview and Communication.
  * - Highlights the currently active page.
  * - Displays the number of pending reports.
- * - Displays administrator information at the bottom.
+ * - Displays footer.
  * - Uses existing SVG icons and application typography.
  */
 
@@ -20,6 +20,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import AdminSidebarFooter from "./admin-sidebar-footer";
 
 /**
  * AdminSidebarProps Interface
@@ -231,36 +233,8 @@ export default function AdminSidebar({
                 </nav>
             </div>
 
-            {/* Administrator Profile Footer */}
-            <div className="mt-auto pt-8">
-
-                {/* Footer Divider */}
-                <hr className="mb-4 border-gray-200" />
-
-                {/* Administrator Information */}
-                <div className="flex items-center gap-3 rounded-md px-2 py-2">
-
-                    {/* Administrator Profile Icon */}
-                    <Image
-                        src="/assets/icons/profile.svg"
-                        alt=""
-                        width={36}
-                        height={36}
-                        className="h-9 w-9 shrink-0 object-contain"
-                    />
-
-                    {/* Administrator Details */}
-                    <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-[#303a36]">
-                            Administrator
-                        </p>
-
-                        <p className="text-xs text-gray-500">
-                            Admin account
-                        </p>
-                    </div>
-                </div>
-            </div>
+            {/* Admin Sidebar Footer */}
+            <AdminSidebarFooter />
         </aside>
     );
 }
