@@ -33,6 +33,9 @@ import SidebarButton from "../ui/sidebar-button";
 // Import the component for adding new courses.
 import AddCourseModal from "./add-course-modal";
 
+// Reusable footer displayed below the sidebar navigation.
+import SidebarFooter from "./sidebar-footer";
+
 /**
  * Courses Data
  *
@@ -464,6 +467,9 @@ export default function Sidebar({ onOpenPostNotes }: SidebarProps) {
 						)}
 					</section>
 				</nav>
+
+				{/* Sidebar Footer */}
+                <SidebarFooter />
 			</aside>
 
 			{isAddCourseOpen && (
