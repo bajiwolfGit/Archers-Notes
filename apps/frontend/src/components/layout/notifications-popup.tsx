@@ -101,7 +101,7 @@ export default function NotificationsPopup() {
             {isOpen && (
                 <div
                     id="notifications-panel"
-                    className="absolute right-0 top-full z-50 mt-3 w-[340px] rounded-lg border border-gray-200 bg-white shadow-lg"
+                    className="absolute right-0 top-full z-50 mt-3 w-85 rounded-lg border border-gray-200 bg-white shadow-lg"
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
@@ -117,7 +117,7 @@ export default function NotificationsPopup() {
                     </div>
 
                     {/* Notification List */}
-                    <div className="max-h-[350px] overflow-y-auto">
+                    <div className="max-h-87.5 overflow-y-auto">
                         {notifications.length === 0 ? (
                             <div className="px-5 py-10 text-center text-sm text-gray-500">
                                 No notifications yet.

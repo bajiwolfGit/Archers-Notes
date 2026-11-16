@@ -190,7 +190,7 @@ export default function Navbar() {
                                     alt=""
                                     width={18}
                                     height={18}
-                                    className="h-[18px] w-[18px] object-contain"
+                                    className="h-4.5 w-4.5 object-contain"
                                 />
                                 View Profile
                             </Link>
@@ -205,7 +205,7 @@ export default function Navbar() {
                                     alt=""
                                     width={18}
                                     height={18}
-                                    className="h-[18px] w-[18px] object-contain"
+                                    className="h-4.5 w-4.5 object-contain"
                                 />
                                 Settings
                             </Link>
@@ -226,7 +226,7 @@ export default function Navbar() {
                                     alt=""
                                     width={18}
                                     height={18}
-                                    className="h-[18px] w-[18px] object-contain"
+                                    className="h-4.5 w-4.5 object-contain"
                                 />
                                 Sign Out
                             </button>
