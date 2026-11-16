@@ -64,7 +64,7 @@ export default function AdminLayout({
 
                 {/* Shared Navbar */}
                 <div className="sticky top-0 z-50 bg-white">
-                    <Navbar />
+                    <Navbar isAdmin />
                 </div>
 
                 {/* Admin Layout */}

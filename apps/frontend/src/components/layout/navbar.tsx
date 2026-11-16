@@ -26,6 +26,12 @@ import Link from "next/link";
 // Import the NotificationsPopup component for displaying notifications.
 import NotificationsPopup from "@/components/layout/notifications-popup";
 
+// Import the AdminNotificationsPopup component for displaying admin notifications.
+import AdminNotificationsPopup from "@/components/admin/admin-notifications-popup";
+
+interface NavbarProps {
+    isAdmin?: boolean;
+}
 import { useEffect, useState } from "react";
 
 /**
@@ -43,7 +49,9 @@ import { useEffect, useState } from "react";
  *
  * @returns The application's main navigation bar.
  */
-export default function Navbar() {
+export default function Navbar({
+    isAdmin = false,
+}: NavbarProps) {
     const [avatar, setAvatar] = useState<string | null>(null);
     const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -120,8 +128,8 @@ export default function Navbar() {
              * to the application's main page.
              */}
             <Link
-                href="/main"
-                aria-label="View my profile"
+                href={isAdmin ? "/admin" : "/main"}
+                aria-label="Go to home"
             >
                 {/* Application logo image. */}
                 <Image
@@ -194,7 +202,11 @@ export default function Navbar() {
                  * The NotificationsPopup component handles the display of notifications.
                  * It is rendered conditionally based on the button's state.
                  */}
-                <NotificationsPopup />
+                {isAdmin ? (
+                    <AdminNotificationsPopup />
+                ) : (
+                    <NotificationsPopup />
+                )}
 
                 {/*
                 * Profile Dropdown:
@@ -251,40 +263,45 @@ export default function Navbar() {
                     >
                         <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
 
-                            {/* View Profile */}
-                            <Link
-                                href="/profile"
-                                className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[#343B36] transition-colors hover:bg-gray-100"
-                            >
-                                <Image
-                                    src="/assets/icons/users.svg"
-                                    alt=""
-                                    width={18}
-                                    height={18}
-                                    className="h-[18px] w-[18px] object-contain"
-                                />
-                                View Profile
-                            </Link>
+                            {/* Regular User Options */}
+                            {!isAdmin && (
+                                <>
+                                    {/* View Profile */}
+                                    <Link
+                                        href="/profile"
+                                        className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[#343B36] transition-colors hover:bg-gray-100"
+                                    >
+                                        <Image
+                                            src="/assets/icons/users.svg"
+                                            alt=""
+                                            width={18}
+                                            height={18}
+                                            className="h-4.5 w-4.5 object-contain"
+                                        />
+                                        View Profile
+                                    </Link>
 
-                            {/* Settings */}
-                            <Link
-                                href="/settings"
-                                className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[#343B36] transition-colors hover:bg-gray-100"
-                            >
-                                <Image
-                                    src="/assets/icons/settings.svg"
-                                    alt=""
-                                    width={18}
-                                    height={18}
-                                    className="h-[18px] w-[18px] object-contain"
-                                />
-                                Settings
-                            </Link>
+                                    {/* Settings */}
+                                    <Link
+                                        href="/settings"
+                                        className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[#343B36] transition-colors hover:bg-gray-100"
+                                    >
+                                        <Image
+                                            src="/assets/icons/settings.svg"
+                                            alt=""
+                                            width={18}
+                                            height={18}
+                                            className="h-4.5 w-4.5 object-contain"
+                                        />
+                                        Settings
+                                    </Link>
 
-                            {/* Divider */}
-                            <div className="my-1 border-t border-gray-200" />
+                                    {/* Divider */}
+                                    <div className="my-1 border-t border-gray-200" />
+                                </>
+                            )}
 
-                            {/* Sign Out */}
+                            {/* Sign Out - Both User and Admin */}
                             <button
                                 type="button"
                                 onClick={handleSignOut}
@@ -296,7 +313,7 @@ export default function Navbar() {
                                     alt=""
                                     width={18}
                                     height={18}
-                                    className="h-[18px] w-[18px] object-contain"
+                                    className="h-4.5 w-4.5 object-contain"
                                 />
                                 {isSigningOut ? "Signing Out..." : "Sign Out"}
                             </button>

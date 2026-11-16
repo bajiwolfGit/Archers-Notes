@@ -88,7 +88,7 @@ export default function RecentPosts() {
 		 * Uses consistent padding and rounded corners
 		 * to match the application's interface.
 		 */
-		<aside className="w-full rounded-sm border border-gray-200 bg-white p-5">
+		<aside className="sticky top-24 w-full self-start rounded-sm border border-gray-200 bg-white p-5">
 
 			{/*
 			 * Panel Header:

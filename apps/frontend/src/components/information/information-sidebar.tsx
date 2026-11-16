@@ -45,7 +45,7 @@ export default function InformationSidebar({
     );
 
     return (
-        <aside className="w-full min-w-0 rounded-lg border border-gray-200 bg-white px-4 py-6 xl:w-[240px] xl:shrink-0">
+        <aside className="w-full min-w-0 rounded-lg border border-gray-200 bg-white px-4 py-6 xl:w-60 xl:shrink-0">
 
             {/* Navigation */}
             <nav
@@ -80,7 +80,7 @@ export default function InformationSidebar({
                                             key={section.id}
                                             href={`/information?${role === "admin" ? "role=admin&" : ""}section=${section.id}`}
                                             aria-current={active ? "page" : undefined}
-                                            className={`flex w-full items-center rounded-md px-3 py-2.5 text-sm font-semibold whitespace-normal break-words transition-colors ${
+                                            className={`flex w-full items-center rounded-md px-3 py-2.5 text-sm font-semibold whitespace-normal wrap-break-word transition-colors ${
                                                 active
                                                     ? "bg-[#E8F7EF] text-[#00A651]"
                                                     : "text-[#303a36] hover:bg-gray-100"

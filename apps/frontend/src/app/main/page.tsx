@@ -62,7 +62,7 @@ export default function MainPage() {
 				 *
 				 * The feed has a maximum width of 480px.
 				 */}
-				<div className="relative left-1/2 w-full max-w-[480px] -translate-x-[calc(50%+111px)]">
+				<div className="relative left-1/2 w-full max-w-120 -translate-x-[calc(50%+111px)]">
 					
 					{/*
 					 * Feed Sorting Tabs:
@@ -98,7 +98,7 @@ export default function MainPage() {
 				 *
 				 * Uses a fixed width of 225px.
 				 */}
-				<div className="absolute right-6 top-6 hidden w-[225px] xl:block">
+				<div className="fixed right-6 top-24 w-56.25">
 					<RecentPosts />
 				</div>
 			</div>
