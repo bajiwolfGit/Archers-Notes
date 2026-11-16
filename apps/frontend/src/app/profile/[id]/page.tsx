@@ -60,35 +60,61 @@ import ReportModal from "@/components/posts/report-modal";
  * the structure defined by the ProfileData type.
  */
 const profiles: Record<string, ProfileData> = {
-	"2": {
-		name: "Jane Doe",
-		email: "jane_doe@dlsu.edu.ph",
-		subtitle: "COB Student",
-		bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-		courses: ["FNDACCT"],
-		avatar: null,
-		cover: null,
-	},
+    "2": {
+        name: "Jane Doe",
+        email: "jane_doe@dlsu.edu.ph",
+        subtitle: "COB Student",
+        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        courses: [
+            {
+                course_id: 1,
+                code: "FNDACCT",
+                name: "Fundamentals of Accounting",
+            },
+        ],
+        avatar: null,
+        cover: null,
+        createdAt: "",
+    },
 
-	"3": {
-		name: "Carmy Berzatto",
-		email: "carmy.berzatto@dlsu.edu.ph",
-		subtitle: "CCS Student",
-		bio: "Computer Science student sharing notes and reviewers.",
-		courses: ["CS1130"],
-		avatar: null,
-		cover: null,
-	},
+    "3": {
+        name: "Carmy Berzatto",
+        email: "carmy.berzatto@dlsu.edu.ph",
+        subtitle: "CCS Student",
+        bio: "Computer Science student sharing notes and reviewers.",
+        courses: [
+            {
+                course_id: 2,
+                code: "CS1130",
+                name: "Introduction to Computing",
+            },
+        ],
+        avatar: null,
+        cover: null,
+        createdAt: "",
+    },
 
-	"4": {
-		name: "Alan Smith",
-		email: "alan.smith@dlsu.edu.ph",
-		subtitle: "CCS Student",
-		bio: "Interested in programming and technology.",
-		courses: ["CSADPRG", "CSARCH1"],
-		avatar: null,
-		cover: null,
-	},
+    "4": {
+        name: "Alan Smith",
+        email: "alan.smith@dlsu.edu.ph",
+        subtitle: "CCS Student",
+        bio: "Interested in programming and technology.",
+        courses: [
+            {
+                course_id: 3,
+                code: "CSADPRG",
+                name: "Advanced Programming",
+            },
+            {
+                course_id: 4,
+                code: "CSARCH1",
+                name: "Computer Architecture",
+            },
+        ],
+        avatar: null,
+        cover: null,
+        createdAt: "",
+    },
 };
 
 /**
