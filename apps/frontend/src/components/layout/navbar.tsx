@@ -21,6 +21,9 @@ import Image from "next/image";
 // Next.js component for client-side navigation between pages.
 import Link from "next/link";
 
+// Import the NotificationsPopup component for displaying notifications.
+import NotificationsPopup from "@/components/layout/notifications-popup";
+
 /**
  * Navbar Component
  *
@@ -127,24 +130,13 @@ export default function Navbar() {
                  * Notifications Button:
                  * Displays the notifications icon.
                  *
-                 * Currently serves as a visual interface element.
-                 * Notification handling functionality has not
-                 * yet been implemented.
+                 * When clicked, it toggles the visibility of the notifications popup.
+                 * The button includes an unread indicator if there are new notifications.
+                 *
+                 * The NotificationsPopup component handles the display of notifications.
+                 * It is rendered conditionally based on the button's state.
                  */}
-                <button
-                    type="button"
-                    aria-label="Notifications"
-                    className="flex h-9 w-9 items-center justify-center"
-                >
-                    {/* Notifications icon. */}
-                    <Image
-                        src="/assets/icons/notification.svg"
-                        alt=""
-                        width={20}
-                        height={20}
-                        className="h-5 w-5 object-contain"
-                    />
-                </button>
+                <NotificationsPopup />
 
                 {/*
                 * Profile Dropdown:
