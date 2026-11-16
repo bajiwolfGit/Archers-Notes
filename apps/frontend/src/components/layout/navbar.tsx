@@ -45,6 +45,34 @@ import { useEffect, useState } from "react";
  */
 export default function Navbar() {
     const [avatar, setAvatar] = useState<string | null>(null);
+    const [isSigningOut, setIsSigningOut] = useState(false);
+
+    async function handleSignOut() {
+        try {
+            setIsSigningOut(true);
+
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/sign-out`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to sign out.");
+            }
+
+            setAvatar(null);
+
+            // Redirect to the landing page.
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Sign-out error:", error);
+            alert("Unable to sign out. Please try again.");
+            setIsSigningOut(false);
+        }
+    }
 
     useEffect(() => {
         async function fetchProfile() {
@@ -259,10 +287,9 @@ export default function Navbar() {
                             {/* Sign Out */}
                             <button
                                 type="button"
-                                onClick={() => {
-                                    // TODO: Connect authentication sign-out.
-                                }}
-                                className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                                onClick={handleSignOut}
+                                disabled={isSigningOut}
+                                className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
                             >
                                 <Image
                                     src="/assets/icons/sign-out.svg"
@@ -271,7 +298,7 @@ export default function Navbar() {
                                     height={18}
                                     className="h-[18px] w-[18px] object-contain"
                                 />
-                                Sign Out
+                                {isSigningOut ? "Signing Out..." : "Sign Out"}
                             </button>
 
                         </div>
