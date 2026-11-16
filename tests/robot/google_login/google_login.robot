@@ -4,7 +4,7 @@ Library          Browser
 
 *** Test Cases ***
 User Can Start Google Login
-    New Browser    chromium    headless=False
+    New Browser    chromium    headless=True
     New Page    http://localhost:3000/
 
     Click    text=Continue with Google
