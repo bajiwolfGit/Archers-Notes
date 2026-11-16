@@ -55,14 +55,14 @@ export default function AdminSidebarFooter() {
                     </h3>
 
                     <Link
-                        href="/admin/guide"
+                        href="/information?section=guide"
                         className="block text-[11px] hover:text-[#00A651]"
                     >
                         Admin Guide
                     </Link>
 
                     <Link
-                        href="/admin/moderation-policy"
+                        href="/information?section=moderation"
                         className="block text-[11px] leading-relaxed hover:text-[#00A651]"
                     >
                         Moderation Policy
@@ -76,7 +76,7 @@ export default function AdminSidebarFooter() {
                     </h3>
 
                     <Link
-                        href="/help"
+                        href="/information?section=help"
                         className="block text-[11px] hover:text-[#00A651]"
                     >
                         Help Center
@@ -91,14 +91,14 @@ export default function AdminSidebarFooter() {
 
                     <div className="flex flex-wrap gap-x-4 gap-y-2">
                         <Link
-                            href="/privacy"
+                            href="/information?section=privacy"
                             className="text-[11px] hover:text-[#00A651]"
                         >
                             Privacy Policy
                         </Link>
 
                         <Link
-                            href="/terms"
+                            href="/information?section=terms"
                             className="text-[11px] hover:text-[#00A651]"
                         >
                             Terms of Service

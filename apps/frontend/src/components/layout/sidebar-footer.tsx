@@ -42,14 +42,14 @@ export default function SidebarFooter() {
                     </h3>
 
                     <Link
-                        href="/about"
+                        href="/information?section=about"
                         className="block text-[11px] hover:text-[#00A651]"
                     >
                         About
                     </Link>
 
                     <Link
-                        href="/community-guidelines"
+                        href="/information?section=guidelines"
                         className="block text-[11px] leading-relaxed hover:text-[#00A651]"
                     >
                         Community Guidelines
@@ -63,21 +63,21 @@ export default function SidebarFooter() {
                     </h3>
 
                     <Link
-                        href="/help"
+                        href="/information?section=help"
                         className="block text-[11px] hover:text-[#00A651]"
                     >
                         Help Center
                     </Link>
 
                     <Link
-                        href="/contact"
+                        href="/information?section=contact"
                         className="block text-[11px] hover:text-[#00A651]"
                     >
                         Contact Us
                     </Link>
 
                     <Link
-                        href="/report"
+                        href="/information?section=report"
                         className="block text-[11px] hover:text-[#00A651]"
                     >
                         Report
@@ -92,14 +92,14 @@ export default function SidebarFooter() {
 
                     <div className="flex flex-wrap gap-x-4 gap-y-2">
                         <Link
-                            href="/privacy"
+                            href="/information?section=privacy"
                             className="text-[11px] hover:text-[#00A651]"
                         >
                             Privacy Policy
                         </Link>
 
                         <Link
-                            href="/terms"
+                            href="/information?section=terms"
                             className="text-[11px] hover:text-[#00A651]"
                         >
                             Terms of Service
