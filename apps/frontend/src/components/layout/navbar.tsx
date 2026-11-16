@@ -177,20 +177,26 @@ export default function Navbar() {
                 </button>
 
                 {/*
-                 * Profile Navigation:
-                 * Displays the current user's profile icon.
-                 *
-                 * Clicking the icon navigates to the
-                 * user's personal profile page.
-                 *
-                 * Includes a hover effect to provide
-                 * visual feedback during interaction.
-                 */}
-                <Link
-                    href="/profile"
-                    aria-label="View my profile"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-75"
-                >
+                * Profile Dropdown:
+                * Opens when the user hovers over the profile icon.
+                *
+                * Includes:
+                * - View Profile
+                * - Settings
+                * - Sign Out
+                *
+                * Uses Tailwind's group-hover and group-focus-within
+                * utilities without requiring React state.
+                */}
+                <div className="group relative flex shrink-0 items-center">
+
+                    {/* Profile Icon */}
+                    <button
+                        type="button"
+                        aria-label="Account menu"
+                        aria-haspopup="menu"
+                        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-75"
+                    >
                     {/* Default user profile icon. */}
                     {avatar ? (
                         <Image
@@ -207,10 +213,79 @@ export default function Navbar() {
                             alt="Profile"
                             width={36}
                             height={36}
+                            unoptimized
                             className="h-9 w-9 object-contain"
                         />
                     )}
-                </Link>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    <div
+                        className="
+                            invisible absolute right-0 top-full z-50
+                            w-48 pt-2 opacity-0
+                            transition-all duration-150
+                            group-hover:visible group-hover:opacity-100
+                            group-focus-within:visible group-focus-within:opacity-100
+                        "
+                    >
+                        <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
+
+                            {/* View Profile */}
+                            <Link
+                                href="/profile"
+                                className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[#343B36] transition-colors hover:bg-gray-100"
+                            >
+                                <Image
+                                    src="/assets/icons/users.svg"
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                    className="h-[18px] w-[18px] object-contain"
+                                />
+                                View Profile
+                            </Link>
+
+                            {/* Settings */}
+                            <Link
+                                href="/settings"
+                                className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[#343B36] transition-colors hover:bg-gray-100"
+                            >
+                                <Image
+                                    src="/assets/icons/settings.svg"
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                    className="h-[18px] w-[18px] object-contain"
+                                />
+                                Settings
+                            </Link>
+
+                            {/* Divider */}
+                            <div className="my-1 border-t border-gray-200" />
+
+                            {/* Sign Out */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    // TODO: Connect authentication sign-out.
+                                }}
+                                className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                            >
+                                <Image
+                                    src="/assets/icons/sign-out.svg"
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                    className="h-[18px] w-[18px] object-contain"
+                                />
+                                Sign Out
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </header>
     );
