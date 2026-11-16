@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.5.1 (Python 3.13.7 on win32)" generated="2026-11-16T15:31:05.188012" rpa="false" schemaversion="5">
+<suite id="s1" name="Google Login" source="C:\Users\shint\OneDrive\Desktop\DLSU\New folder\stsweng\Archers-Notes\tests\robot\google_login.robot">
+<test id="s1-t1" name="User Can Start Google Login" line="6">
+<kw name="New Browser" owner="Browser">
+<msg time="2026-11-16T15:31:05.607659" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "C:\\Users\\shint\\OneDrive\\Desktop\\DLSU\\New folder\\stsweng\\Archers-Notes\\tests\\robot\\browser\\traces\\temp\\8c96a66b-fb05-4902-a519-364218b018dc"}</msg>
+<msg time="2026-11-16T15:31:05.644408" level="INFO">Starting Browser process c:\Users\shint\OneDrive\Desktop\DLSU\New folder\stsweng\robot framework stuff\.venv\Lib\site-packages\Browser\wrapper\index.js using at 127.0.0.1:61391</msg>
+<msg time="2026-11-16T15:31:06.975700" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"C:\\Users\\shint\\OneDrive\\Desktop\\DLSU\\New folder\\stsweng\\Archers-Notes\\tests\\robot\\browser\\traces\\temp\\8c96a66b-fb05-4902-a519-364218b018dc"}</msg>
+<arg>chromium</arg>
+<arg>headless=False</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2026-11-16T15:31:05.606781" elapsed="1.369554"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2026-11-16T15:31:07.637667" level="INFO">Successfully initialized new page object and opened url: http://localhost:3000/</msg>
+<msg time="2026-11-16T15:31:07.637847" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>http://localhost:3000/</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2026-11-16T15:31:06.977297" elapsed="0.660949"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2026-11-16T15:31:07.639635" level="INFO">Clicks the element 'text=Continue with Google'.</msg>
+<arg>text=Continue with Google</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-16T15:31:07.638899" elapsed="0.099358"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>Please complete Google sign-in in the browser.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2026-11-16T15:31:07.738805" elapsed="0.000857"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:07.746066" level="INFO">${url} = http://localhost:3000/</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:07.741660" elapsed="0.004472"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:07.747297" level="FAIL">'http://localhost:3000/' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:07.746344" elapsed="0.001103">'http://localhost:3000/' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:07.741134" elapsed="0.006466">'http://localhost:3000/' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:09.752320" level="INFO">${url} = https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXD...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:09.749189" elapsed="0.003187"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:09.753234" level="FAIL">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:09.752609" elapsed="0.000733">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:09.748496" elapsed="0.004997">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:11.758245" level="INFO">${url} = https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXD...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:11.754820" elapsed="0.003484"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:11.759142" level="FAIL">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:11.758524" elapsed="0.000716">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:11.754217" elapsed="0.005151">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:13.763988" level="INFO">${url} = https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXD...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:13.760458" elapsed="0.003588"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:13.764916" level="FAIL">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:13.764270" elapsed="0.000735">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:13.759909" elapsed="0.005355">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:15.771979" level="INFO">${url} = https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXD...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:15.766751" elapsed="0.005287"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:15.773004" level="FAIL">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:15.772281" elapsed="0.000815">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:15.766132" elapsed="0.007101">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S-49812733%3A1794814268708060&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;include_granted_scopes=true&amp;o2v=2&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b&amp;flowName=GeneralOAuthFlow&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:17.778276" level="INFO">${url} = https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9j...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:17.774451" elapsed="0.003879"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:17.779195" level="FAIL">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:17.778532" elapsed="0.000756">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:17.773848" elapsed="0.005580">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:19.783638" level="INFO">${url} = https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9j...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:19.780388" elapsed="0.003317"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:19.784563" level="FAIL">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:19.783930" elapsed="0.000842">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:19.779832" elapsed="0.005084">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:21.789068" level="INFO">${url} = https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9j...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:21.786115" elapsed="0.003000"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:21.789922" level="FAIL">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:21.789293" elapsed="0.000724">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:21.785518" elapsed="0.004635">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:23.794416" level="INFO">${url} = https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9j...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:23.791662" elapsed="0.002808"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:23.795288" level="FAIL">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:23.794670" elapsed="0.000726">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:23.791024" elapsed="0.004558">'https://accounts.google.com/v3/signin/rejected?app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAO2Fvpj9kUuFd27lTLYIuH8nlajUsIAN3zpoHgezZT3eM1nRsqZbYQV2LO684idy49fx7G6ozyz9qkfEiOIRwB3z0T9WSbpSYpwR7iskODzs1aWJHH7B0BjpIs4O36P-QLM2cDEfeeH5X0Eq5EK2-QO04G7E4VVDMLVWIwSK6W-SxP6D7UyKKwetvDGJUsVnLp_UuhQA4u_rzE8yNQz_BSLs5wSLmB-NJh9IiwKzpmetQsjEljvGUCSzKoUyWtf_8dwR9glBRF5g5f70QXbrVzI7bKQBUleVTpt4RIeSrGZEiBD0VmivCARh8RAFWrNKXkUQW9q9KwLiFMDlOkEPpTp3QLKAdJfRroEi7MYxDYHF91uEnAuHLwmUBtBeCIycat-9ZvRvdMsgNd_ceTTyuTlVen9Zh-j1CalqRZ3bcDKZkTmd1t3ZyrSK4s8qMPijW506i0oUA53x4FbLQwCB2Tl_TqsPw%26flowName%3DGeneralOAuthFlow%26as%3DS-49812733%253A1794814268708060%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;dsh=S-49812733%3A1794814268708060&amp;epd=Ae_G1bdsSCt80BK9kvbmodu1XwG3N0UcG5MNAHrUGDScVR0fwLIfTH000Q&amp;flowName=GeneralOAuthFlow&amp;idnf=exampleshin765%40gmail.com&amp;include_granted_scopes=true&amp;o2v=2&amp;opparams=%253F&amp;rart=ANgoxceH3tDxEz6wdOPKJHmPiPpcio0tLQyy65PZ5KAIdrALWH_CZ6UUfQBy2EaRcYH7cdBITX6C5RknltvL5BNFbDioxajtI39nXl18WgOQ3EVIcpLqCTc&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;rhlk=le&amp;rrk=46&amp;scope=email%20profile%20openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:25.800492" level="INFO">${url} = https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S1393465658%3A1794814285027575&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps...</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2026-11-16T15:31:25.797134" elapsed="0.003412"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-11-16T15:31:25.801489" level="FAIL">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S1393465658%3A1794814285027575&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hANNkzm1UEy_gRmLF_R7vbuTW0BhrhFUOcJktzHq2pS_Uc4eKw5AW5Uqjh6ioRpLHw6nwQbutJIAunHhpnSMNzUrirowxVDUOgUaQMd5chLLWQBzvrVhw-Ra8a-4O7qu5QtbTeVxeQKyXkvyxyiH2o9d1xnqwdtXX5mmQZYCpoNjRi5h08FF7Ts6kESIMT_mUJYz3aa43cwcONpjVBz0gpkpwcOufViYFl0y4xmeojNpOORilf-zAChSA6ea6dCPDN7Oo6YlzZOyylsgQwKlT87CUBWFl2OtejltYh2xBHWXaYWxJZwD5GW1Qr_R_0vkgq5KGUefIo4dD-sbVDCPnnLSb8iVVgzeoefOLhIFDHb1aW-MEGqInMADUXi6C9fDY1jlPoNdXcQtEuBhFgbRdkxbe76l4Peer4i2Ma142HqK0KmeLCo24LmKWB2z3UZlMxyMZI-wNyWj1yvPXwfFHqehd9H2UQ%26flowName%3DGeneralOAuthFlow%26as%3DS1393465658%253A1794814285027575%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;flowName=GeneralOAuthFlow&amp;include_granted_scopes=true&amp;o2v=2&amp;rart=ANgoxcenhDv2PLQStlhYuevQL5I1ACil-BW693Jvn5H6peiSEoaEQqUKfgkwyUPsvvyWEKXUTyJbM2VLvbenr_hKvBv_rMBmL4QxTwMs1tg0H8aauMX-OvQ&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</msg>
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="FAIL" start="2026-11-16T15:31:25.800744" elapsed="0.000998">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S1393465658%3A1794814285027575&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hANNkzm1UEy_gRmLF_R7vbuTW0BhrhFUOcJktzHq2pS_Uc4eKw5AW5Uqjh6ioRpLHw6nwQbutJIAunHhpnSMNzUrirowxVDUOgUaQMd5chLLWQBzvrVhw-Ra8a-4O7qu5QtbTeVxeQKyXkvyxyiH2o9d1xnqwdtXX5mmQZYCpoNjRi5h08FF7Ts6kESIMT_mUJYz3aa43cwcONpjVBz0gpkpwcOufViYFl0y4xmeojNpOORilf-zAChSA6ea6dCPDN7Oo6YlzZOyylsgQwKlT87CUBWFl2OtejltYh2xBHWXaYWxJZwD5GW1Qr_R_0vkgq5KGUefIo4dD-sbVDCPnnLSb8iVVgzeoefOLhIFDHb1aW-MEGqInMADUXi6C9fDY1jlPoNdXcQtEuBhFgbRdkxbe76l4Peer4i2Ma142HqK0KmeLCo24LmKWB2z3UZlMxyMZI-wNyWj1yvPXwfFHqehd9H2UQ%26flowName%3DGeneralOAuthFlow%26as%3DS1393465658%253A1794814285027575%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;flowName=GeneralOAuthFlow&amp;include_granted_scopes=true&amp;o2v=2&amp;rart=ANgoxcenhDv2PLQStlhYuevQL5I1ACil-BW693Jvn5H6peiSEoaEQqUKfgkwyUPsvvyWEKXUTyJbM2VLvbenr_hKvBv_rMBmL4QxTwMs1tg0H8aauMX-OvQ&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:25.796350" elapsed="0.005554">'https://accounts.google.com/v3/signin/identifier?opparams=%253F&amp;dsh=S1393465658%3A1794814285027575&amp;app_domain=http%3A%2F%2Flocalhost%3A5000&amp;client_id=158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com&amp;code_challenge=oSXDb7Oyzyjm9jUEZUP10Cvzn1Rth5BDQ62uNAe50HA&amp;code_challenge_method=S256&amp;continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hANNkzm1UEy_gRmLF_R7vbuTW0BhrhFUOcJktzHq2pS_Uc4eKw5AW5Uqjh6ioRpLHw6nwQbutJIAunHhpnSMNzUrirowxVDUOgUaQMd5chLLWQBzvrVhw-Ra8a-4O7qu5QtbTeVxeQKyXkvyxyiH2o9d1xnqwdtXX5mmQZYCpoNjRi5h08FF7Ts6kESIMT_mUJYz3aa43cwcONpjVBz0gpkpwcOufViYFl0y4xmeojNpOORilf-zAChSA6ea6dCPDN7Oo6YlzZOyylsgQwKlT87CUBWFl2OtejltYh2xBHWXaYWxJZwD5GW1Qr_R_0vkgq5KGUefIo4dD-sbVDCPnnLSb8iVVgzeoefOLhIFDHb1aW-MEGqInMADUXi6C9fDY1jlPoNdXcQtEuBhFgbRdkxbe76l4Peer4i2Ma142HqK0KmeLCo24LmKWB2z3UZlMxyMZI-wNyWj1yvPXwfFHqehd9H2UQ%26flowName%3DGeneralOAuthFlow%26as%3DS1393465658%253A1794814285027575%26client_id%3D158044752684-pd1ov106lmgnjbsk04mcb3a3q2vec6at.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&amp;flowName=GeneralOAuthFlow&amp;include_granted_scopes=true&amp;o2v=2&amp;rart=ANgoxcenhDv2PLQStlhYuevQL5I1ACil-BW693Jvn5H6peiSEoaEQqUKfgkwyUPsvvyWEKXUTyJbM2VLvbenr_hKvBv_rMBmL4QxTwMs1tg0H8aauMX-OvQ&amp;redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fauth%2Fcallback%2Fgoogle&amp;response_type=code&amp;scope=email+profile+openid&amp;service=lso&amp;state=SHtVawKTnaUMUOYfI9u7brZwcrM0iZ-b' does not contain 'localhost:3000/main'</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:28.820752" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:28.820900" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:28.821238" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:27.802802" elapsed="1.023109">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:28.826242" elapsed="0.000259"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:27.802254" elapsed="1.024417">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:31.842781" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:31.842901" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:31.843030" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:30.828204" elapsed="1.016951">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:31.845443" elapsed="0.000160"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:30.827530" elapsed="1.018204">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:34.864141" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:34.864296" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:34.864437" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:33.846996" elapsed="1.020436">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:34.867834" elapsed="0.000377"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:33.846286" elapsed="1.022501">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:37.924458" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:37.924568" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:37.924683" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:36.870426" elapsed="1.056902">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:37.927596" elapsed="0.000221"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:36.869746" elapsed="1.058237">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:40.945639" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:40.945845" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:40.946100" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:39.929024" elapsed="1.020840">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:40.950219" elapsed="0.000322"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:39.928508" elapsed="1.022285">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:43.961202" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:43.961298" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:43.961403" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:42.952132" elapsed="1.011248">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:43.963632" elapsed="0.000171"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:42.951590" elapsed="1.012364">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:46.973040" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:46.973136" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:46.973241" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:45.965008" elapsed="1.010304">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:46.975539" elapsed="0.000146"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:45.964460" elapsed="1.011361">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:50.008546" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:50.008670" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:50.008794" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:48.976875" elapsed="1.033904">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:50.011013" elapsed="0.000164"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:48.976287" elapsed="1.035019">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:53.023627" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:53.023741" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:53.023866" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:52.012435" elapsed="1.013368">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:53.026010" elapsed="0.000139"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:52.011838" elapsed="1.014431">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:56.044467" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:56.044584" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:56.044706" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:55.027438" elapsed="1.019283">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:56.046918" elapsed="0.000134"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:55.026890" elapsed="1.020277">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:31:59.058987" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:31:59.059099" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:31:59.059220" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:31:58.048559" elapsed="1.012810">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:31:59.061575" elapsed="0.000142"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:58.047729" elapsed="1.014252">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:02.077379" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:02.077520" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:02.077666" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:01.063249" elapsed="1.016593">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:02.080061" elapsed="0.000180"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:01.062480" elapsed="1.017902">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:05.099713" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:05.099822" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:05.099932" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:04.081685" elapsed="1.020164">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:05.102058" elapsed="0.000146"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:04.081082" elapsed="1.021252">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:08.110444" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:08.110556" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:08.110670" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:07.103265" elapsed="1.009527">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:08.113013" elapsed="0.000158"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:07.102702" elapsed="1.010596">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:11.129229" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:11.129346" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:11.129465" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:10.114617" elapsed="1.016867">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:11.131689" elapsed="0.000142"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:10.114066" elapsed="1.017896">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:14.142844" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:14.142954" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:14.143072" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:13.133290" elapsed="1.011754">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:14.145252" elapsed="0.000140"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:13.132704" elapsed="1.012807">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:17.154122" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:17.154217" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:17.154319" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:16.146644" elapsed="1.009566">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:17.156408" elapsed="0.000127"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:16.146108" elapsed="1.010539">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:20.164589" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:20.164732" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:20.164887" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:19.157877" elapsed="1.009110">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:20.167230" elapsed="0.000193"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:19.157268" elapsed="1.010442">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:23.178951" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:23.179074" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:23.179208" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:22.168727" elapsed="1.013086">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:23.182132" elapsed="0.000193"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:22.168124" elapsed="1.014340">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:26.191073" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:26.191184" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:26.191302" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:25.183755" elapsed="1.009567">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:26.193547" elapsed="0.000144"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:25.183066" elapsed="1.010758">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:29.204408" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:29.204520" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:29.204640" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:28.194867" elapsed="1.011903">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:29.207069" elapsed="0.000234"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:28.194214" elapsed="1.013259">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:32.222065" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:32.222216" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:32.222367" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:31.208961" elapsed="1.015860">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:32.225125" elapsed="0.000223"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:31.208293" elapsed="1.017277">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:35.238902" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:35.239075" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:35.239249" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:34.227188" elapsed="1.015077">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:35.242581" elapsed="0.000233"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:34.226439" elapsed="1.016566">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:38.264530" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:38.264661" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:38.264793" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:37.245211" elapsed="1.021860">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:38.267308" elapsed="0.000161"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:37.244237" elapsed="1.023376">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:41.283544" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:41.283658" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:41.283785" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:40.268819" elapsed="1.017250">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:41.286383" elapsed="0.000186"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:40.268253" elapsed="1.018501">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:44.300704" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:44.300828" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:44.300959" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:43.287796" elapsed="1.015672">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:44.303873" elapsed="0.000188"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:43.287158" elapsed="1.017058">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:47.322780" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:47.322920" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:47.323084" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:46.305504" elapsed="1.019922">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:47.325639" elapsed="0.000145"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:46.304884" elapsed="1.021027">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:50.339872" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:50.339991" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:50.340143" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:49.327198" elapsed="1.015131">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:50.342553" elapsed="0.000158"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:49.326549" elapsed="1.016297">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:53.355928" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:53.356030" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:53.356143" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:52.344028" elapsed="1.014568">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:53.358846" elapsed="0.000181"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:52.343432" elapsed="1.015728">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:56.367684" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:56.367781" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:56.367908" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:55.360586" elapsed="1.009413">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:56.370254" elapsed="0.000193"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:55.359880" elapsed="1.010734">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:32:59.385632" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:32:59.385757" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:32:59.385903" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:32:58.371687" elapsed="1.016936">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:32:59.389037" elapsed="0.000335"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:32:58.371123" elapsed="1.018577">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:33:02.404394" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:33:02.404525" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:33:02.404800" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:33:01.390954" elapsed="1.016688">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:02.408452" elapsed="0.000186"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:33:01.390385" elapsed="1.018399">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:33:05.444363" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:33:05.444470" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:33:05.444585" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:33:04.418868" elapsed="1.027878">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:05.446976" elapsed="0.000257"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:33:04.416038" elapsed="1.031340">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:33:08.464779" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:33:08.464877" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:33:08.464995" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:33:07.448830" elapsed="1.018174">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:08.467300" elapsed="0.000215"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:33:07.448157" elapsed="1.019506">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:33:11.489785" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:33:11.489921" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:33:11.490069" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:33:10.468843" elapsed="1.023646">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:11.492713" elapsed="0.000141"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:33:10.468305" elapsed="1.024676">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<msg time="2026-11-16T15:33:14.512461" level="INFO">Keyword 'Take Screenshot  fail-screenshot-{index}' could not be run on failure:
+Error: Tried to take screenshot, but no page was open.</msg>
+<msg time="2026-11-16T15:33:14.512593" level="INFO">See also file:///C:/Users/shint/OneDrive/Desktop/DLSU/New%20folder/stsweng/Archers-Notes/tests/robot/playwright-log.txt for additional details.</msg>
+<msg time="2026-11-16T15:33:14.512734" level="FAIL">Error: No page open.</msg>
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:33:13.494410" elapsed="1.020754">Error: No page open.</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:14.515487" elapsed="0.000245"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:33:13.493783" elapsed="1.022142">Error: No page open.</status>
+</kw>
+<kw name="Verify User Returned To Archer's Notes">
+<kw name="Get Url" owner="Browser">
+<var>${url}</var>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="FAIL" start="2026-11-16T15:33:16.517318" elapsed="0.000562">Execution terminated by signal</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${url}</arg>
+<arg>localhost:3000/main</arg>
+<doc>Fails if the `container` does not contain the `item` one or more times.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:16.518056" elapsed="0.000129"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:33:16.516749" elapsed="0.001567">Execution terminated by signal</status>
+</kw>
+<arg>5 min</arg>
+<arg>2 sec</arg>
+<arg>Verify User Returned To Archer's Notes</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="FAIL" start="2026-11-16T15:31:07.740180" elapsed="128.778197">Execution terminated by signal</status>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>Successfully returned to Archer's Notes!</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:16.518651" elapsed="0.000146"/>
+</kw>
+<kw name="Close Browser" owner="Browser">
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="NOT RUN" start="2026-11-16T15:33:16.519054" elapsed="0.000155"/>
+</kw>
+<status status="FAIL" start="2026-11-16T15:31:05.605714" elapsed="130.913768">Execution terminated by signal</status>
+</test>
+<doc>Tests Google OAuth login initiation.</doc>
+<status status="FAIL" start="2026-11-16T15:31:05.189931" elapsed="131.363784"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Google Login" id="s1" pass="0" fail="1" skip="0">Google Login</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2026-11-16T15:33:16.552491" level="ERROR">Calling method '_end_test' of listener 'Browser' failed: ConnectionError: Playwright process has been terminated with code 130</msg>
+<msg time="2026-11-16T15:33:16.555034" level="ERROR">Calling method '_end_suite' of listener 'Browser' failed: ConnectionError: Playwright process has been terminated with code 130</msg>
+</errors>
+</robot>
