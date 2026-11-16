@@ -5,7 +5,11 @@
     "DATABASE_URL",
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
-    "PORT"
+    "PORT",
+    "SUPABASE_URL",
+    "SUPABASE_PUPLISHABLE_KEY",
+    "SUPABASE_SECRET_KEY",
+    "SUPABASE_JWKS_URL"
   ],
   "tasks": {
     "build": {
