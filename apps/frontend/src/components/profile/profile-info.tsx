@@ -10,29 +10,20 @@ import type { ProfileData } from "./profile-types";
 interface ProfileInfoProps {
 	profile: ProfileData;
 	onEdit: () => void;
+	followingCount: number;
+    followersCount: number;
+	refreshFollowCounts: () => Promise<void>;
 }
 
 
 export default function ProfileInfo({
 	profile,
 	onEdit,
+	followingCount,
+    followersCount,
+	refreshFollowCounts,
 }: ProfileInfoProps) {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-	// Stores the users currently followed.
-	const [followingIds, setFollowingIds] = useState<number[]>([2, 3]);
-
-	// Mock followers.
-	const followerIds = [2, 3, 4];
-
-	// Follow or unfollow a user.
-	function handleToggleFollow(userId: number) {
-		setFollowingIds((previous) =>
-			previous.includes(userId)
-				? previous.filter((id) => id !== userId)
-				: [...previous, userId]
-		);
-	}
 
 	const [activeFollowTab, setActiveFollowTab] = useState<
 		"following" | "followers" | null
@@ -112,7 +103,7 @@ export default function ProfileInfo({
 						onClick={() => setActiveFollowTab("following")}
 						className="hover:text-[#00A651] hover:underline"
 					>
-						{followingIds.length} Following
+						{followingCount} Following
 					</button>
 
 					<button
@@ -120,7 +111,7 @@ export default function ProfileInfo({
 						onClick={() => setActiveFollowTab("followers")}
 						className="hover:text-[#00A651] hover:underline"
 					>
-						{followerIds.length} Followers
+						{followersCount} Followers
 					</button>
 				</div>
 			</div>
@@ -142,10 +133,8 @@ export default function ProfileInfo({
 			{activeFollowTab && (
 				<FollowListModal
 					initialTab={activeFollowTab}
-					followingIds={followingIds}
-					followerIds={followerIds}
-					onToggleFollow={handleToggleFollow}
 					onClose={() => setActiveFollowTab(null)}
+					onFollowChange={refreshFollowCounts}
 				/>
 			)}
 		</>

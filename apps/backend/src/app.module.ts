@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { auth } from './auth.js';
 import { UsersModule } from './users/users.module.js';
 import { CoursesModule } from './courses/courses.module.js';
+import { FollowsModule } from './follows/follows.module.js';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CoursesModule } from './courses/courses.module.js';
     BetterAuthModule.forRoot({ auth }),
     UsersModule,
     CoursesModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

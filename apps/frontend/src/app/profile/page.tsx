@@ -57,9 +57,35 @@ interface UserProfileResponse {
 export default function ProfilePage() {
 
 	const [profile, setProfile] = useState<ProfileData>(initialProfile);
-
+  const [userId, setUserId] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+  
+
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(0);
+
+  // Refresh the logged-in user's follow counts.
+  async function refreshFollowCounts(id: string) {
+      try {
+          const response = await fetch(`${API_URL}/follows/${id}/counts`, {
+              method: "GET",
+              credentials: "include",
+          });
+
+          if (!response.ok) {
+              throw new Error("Failed to refresh follow counts.");
+          }
+
+          const counts: { followers: number; following: number } =
+              await response.json();
+
+          setFollowersCount(counts.followers);
+          setFollowingCount(counts.following);
+      } catch (err) {
+          console.error("Error refreshing follow counts:", err);
+      }
+  }
 
 	useEffect(() => {
     async function fetchProfile() {
@@ -74,6 +100,10 @@ export default function ProfilePage() {
         }
 
         const user: UserProfileResponse = await response.json();
+        setUserId(user.id);
+
+        await refreshFollowCounts(user.id);
+
         const collegeId = user.college?.college_id ?? user.college_id;
         const collegeCode = collegeId
           ? collegeCodes[collegeId] ?? user.college?.name
@@ -112,9 +142,12 @@ export default function ProfilePage() {
 			<div className="w-full px-6 py-5">
 					
 				<ProfileHeader
-					profile={profile}
-					onProfileChange={setProfile}
-				/>
+          profile={profile}
+          onProfileChange={setProfile}
+          followingCount={followingCount}
+          followersCount={followersCount}
+          refreshFollowCounts={() => userId ? refreshFollowCounts(userId) : Promise.resolve()}
+        />
 
 				<div className="mt-6 grid grid-cols-1 items-start gap-10 xl:grid-cols-[minmax(0,1fr)_210px]">
 					

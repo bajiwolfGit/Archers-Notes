@@ -33,7 +33,7 @@ import MainLayout from "@/components/layout/main-layout";
 import ProfileAbout from "@/components/profile/profile-about";
 
 // Component for displaying individual posts and the TypeScript Post type.
-import PostCard, { type Post } from "@/components/home/post-card";
+import PostCard from "@/components/home/post-card";
 
 // TypeScript type defining the structure of user profile information.
 import type { ProfileData } from "@/components/profile/profile-types";
@@ -47,148 +47,26 @@ import { posts } from "@/data/posts";
 // Modal component for reporting another user's profile.
 import ReportModal from "@/components/posts/report-modal";
 
-/**
- * Mock User Profiles
- *
- * Stores sample profile information for users other than the
- * currently logged-in user.
- *
- * Each profile is identified by a unique string ID corresponding
- * to the dynamic [id] parameter in the page URL.
- *
- * Record<string, ProfileData> ensures that each profile follows
- * the structure defined by the ProfileData type.
- */
-const profiles: Record<string, ProfileData> = {
-    "2": {
-        name: "Jane Doe",
-        email: "jane_doe@dlsu.edu.ph",
-        subtitle: "COB Student",
-        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        courses: [
-            {
-                course_id: 1,
-                code: "FNDACCT",
-                name: "Fundamentals of Accounting",
-            },
-        ],
-        avatar: null,
-        cover: null,
-        createdAt: "",
-    },
-
-    "3": {
-        name: "Carmy Berzatto",
-        email: "carmy.berzatto@dlsu.edu.ph",
-        subtitle: "CCS Student",
-        bio: "Computer Science student sharing notes and reviewers.",
-        courses: [
-            {
-                course_id: 2,
-                code: "CS1130",
-                name: "Introduction to Computing",
-            },
-        ],
-        avatar: null,
-        cover: null,
-        createdAt: "",
-    },
-
-    "4": {
-        name: "Alan Smith",
-        email: "alan.smith@dlsu.edu.ph",
-        subtitle: "CCS Student",
-        bio: "Interested in programming and technology.",
-        courses: [
-            {
-                course_id: 3,
-                code: "CSADPRG",
-                name: "Advanced Programming",
-            },
-            {
-                course_id: 4,
-                code: "CSARCH1",
-                name: "Computer Architecture",
-            },
-        ],
-        avatar: null,
-        cover: null,
-        createdAt: "",
-    },
-};
-
-/**
- * Mock Account Information
- *
- * Stores account-related statistics for each user profile.
- *
- * Each entry contains:
- * - joined: The month and year the user joined the application.
- * - following: The number of accounts followed by the user.
- * - followers: The number of users following the account.
- *
- * The profile ID is used as the key to associate account
- * information with the corresponding user profile.
- */
-const accountInfo: Record<
-	string,
-	{
-		joined: string;
-		following: number;
-		followers: number;
-	}
-	> = {
-	"2": {
-		joined: "October 2024",
-		following: 16,
-		followers: 50,
-	},
-	"3": {
-		joined: "March 2025",
-		following: 12,
-		followers: 28,
-	},
-	"4": {
-		joined: "June 2025",
-		following: 8,
-		followers: 15,
-	},
-};
-
-/**
- * Mock Posts for Jane Doe
- *
- * Contains sample post data associated with Jane Doe's profile.
- *
- * Each post follows the Post type structure, including
- * author information, course, title, content, images,
- * engagement statistics, and creation date.
- *
- * Note: This array is currently not used when rendering posts.
- * The displayed posts are retrieved from the imported posts array.
- */
-const janePosts: Post[] = [
-  	{
-		id: 2,
-		authorId: 2,
-		name: "Jane Doe",
-		course: "FNDACCT",
-		time: "2 days ago",
-		title: "Lorem Ipsum",
-		content:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-			"Reprehenderit neque ab aliqua ipsam consequuntur reprehenderit " +
-			"doloremque architecto beatae elit consectetur.\n\n" +
-			"Architecto officia totam nostrum voluptas ipsam eum fugiat " +
-			"enim sit error incidunt porro.\n\n" +
-			"Et ullamco dolorem deserunt quas duis velit laborum qui " +
-			"ratione culpa.",
-		images: [],
-		likes: 0,
-		comments: 0,
-		createdAt: "2026-10-24",
-	},
-];
+interface PublicProfileResponse {
+	id: string;
+	name: string;
+	username: string | null;
+	bio: string | null;
+	avatar_url: string | null;
+	cover_url: string | null;
+	created_at: string;
+	college_id: number | null;
+	college: {
+		college_id: number;
+		name: string;
+	} | null;
+	program: string | null;
+	courses: {
+		course_id: number;
+		code: string;
+		name: string;
+	}[];
+}
 
 /**
  * OtherProfilePage Component
@@ -212,23 +90,175 @@ export default function OtherProfilePage() {
 	// Extract the unique profile ID from the route parameters.
 	const profileId = params.id;
 
-	// Retrieve the profile information associated with the selected user.
-	const profile = profiles[profileId];
+	// Profile info with selected user
+	const [profile, setProfile] = useState<ProfileData | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	
+	useEffect(() => {
+	async function fetchProfile() {
+		try {
+			setIsLoading(true);
+			setError(null);
 
-	// Retrieve the account statistics associated with the selected user.
-	const info = accountInfo[profileId];
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/users/${profileId}`,
+				{
+					credentials: "include",
+				}
+			);
 
-	/**
-	 * Followed Users State
-	 *
-	 * Stores the IDs of users followed during the current page session.
-	 *
-	 * A Set is used to prevent duplicate profile IDs and allow
-	 * efficient checking, addition, and removal of followed users.
-	 */
-	const [followedUsers, setFollowedUsers] = useState<Set<string>>(
-		new Set()
-	);
+			if (!response.ok) {
+				if (response.status === 404) {
+					throw new Error("Profile not found.");
+				}
+
+				throw new Error("Failed to load profile.");
+			}
+
+			const user: PublicProfileResponse = await response.json();
+
+			const collegeCodes: Record<number, string> = {
+				1: "BAGCED",
+				2: "CCS",
+				3: "CLA",
+				4: "COB",
+				5: "COS",
+				6: "GCOE",
+				7: "SOE",
+			};
+
+			const collegeId = user.college?.college_id ?? user.college_id;
+
+			const collegeCode = collegeId
+				? collegeCodes[collegeId] ?? user.college?.name
+				: null;
+
+			const subtitleParts = [
+				collegeCode ? `${collegeCode} Student` : null,
+				user.program,
+			].filter(Boolean);
+
+			setProfile({
+				name: user.name,
+				email: "",
+				subtitle: subtitleParts.join(" · "),
+				bio: user.bio ?? "",
+				courses: user.courses ?? [],
+				avatar: user.avatar_url,
+				cover: user.cover_url,
+				createdAt: user.created_at,
+			});
+		} catch (err) {
+			console.error("Profile fetch error:", err);
+			setError(
+				err instanceof Error
+					? err.message
+					: "Something went wrong."
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	fetchProfile();
+}, [profileId]);
+	
+	// Stores the selected user's actual follow status and account statistics.
+	const [isFollowing, setIsFollowing] = useState(false);
+	const [followingCount, setFollowingCount] = useState(0);
+	const [followersCount, setFollowersCount] = useState(0);
+	const [isFollowLoading, setIsFollowLoading] = useState(false);
+
+	// Retrieves the selected user's follow status and counts from the backend.
+	useEffect(() => {
+		async function fetchFollowInformation() {
+			const API_URL =
+				process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
+			try {
+				const countsResponse = await fetch(
+					`${API_URL}/follows/${profileId}/counts`,
+					{ credentials: "include" }
+				);
+
+				if (countsResponse.ok) {
+					const counts: {
+						followers: number;
+						following: number;
+					} = await countsResponse.json();
+
+					setFollowersCount(counts.followers);
+					setFollowingCount(counts.following);
+				}
+
+				const statusResponse = await fetch(
+					`${API_URL}/follows/${profileId}/status`,
+					{ credentials: "include" }
+				);
+
+				if (statusResponse.ok) {
+					const status: { isFollowing: boolean } =
+						await statusResponse.json();
+
+					setIsFollowing(status.isFollowing);
+				}
+			} catch (err) {
+				console.error("Follow information fetch error:", err);
+			}
+		}
+
+		fetchFollowInformation();
+	}, [profileId]);
+
+	// Follows or unfollows the selected user through the backend.
+	async function handleFollow() {
+		if (isFollowLoading) return;
+
+		const API_URL =
+			process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
+		try {
+			setIsFollowLoading(true);
+
+			const response = await fetch(
+				`${API_URL}/follows/${profileId}`,
+				{
+					method: isFollowing ? "DELETE" : "POST",
+					credentials: "include",
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to update follow status.");
+			}
+
+			const newFollowStatus = !isFollowing;
+
+			setIsFollowing(newFollowStatus);
+
+			// Refresh the selected user's follow counts.
+			const countsResponse = await fetch(
+				`${API_URL}/follows/${profileId}/counts`,
+				{ credentials: "include" }
+			);
+
+			if (countsResponse.ok) {
+				const counts: {
+					followers: number;
+					following: number;
+				} = await countsResponse.json();
+
+				setFollowersCount(counts.followers);
+				setFollowingCount(counts.following);
+			}
+		} catch (err) {
+			console.error("Follow action error:", err);
+			alert("Unable to update follow status. Please try again.");
+		} finally {
+			setIsFollowLoading(false);
+		}
+	}
 
 	// Controls whether the profile's More Options dropdown is visible.
 	const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -274,44 +304,6 @@ export default function OtherProfilePage() {
 		};
 	}, []);
 
-	// Determine whether the currently viewed profile is followed.
-	const isFollowing = followedUsers.has(profileId);
-	
-	// Adjust the displayed follower count based on the current follow state.
-	const followers = info.followers + (isFollowing ? 1 : 0);
-
-	/**
-	 * handleFollow
-	 *
-	 * Toggles the follow status of the currently viewed user.
-	 *
-	 * Creates a new Set from the previous followedUsers state
-	 * to avoid directly mutating React state.
-	 *
-	 * If the user is already followed, their ID is removed.
-	 * Otherwise, their ID is added to the Set.
-	 *
-	 * Updating the state automatically refreshes the Follow button
-	 * and the displayed follower count.
-	 */
-	function handleFollow() {
-		setFollowedUsers((previous) => {
-
-			// Create a copy of the current followed users.
-			const updated = new Set(previous);
-
-			// Remove the user if already followed, otherwise add them.
-			if (updated.has(profileId)) {
-				updated.delete(profileId);
-			} else {
-				updated.add(profileId);
-			}
-
-			// Return the updated Set to trigger a state update.
-			return updated;
-		});
-	}
-
 	/**
 	 * User Posts
 	 *
@@ -330,11 +322,21 @@ export default function OtherProfilePage() {
 	 * Displays a fallback message when the requested profile ID
 	 * does not correspond to an existing user profile.
 	 */
-	if (!profile) {
+	if (isLoading) {
 		return (
 			<MainLayout>
 				<div className="p-6 text-sm text-gray-600">
-				Profile not found.
+					Loading profile...
+				</div>
+			</MainLayout>
+		);
+	}
+
+	if (error || !profile) {
+		return (
+			<MainLayout>
+				<div className="p-6 text-sm text-gray-600">
+					{error || "Profile not found."}
 				</div>
 			</MainLayout>
 		);
@@ -409,10 +411,6 @@ export default function OtherProfilePage() {
 							{profile.name}
 						</h1>
 
-						<p className="mt-1 text-xs text-gray-600">
-							{profile.email}
-						</p>
-
 						<p className="mt-2 text-xs text-gray-700">
 							{profile.subtitle}
 						</p>
@@ -483,14 +481,19 @@ export default function OtherProfilePage() {
 						<button
 							type="button"
 							onClick={handleFollow}
+							disabled={isFollowLoading}
 							aria-pressed={isFollowing}
 							className={`min-w-[125px] rounded-full px-6 py-2 text-xs font-semibold transition ${
 								isFollowing
 									? "border border-[#00A651] bg-white text-[#00A651]"
 									: "bg-[#00A651] text-white hover:bg-[#008C45]"
-							}`}
+							} disabled:cursor-not-allowed disabled:opacity-60`}
 						>
-							{isFollowing ? "Following" : "Follow"}
+							{isFollowLoading
+								? "Loading..."
+								: isFollowing
+									? "Following"
+									: "Follow"}
 						</button>
 					</div>
 				</div>
@@ -511,7 +514,15 @@ export default function OtherProfilePage() {
 							height={24}
 						/>
 
-						<span>Joined {info.joined}</span>
+						<span>
+							Joined{" "}
+							{profile.createdAt
+								? new Date(profile.createdAt).toLocaleDateString("en-US", {
+										month: "long",
+										year: "numeric",
+									})
+								: "Unknown"}
+						</span>
 					</div>
 
 					{/*
@@ -522,8 +533,8 @@ export default function OtherProfilePage() {
 					 * Follow button is clicked.
 					 */}
 					<div className="mt-3 flex gap-5 text-sm text-[#343B36]">
-						<span>{info.following} Following</span>
-						<span>{followers} Followers</span>
+						<span>{followingCount} Following</span>
+						<span>{followersCount} Followers</span>
 					</div>
 				</div>
 

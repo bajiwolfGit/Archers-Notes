@@ -24,67 +24,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
 type FollowTab = "following" | "followers";
 
 interface FollowUser {
-    id: number;
+    id: string;
     name: string;
-    course: string;
-    avatar: string;
+    username: string;
+    avatar_url: string | null;
+    user_courses: {
+        courses: {
+            code: string;
+        };
+    }[];
 }
 
 interface FollowListModalProps {
     initialTab: FollowTab;
-    followingIds: number[];
-    followerIds: number[];
-    onToggleFollow: (userId: number) => void;
     onClose: () => void;
+    onFollowChange: () => Promise<void>;
 }
-
-// Mock users for the Following list.
-const initialFollowing: FollowUser[] = [
-    {
-        id: 2,
-        name: "Jane Doe",
-        course: "COB Student",
-        avatar: "/assets/icons/profile.svg",
-    },
-    {
-        id: 3,
-        name: "Carmy Berzatto",
-        course: "CCS Student",
-        avatar: "/assets/icons/profile.svg",
-    },
-];
-
-// Mock users for the Followers list.
-const initialFollowers: FollowUser[] = [
-    {
-        id: 2,
-        name: "Jane Doe",
-        course: "COB Student",
-        avatar: "/assets/icons/profile.svg",
-    },
-    {
-        id: 3,
-        name: "Carmy Berzatto",
-        course: "CCS Student",
-        avatar: "/assets/icons/profile.svg",
-    },
-    {
-        id: 4,
-        name: "Alan Smith",
-        course: "CCS Student",
-        avatar: "/assets/icons/profile.svg",
-    },
-];
 
 export default function FollowListModal({
     initialTab,
-    followingIds,
-    followerIds,
-    onToggleFollow,
     onClose,
+    onFollowChange,
 }: FollowListModalProps) {
     // Controls the currently selected tab.
     const [activeTab, setActiveTab] = useState<FollowTab>(initialTab);
@@ -92,8 +57,71 @@ export default function FollowListModal({
     // Ensures the portal only renders after mounting.
     const [mounted, setMounted] = useState(false);
 
+    // Stores the actual users retrieved from the backend.
+    const [followingUsers, setFollowingUsers] = useState<FollowUser[]>([]);
+    const [followerUsers, setFollowerUsers] = useState<FollowUser[]>([]);
+
+    // Tracks the loading and error states.
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Update State
+    const [updatingUserIds, setUpdatingUserIds] = useState<string[]>([]);
+
     useEffect(() => {
         setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        async function fetchFollowLists() {
+            try {
+                setIsLoading(true);
+                setError(null);
+
+                // Get the logged-in user's ID.
+                const profileResponse = await fetch(`${API_URL}/users/me`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (!profileResponse.ok) {
+                    throw new Error("Failed to retrieve your profile.");
+                }
+
+                const user: { id: string } = await profileResponse.json();
+
+                // Retrieve both lists simultaneously.
+                const [followingResponse, followersResponse] =
+                    await Promise.all([
+                        fetch(`${API_URL}/follows/${user.id}/following`, {
+                            credentials: "include",
+                        }),
+                        fetch(`${API_URL}/follows/${user.id}/followers`, {
+                            credentials: "include",
+                        }),
+                    ]);
+
+                if (!followingResponse.ok || !followersResponse.ok) {
+                    throw new Error("Failed to retrieve follow lists.");
+                }
+
+                const following: FollowUser[] =
+                    await followingResponse.json();
+
+                const followers: FollowUser[] =
+                    await followersResponse.json();
+
+                setFollowingUsers(following);
+                setFollowerUsers(followers);
+            } catch (err) {
+                console.error("Error fetching follow lists:", err);
+                setError("Unable to load connections. Please try again.");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchFollowLists();
     }, []);
 
     // Close the modal when Escape is pressed.
@@ -122,21 +150,46 @@ export default function FollowListModal({
         };
     }, []);
 
-    // Select the users displayed in the active tab.
-    // The following list reflects local follow/unfollow changes.
-    const allUsers = Array.from(
-        new Map(
-            [...initialFollowing, ...initialFollowers].map((user) => [
-                user.id,
-                user,
-            ])
-        ).values()
-    );
+    // Select the actual users displayed in the active tab.
+    const displayedUsers = activeTab === "following" ? followingUsers : followerUsers;
 
-    const displayedUsers =
-        activeTab === "following"
-            ? allUsers.filter((user) => followingIds.includes(user.id))
-            : allUsers.filter((user) => followerIds.includes(user.id));
+    // Follow or unfollow a user through the backend.
+    async function handleToggleFollow(user: FollowUser) {
+        const isFollowing = followingUsers.some(
+            (followedUser) => followedUser.id === user.id
+        );
+
+        try {
+            setUpdatingUserIds((previous) => [...previous, user.id]);
+
+            const response = await fetch(`${API_URL}/follows/${user.id}`, {
+                method: isFollowing ? "DELETE" : "POST",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update follow status.");
+            }
+
+            if (isFollowing) {
+                setFollowingUsers((previous) =>
+                    previous.filter((item) => item.id !== user.id)
+                );
+            } else {
+                setFollowingUsers((previous) => [...previous, user]);
+            }
+
+            await onFollowChange();
+            
+        } catch (err) {
+            console.error("Error updating follow status:", err);
+            alert("Unable to update follow status. Please try again.");
+        } finally {
+            setUpdatingUserIds((previous) =>
+                previous.filter((id) => id !== user.id)
+            );
+        }
+    }
 
     if (!mounted) {
         return null;
@@ -227,7 +280,17 @@ export default function FollowListModal({
 
                 {/* User List */}
                 <div className="max-h-[360px] min-h-[180px] overflow-y-auto px-5 py-3">
-                    {displayedUsers.length === 0 ? (
+                    {isLoading ? (
+                        <div className="flex min-h-[160px] items-center justify-center">
+                            <p className="text-sm text-gray-500">
+                                Loading connections...
+                            </p>
+                        </div>
+                    ) : error ? (
+                        <div className="flex min-h-[160px] items-center justify-center">
+                            <p className="text-sm text-red-500">{error}</p>
+                        </div>
+                    ) : displayedUsers.length === 0 ? (
                         <div className="flex min-h-[160px] items-center justify-center">
                             <p className="text-sm text-gray-500">
                                 {activeTab === "following"
@@ -238,27 +301,26 @@ export default function FollowListModal({
                     ) : (
                         <div className="space-y-2">
                             {displayedUsers.map((user) => {
-                                const isFollowing = followingIds.includes(
-                                    user.id
+                                const isFollowing = followingUsers.some(
+                                    (followedUser) => followedUser.id === user.id
                                 );
+
+                                const course = user.user_courses
+                                    .map((item) => item.courses.code)
+                                    .join(", ");
 
                                 return (
                                     <div
                                         key={user.id}
                                         className="flex items-center justify-between gap-3 rounded-lg px-2 py-3 transition hover:bg-gray-50"
                                     >
-                                        {/* User Profile */}
                                         <Link
-                                            href={
-                                                user.id === 1
-                                                    ? "/profile"
-                                                    : `/profile/${user.id}`
-                                            }
+                                            href={`/profile/${user.id}`}
                                             onClick={onClose}
                                             className="flex min-w-0 flex-1 items-center gap-3"
                                         >
                                             <Image
-                                                src={user.avatar}
+                                                src={user.avatar_url || "/assets/icons/profile.svg"}
                                                 alt=""
                                                 width={42}
                                                 height={42}
@@ -271,27 +333,24 @@ export default function FollowListModal({
                                                 </p>
 
                                                 <p className="mt-1 truncate text-xs text-gray-500">
-                                                    {user.course}
+                                                    {course || "No course listed"}
                                                 </p>
                                             </div>
                                         </Link>
 
-                                        {/* Follow / Unfollow Button */}
                                         <button
                                             type="button"
-                                            onClick={() => onToggleFollow(user.id)}
-                                            aria-label={
-                                                isFollowing
-                                                    ? `Unfollow ${user.name}`
-                                                    : `Follow ${user.name}`
-                                            }
-                                            className={`min-w-[100px] shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                                            onClick={() => handleToggleFollow(user)}
+                                            disabled={updatingUserIds.includes(user.id)}
+                                            className={`min-w-[100px] shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition disabled:opacity-50 ${
                                                 isFollowing
                                                     ? "border-[#343B36] bg-white text-[#343B36] hover:bg-gray-100"
                                                     : "border-[#00A651] bg-[#00A651] text-white hover:bg-[#008F45]"
                                             }`}
                                         >
-                                            {isFollowing
+                                            {updatingUserIds.includes(user.id)
+                                                ? "Updating..."
+                                                : isFollowing
                                                 ? "Following"
                                                 : "Follow"}
                                         </button>

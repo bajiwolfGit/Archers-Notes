@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Delete, Param, ParseIntPipe, UploadedFile, UseInterceptors} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Delete, Param, ParseIntPipe, ParseUUIDPipe, UploadedFile, UseInterceptors} from '@nestjs/common';
 import { CurrentUser, type AuthUser } from '@nestm/better-auth';
 import { auth } from '../auth.js';
 import { UsersService } from './users.service.js';
@@ -73,6 +73,14 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.usersService.uploadImage(user.id, 'cover', file);
+  }
+
+  // Get another user's public profile
+  @Get(':id')
+  getUserProfile(
+    @Param('id') id: string,
+  ) {
+    return this.usersService.getPublicProfile(id);
   }
 }
 

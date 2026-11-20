@@ -52,6 +52,9 @@ import {
 interface ProfileHeaderProps {
 	profile: ProfileData;
 	onProfileChange: (profile: ProfileData) => void;
+	followingCount: number;
+ 	followersCount: number;
+	refreshFollowCounts: () => Promise<void>;
 }
 
 /**
@@ -76,6 +79,9 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({
 	profile,
 	onProfileChange,
+	followingCount,
+  	followersCount,
+	refreshFollowCounts,
 }: ProfileHeaderProps) {
 
 	/**
@@ -254,6 +260,9 @@ export default function ProfileHeader({
 				<ProfileInfo
 					profile={profile}
 					onEdit={() => setIsEditing(true)}
+					followingCount={followingCount}
+ 					followersCount={followersCount}
+					refreshFollowCounts={refreshFollowCounts}
 				/>
 
 				{/*

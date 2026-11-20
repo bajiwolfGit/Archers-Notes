@@ -80,6 +80,63 @@ async getProfile(userId: string) {
   };
 }
 
+// Retrieve another user's public profile
+async getPublicProfile(userId: string) {
+  const user = await this.prisma.users.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      bio: true,
+      avatar_url: true,
+      cover_url: true,
+      created_at: true,
+
+      // Academic information
+      college_id: true,
+      program: true,
+      colleges: {
+        select: {
+          college_id: true,
+          name: true,
+        },
+      },
+
+      // Courses
+      user_courses: {
+        select: {
+          courses: {
+            select: {
+              course_id: true,
+              code: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  return {
+    id: user.id,
+    name: user.name,
+    username: user.username,
+    bio: user.bio,
+    avatar_url: user.avatar_url,
+    cover_url: user.cover_url,
+    created_at: user.created_at,
+    college_id: user.college_id,
+    college: user.colleges,
+    program: user.program,
+    courses: user.user_courses.map((item) => item.courses),
+  };
+}
+
 async updateProfile(
   userId: string,
   data: {
