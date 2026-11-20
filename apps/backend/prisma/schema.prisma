@@ -172,6 +172,8 @@ model users {
   college_id                          Int?
   colleges                            colleges?      @relation(fields: [college_id], references: [college_id])
   user_courses                        user_courses[]
+  batch_id                            Int?
+  program                             String?
 
   @@map("users")
 }
