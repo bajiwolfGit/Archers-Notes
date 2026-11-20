@@ -55,7 +55,7 @@ export default function AccountSettings({
 
     try {
       await onSignOut();
-      router.replace("/login");
+      router.replace("/");
       router.refresh();
     } catch (error) {
       console.error("Failed to sign out:", error);
@@ -78,7 +78,7 @@ export default function AccountSettings({
       await onDeleteAccount(password);
       setIsDeleteModalOpen(false);
 
-      router.replace("/login");
+      router.replace("/");
       router.refresh();
     } catch (error) {
       console.error("Failed to delete account:", error);

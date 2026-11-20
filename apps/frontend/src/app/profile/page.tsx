@@ -20,6 +20,16 @@ import {
 const API_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
+const collegeCodes: Record<number, string> = {
+  1: "BAGCED",
+  2: "CCS",
+  3: "CLA",
+  4: "COB",
+  5: "COS",
+  6: "GCOE",
+  7: "SOE",
+};
+
 interface UserProfileResponse {
   id: string;
   name: string;
@@ -29,6 +39,14 @@ interface UserProfileResponse {
   avatar_url: string | null;
   cover_url: string | null;
   created_at: string;
+
+  college_id: number | null;
+  college: {
+    college_id: number;
+    name: string;
+  } | null;
+  program: string | null;
+
   courses: {
     course_id: number;
     code: string;
@@ -56,17 +74,28 @@ export default function ProfilePage() {
         }
 
         const user: UserProfileResponse = await response.json();
+        const collegeId = user.college?.college_id ?? user.college_id;
+        const collegeCode = collegeId
+          ? collegeCodes[collegeId] ?? user.college?.name
+          : null;
+
+        const subtitleParts = [
+          collegeCode ? `${collegeCode} Student` : null,
+          user.program,
+        ].filter(Boolean);
 
         setProfile((currentProfile) => ({
           ...currentProfile,
           name: user.name,
           email: user.gmail,
+          subtitle: subtitleParts.join(" · "),
           bio: user.bio ?? "",
           avatar: user.avatar_url,
           cover: user.cover_url,
           createdAt: user.created_at,
           courses: user.courses ?? [],
         }));
+
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError("Unable to load your profile. Please try again.");
