@@ -14,6 +14,7 @@ async getProfile(userId: string) {
   const user = await this.prisma.users.findUnique({
     where: { id: userId },
     select: {
+      // User Stuff
       id: true,
       name: true,
       gmail: true,
@@ -22,6 +23,18 @@ async getProfile(userId: string) {
       avatar_url: true,
       cover_url: true,
       created_at: true,
+
+      // Academic information
+      college_id: true,
+      program: true,
+      batch_id: true,
+
+      // Notification preferences
+      in_app_notifications: true,
+      email_notifications: true,
+      comment_notifications: true,
+
+      // Existing relations
       colleges: {
         select: {
           college_id: true,
@@ -57,6 +70,13 @@ async getProfile(userId: string) {
     created_at: user.created_at,
     college: user.colleges,
     courses: user.user_courses.map((item) => item.courses),
+    college_id: user.college_id,
+    program: user.program,
+    batch_id: user.batch_id,
+
+    in_app_notifications: user.in_app_notifications,
+    email_notifications: user.email_notifications,
+    comment_notifications: user.comment_notifications,
   };
 }
 
@@ -66,6 +86,11 @@ async updateProfile(
     name?: string;
     bio?: string | null;
     college_id?: number | null;
+    program?: string | null;
+    batch_id?: number | null;
+    in_app_notifications?: boolean;
+    email_notifications?: boolean;
+    comment_notifications?: boolean;
   },
 ) {
   await this.prisma.users.update({
@@ -73,6 +98,11 @@ async updateProfile(
     data: {
       ...(data.name !== undefined && { name: data.name }),
       ...(data.bio !== undefined && { bio: data.bio }),
+      ...(data.program !== undefined && { program: data.program, }),
+      ...(data.batch_id !== undefined && {batch_id: data.batch_id, }),
+      ...(data.in_app_notifications !== undefined && { in_app_notifications: data.in_app_notifications, }),
+      ...(data.email_notifications !== undefined && { email_notifications: data.email_notifications, }),
+      ...(data.comment_notifications !== undefined && { comment_notifications: data.comment_notifications, }),
       ...(data.college_id !== undefined && {
         colleges:
           data.college_id === null

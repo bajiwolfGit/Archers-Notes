@@ -212,6 +212,11 @@ model users {
   batch_id                            Int?
   program                             String?
 
+  // Notification Preferences
+  in_app_notifications  Boolean @default(true)
+  email_notifications   Boolean @default(false)
+  comment_notifications Boolean @default(true)
+
   received_notifications notifications[] @relation("NotificationRecipient")
   sent_notifications     notifications[] @relation("NotificationActor")
 
