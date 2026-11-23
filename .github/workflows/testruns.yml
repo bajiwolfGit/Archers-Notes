@@ -2,6 +2,10 @@ name: Test Runs
 
 on: [push, pull_request]
 
+env:
+    DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+
 jobs:
   test:
     runs-on: ubuntu-latest
