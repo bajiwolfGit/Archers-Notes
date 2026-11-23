@@ -29,7 +29,7 @@ jobs:
         run: |
           npm run build
           sleep 15
-          npm run dev
+          npm run start
           sleep 15
 
       - name: Run Test Script
