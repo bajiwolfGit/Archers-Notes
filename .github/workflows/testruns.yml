@@ -44,6 +44,7 @@ jobs:
         run: robot --outputdir results/tests tests/robot/google_login
 
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: results
