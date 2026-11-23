@@ -25,12 +25,20 @@ jobs:
           python -m Browser.entry init
           npm install
       
-      - name: Run Server
+      - name: Start Server
         run: |
           npm run build
-          sleep 15
-          npm run start
-          sleep 15
+          nohup npm run dev > server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null; then
+              echo "Server is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Server failed to start"
+          cat server.log
+          exit 1
 
       - name: Run Test Script
         run: robot --outputdir results/tests tests/robot/google_login
