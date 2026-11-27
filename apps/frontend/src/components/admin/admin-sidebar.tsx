@@ -10,7 +10,8 @@
  * - Displays the Post Announcements button.
  * - Organizes navigation into Overview and Communication.
  * - Highlights the currently active page.
- * - Displays the number of pending reports.
+ * - Displays the number of open reports.
+ * - Links to the read-only Activity Log.
  * - Displays footer.
  * - Uses existing SVG icons and application typography.
  */
@@ -22,6 +23,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import AdminSidebarFooter from "./admin-sidebar-footer";
+
+import { useAdmin } from "@/context/admin-context";
 
 /**
  * AdminSidebarProps Interface
@@ -63,7 +66,6 @@ const overviewNavigation: NavigationItem[] = [
         label: "Reports",
         href: "/admin/reports",
         icon: "/assets/icons/reports.svg",
-        badge: 10,
     },
     {
         label: "Users",
@@ -74,6 +76,11 @@ const overviewNavigation: NavigationItem[] = [
         label: "Notes",
         href: "/admin/notes",
         icon: "/assets/icons/notes.svg",
+    },
+    {
+        label: "Quizzes",
+        href: "/admin/quizzes",
+        icon: "/assets/icons/quizbits.svg",
     },
     {
         label: "Courses",
@@ -93,6 +100,11 @@ const communicationNavigation: NavigationItem[] = [
         href: "/admin/announcements",
         icon: "/assets/icons/announcements.svg",
     },
+    {
+        label: "Activity Log",
+        href: "/admin/activity-log",
+        icon: "/assets/icons/activity-log.svg",
+    },
 ];
 
 /**
@@ -107,6 +119,13 @@ export default function AdminSidebar({
     onOpenAnnouncement,
 }: AdminSidebarProps) {
     const pathname = usePathname();
+
+    // Number of open reports, shown as a badge on Reports.
+    const { reports, loaded } = useAdmin();
+
+    const openReports = reports.filter(
+        (report) => report.status === "Open"
+    ).length;
 
     /**
      * isActive
@@ -131,6 +150,11 @@ export default function AdminSidebar({
     function renderNavigation(items: NavigationItem[]) {
         return items.map((item) => {
             const active = isActive(item.href);
+
+            const badge =
+                item.href === "/admin/reports" && loaded
+                    ? openReports
+                    : item.badge;
 
             return (
                 <Link
@@ -158,10 +182,10 @@ export default function AdminSidebar({
                     </span>
 
                     {/* Report Count Badge */}
-                    {item.badge !== undefined &&
-                        item.badge > 0 && (
+                    {badge !== undefined &&
+                        badge > 0 && (
                             <span className="flex min-w-6 items-center justify-center rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-500">
-                                {item.badge}
+                                {badge}
                             </span>
                         )}
                 </Link>

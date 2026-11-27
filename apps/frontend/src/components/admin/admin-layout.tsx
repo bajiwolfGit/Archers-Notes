@@ -1,9 +1,26 @@
+
+/**
+ * File: components/admin/admin-layout.tsx
+ *
+ * Description:
+ * Provides the shared layout for the Admin Dashboard.
+ *
+ * Features:
+ * - Reuses the application's existing Navbar.
+ * - Displays an independently scrollable admin sidebar.
+ * - Manages the Post Announcement modal.
+ * - Stores published announcements in local React state.
+ * - Provides shared admin data (users, reports, activity log).
+ * - Provides shared quiz data for the Quizzes directory.
+ */
+
 "use client";
 
 import { useState, type ReactNode } from "react";
 
 import { PostsProvider } from "@/context/posts-context";
 import { AdminProvider } from "@/context/admin-context";
+import { QuizzesProvider } from "@/context/quizzes-context";
 import Navbar from "@/components/layout/navbar";
 import AdminSidebar from "./admin-sidebar";
 
@@ -18,12 +35,19 @@ interface AdminLayoutProps {
 export default function AdminLayout({
     children,
 }: AdminLayoutProps) {
+    // Controls the announcement modal.
     const [announcementModalOpen, setAnnouncementModalOpen] =
         useState(false);
 
+    // Stores announcements during the current session.
     const [announcements, setAnnouncements] =
         useState<Announcement[]>([]);
 
+    /**
+     * Handle Publish Announcement
+     *
+     * Adds the announcement to local state.
+     */
     function handlePublishAnnouncement(
         announcement: Announcement
     ) {
@@ -40,15 +64,19 @@ export default function AdminLayout({
 
     return (
         <PostsProvider>
+            <QuizzesProvider>
             <AdminProvider>
             <div className="min-h-screen bg-white">
 
+                {/* Shared Navbar */}
                 <div className="sticky top-0 z-50 bg-white">
                     <Navbar isAdmin />
                 </div>
 
+                {/* Admin Layout */}
                 <div className="flex">
 
+                    {/* Admin Sidebar */}
                     <div className="sidebar-scroll sticky top-18.25 h-[calc(100vh-73px)] shrink-0 overflow-y-auto">
                         <AdminSidebar
                             onOpenAnnouncement={() =>
@@ -57,11 +85,13 @@ export default function AdminLayout({
                         />
                     </div>
 
+                    {/* Main Content */}
                     <main className="min-w-0 flex-1">
                         {children}
                     </main>
                 </div>
 
+                {/* Announcement Modal */}
                 {announcementModalOpen && (
                     <PostAnnouncementModal
                         onClose={() =>
@@ -72,6 +102,7 @@ export default function AdminLayout({
                 )}
             </div>
             </AdminProvider>
+            </QuizzesProvider>
         </PostsProvider>
     );
 }
